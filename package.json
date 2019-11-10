@@ -1,0 +1,52 @@
+{
+  "name": "adx-query-charts",
+  "version": "1.0.0",
+  "description": "Draw charts from Azure Data Explorer queries",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build && npm run test",
+    "test": "npm run build && jest",
+    "test:watch": "jest --watch",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/adx-query-charts.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Violet Voronetzky",
+    "email": "sigalvo@microsoft.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microsoft/adx-query-charts/issues"
+  },
+  "homepage": "https://github.com/microsoft/adx-query-charts#readme",
+  "files": [
+    "dist/**/*"
+  ],
+  "devDependencies": {
+    "typescript": "^3.7.2",
+    "@types/jest": "^24.0.22",
+    "jest": "^24.9.0",
+    "@types/lodash": "^4.14.135",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
+  },
+  "jest": {
+    "testMatch": [
+      "**/dist/**/?(*.)(spec|test).js?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": [ "es2018", "dom" ],
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "removeComments": false,
+    "noEmitOnError": true,  
+    "skipLibCheck": true,
+    "typeRoots": [ "node_modules/@types", "definitelyTyped" ],
+	  "sourceMap": true
+  }
+}
