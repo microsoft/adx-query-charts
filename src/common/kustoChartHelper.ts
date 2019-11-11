@@ -14,6 +14,14 @@ export interface ITransformedQueryResultData {
 }
 
 export class KustoChartHelper implements IChartHelper {
+    
+    //#region Public members
+
+    public transformedQueryResultData: IQueryResultData;
+    public isResolveAsSeries: boolean = false;
+
+    //#endregion Public members
+
     //#region Private members
 
     private static readonly maxDefaultYAxesSelection: number = 4;
@@ -26,9 +34,7 @@ export class KustoChartHelper implements IChartHelper {
         aggregationType: AggregationType.Sum
     }
 
-    private readonly seriesVisualize: SeriesVisualize;
     private queryResultData: IQueryResultData;
-    private transformedQueryResultData?: IQueryResultData;
 
     //#endregion Private members
 
@@ -96,7 +102,7 @@ export class KustoChartHelper implements IChartHelper {
     * @param chartOptions
     * @returns transformed data if the transformation succeeded. Otherwise - returns null
     */
-   public transformQueryResultData(queryResultData: IQueryResultData, chartOptions: IChartOptions): ITransformedQueryResultData {
+    public transformQueryResultData(queryResultData: IQueryResultData, chartOptions: IChartOptions): ITransformedQueryResultData {
         // Update the chart options with defaults for optional values that weren't provided
         chartOptions = this.updateDefaultChartOptions(chartOptions);
         const chartColumns: IColumn[] = [];
@@ -150,9 +156,11 @@ export class KustoChartHelper implements IChartHelper {
             this.transformedQueryResultData = queryResultData;
 
             // Tries to resolve the results as series
-            const updatedQueryResultData: IQueryResultData = this.seriesVisualize.tryResolveResultsAsSeries(queryResultData);
+            const seriesVisualize = SeriesVisualize.getInstance();
+            const updatedQueryResultData: IQueryResultData = seriesVisualize.tryResolveResultsAsSeries(queryResultData);
 
             if (updatedQueryResultData) {
+                this.isResolveAsSeries = true;
                 this.transformedQueryResultData = updatedQueryResultData;
             }
         }
