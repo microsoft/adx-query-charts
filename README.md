@@ -1,6 +1,8 @@
-# ** This package is a work in process. Please DO NOT USE it yet **
+# This package is a work in process. Please DO NOT USE it yet
 
 # query-data-to-chart-private
+[![Build Status](https://travis-ci.org/microsoft/adx-query-charts.svg?branch=master)](https://travis-ci.org/microsoft/adx-query-charts)&nbsp;&nbsp;&nbsp;&nbsp;[![npm version](https://badge.fury.io/js/adx-query-charts.svg)](https://badge.fury.io/js/adx-query-charts)
+
 Draw charts from Azure Data Explorer queries
 
 ## Installation 
