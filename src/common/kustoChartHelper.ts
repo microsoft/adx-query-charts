@@ -2,7 +2,7 @@
 
 //#region Imports
 
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType } from './chartModels';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IAxesInfo, IChartOptions, AggregationType } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 
@@ -76,7 +76,7 @@ export class KustoChartHelper implements IChartHelper {
         }
     }
 
-    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection {
+    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IAxesInfo<IColumn> {
         if (!supportedColumnsForChart) {
             supportedColumnsForChart = this.getSupportedColumnsInResult(queryResultData, chartType);
         }
@@ -129,9 +129,11 @@ export class KustoChartHelper implements IChartHelper {
         // Create transformed rows for visualization
         const limitAndAggregateParams: ILimitAndAggregateParams = {
             queryResultData: queryResultData,
-            indexOfXColumn: indexOfXAxisColumn[0],
-            indexesOfYColumns: indexesOfYAxes,
-            indexesOfSplitByColumns: indexesOfSplitByColumns,
+            axesIndexes: {
+                xAxis: indexOfXAxisColumn[0],
+                yAxes: indexesOfYAxes,
+                splitBy: indexesOfSplitByColumns
+            },
             xColumnType: chartOptions.columnsSelection.xAxis.type,
             aggregationType: chartOptions.aggregationType,
             maxUniqueXValues: chartOptions.maxUniqueXValues,

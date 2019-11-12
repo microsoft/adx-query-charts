@@ -65,10 +65,10 @@ export interface ISupportedColumns {
     splitBy: IColumn[];
 }
 
-export interface IColumnsSelection {
-    xAxis: IColumn;
-    yAxes: IColumn[];
-    splitBy?: IColumn[];
+export interface IAxesInfo<T> {
+    xAxis: T;
+    yAxes: T[];
+    splitBy?: T[];
 }
 
 /**
@@ -83,7 +83,7 @@ export interface IChartOptions {
     /**
      * The columns selection for the Axes and the split-by of the chart
      */
-    columnsSelection: IColumnsSelection;
+    columnsSelection: IAxesInfo<IColumn>;
 
     /**
      * The maximum number of the unique X-axis values.
@@ -142,5 +142,5 @@ export interface IChartHelper {
      * @param chartType - The type of the chart
      * @param supportedColumnsForChart - [Optional] The list of the supported column types for the axes and the split-by
      */
-    getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection;
+    getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IAxesInfo<IColumn>;
 }

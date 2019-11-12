@@ -69,9 +69,11 @@ describe('Unit tests for LimitVisResults', () => {
 
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 0,
-                indexesOfYColumns: [2],
-                indexesOfSplitByColumns: [1],
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [2],
+                    splitBy: [1]
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -93,9 +95,11 @@ describe('Unit tests for LimitVisResults', () => {
         it("When X values are DateTime, the X values aren't limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 0,
-                indexesOfYColumns: [3],
-                indexesOfSplitByColumns: [],
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [3],
+                    splitBy: []
+                },
                 xColumnType: DraftColumnType.DateTime,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -117,9 +121,11 @@ describe('Unit tests for LimitVisResults', () => {
         it("When X values exceeds maximum size, the X values are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 1,
-                indexesOfYColumns: [3],
-                indexesOfSplitByColumns: [],
+                axesIndexes: {
+                    xAxis: 1,
+                    yAxes: [3],
+                    splitBy: []
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -150,9 +156,11 @@ describe('Unit tests for LimitVisResults', () => {
         it("When X values are DateTime, and Filter exceeds maximum size, only Filter values are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 0,
-                indexesOfYColumns: [3, 4],
-                indexesOfSplitByColumns: [2],
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [3, 4],
+                    splitBy: [2]
+                },
                 xColumnType: DraftColumnType.DateTime,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -186,9 +194,11 @@ describe('Unit tests for LimitVisResults', () => {
         it("When both X values and Filter values exceeds maximum size, both of them are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 1,
-                indexesOfYColumns: [3, 4],
-                indexesOfSplitByColumns: [2],
+                axesIndexes: {
+                    xAxis: 1,
+                    yAxes: [3, 4],
+                    splitBy: [2]
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -233,9 +243,11 @@ describe('Unit tests for LimitVisResults', () => {
 
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 0,
-                indexesOfYColumns: [2],
-                indexesOfSplitByColumns: [1, 3],
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [2],
+                    splitBy: [1, 3]
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -272,9 +284,11 @@ describe('Unit tests for LimitVisResults', () => {
 
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 1,
-                indexesOfYColumns: [3, 4],
-                indexesOfSplitByColumns: [2],
+                axesIndexes: {
+                    xAxis: 1,
+                    yAxes: [3, 4],
+                    splitBy: [2]
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Average,
                 maxUniqueXValues: maxUniqueXValues,
@@ -339,9 +353,11 @@ describe('Unit tests for LimitVisResults', () => {
         it("When the X and the SpliBy have the same values, those values are aggregated", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 0,
-                indexesOfYColumns: [4],
-                indexesOfSplitByColumns: [1],
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [4],
+                    splitBy: [1]
+                },
                 xColumnType: DraftColumnType.DateTime,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: maxUniqueXValues,
@@ -397,9 +413,11 @@ describe('Unit tests for LimitVisResults', () => {
         it("When the X have the same value, and there is no split-by, the X values are aggregated", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 2,
-                indexesOfYColumns: [4],
-                indexesOfSplitByColumns: [],
+                axesIndexes: {
+                    xAxis: 2,
+                    yAxes: [4],
+                    splitBy: []
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: 100,
@@ -467,9 +485,10 @@ describe('Unit tests for LimitVisResults', () => {
         it("When the X values exceeds maximum size, they are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
-                indexOfXColumn: 2,
-                indexesOfYColumns: [4],
-                indexesOfSplitByColumns: [],
+                axesIndexes: {
+                    xAxis: 2,
+                    yAxes: [4]
+                },
                 xColumnType: DraftColumnType.String,
                 aggregationType: AggregationType.Sum,
                 maxUniqueXValues: 3,
