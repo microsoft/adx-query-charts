@@ -4,7 +4,7 @@
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { DraftColumnType, IQueryResultData, AggregationType, IRow, IRowValue } from '../common/chartModels';
+import { DraftColumnType, IQueryResultData, AggregationType, IRow, IRowValue, IAxesInfo } from '../common/chartModels';
 import { ChartAggregation, IAggregationMethod } from './chartAggregation';
 
 //#endregion Imports
@@ -19,9 +19,7 @@ export class LimitedResults {
 
 export interface ILimitAndAggregateParams {
     queryResultData: IQueryResultData;
-    indexOfXColumn: number;
-    indexesOfYColumns: number[];
-    indexesOfSplitByColumns: number[];
+    axesIndexes: IAxesInfo<number>;
     xColumnType: DraftColumnType;
     aggregationType: AggregationType;
     maxUniqueXValues: number;
@@ -162,7 +160,7 @@ export class _LimitVisResults {
             const otherRow: any = [];
 
             otherRow[indexOfLimitedColumn] = params.otherStr;
-            params.indexesOfYColumns.forEach((yIndex) => {
+            params.axesIndexes.yAxes.forEach((yIndex) => {
                 otherRow[yIndex] = [];
             });
 
@@ -181,7 +179,7 @@ export class _LimitVisResults {
                 if (createOtherColumn) {
                     const otherRow = otherRows[0];
 
-                    params.indexesOfYColumns.forEach((yIndex) => {
+                    params.axesIndexes.yAxes.forEach((yIndex) => {
                         otherRow[yIndex].push(row[yIndex]);
                     });
                 } else {
@@ -195,7 +193,7 @@ export class _LimitVisResults {
             const otherRow = otherRows[0];
 
             // Aggregate all Y Values
-            params.indexesOfYColumns.forEach((yIndex) => {
+            params.axesIndexes.yAxes.forEach((yIndex) => {
                 otherRow[yIndex] = params.aggregationMethod(otherRow[yIndex]);
             });
         }
@@ -216,7 +214,7 @@ export class _LimitVisResults {
         // Aggregate the total count for each unique value
         rows.forEach((row) => {
             const limitedColumnValue = row[indexOfLimitedColumn];
-            const yValues = _.map(params.indexesOfYColumns, (yIndex: number) => {
+            const yValues = _.map(params.axesIndexes.yAxes, (yIndex: number) => {
                 return row[yIndex];
             });
 
@@ -271,7 +269,7 @@ export class _LimitVisResults {
             return;
         }
 
-        this.limitRows(params, limitedResults, /*indexOfLimitedColumn*/ params.indexOfXColumn, /*createOtherColumn*/ true);
+        this.limitRows(params, limitedResults, /*indexOfLimitedColumn*/ params.axesIndexes.xAxis, /*createOtherColumn*/ true);
 
         // Mark that the X values were limited
         if (limitedResults.rows.length < originalRows.length) {
@@ -282,7 +280,9 @@ export class _LimitVisResults {
     private limitAllRows(params: IInternalParams, limitedResults: LimitedResults): void {
         this.limitXValues(params, limitedResults);
 
-        params.indexesOfSplitByColumns.forEach((indexOfSplitByColumn: number) => {
+        const splitByIndexes = params.axesIndexes.splitBy || [];
+
+        splitByIndexes.forEach((indexOfSplitByColumn: number) => {
             this.limitRows(params, limitedResults, indexOfSplitByColumn);
         });
     }
@@ -305,11 +305,13 @@ export class _LimitVisResults {
         const aggregatedRowInfoMap: { [rowKey: string]: IAggregatedRowInfo } = {};
 
         limitedResults.rows.forEach((row: IRow, index: number) => {
-            const xValue = row[params.indexOfXColumn];
+            const xValue = row[params.axesIndexes.xAxis];
             const transformedRow = [this.escapeStr(xValue)];
 
             // Add all split-by values
-            params.indexesOfSplitByColumns.forEach((splitByIndex) => {
+            const splitByIndexes = params.axesIndexes.splitBy || [];
+
+            splitByIndexes.forEach((splitByIndex) => {
                 transformedRow.push(this.escapeStr(row[splitByIndex]));
             });
 
@@ -322,13 +324,13 @@ export class _LimitVisResults {
                     yValues: []
                 };
 
-                params.indexesOfYColumns.forEach((yValue) => {
+                params.axesIndexes.yAxes.forEach((yValue) => {
                     aggregatedRowInfoMap[key].yValues.push([]);
                 });
             }
 
             // Add the Y-values, to be later aggregated
-            params.indexesOfYColumns.forEach((yIndex: number, i: number) => {
+            params.axesIndexes.yAxes.forEach((yIndex: number, i: number) => {
                 const yValue = row[yIndex];
 
                 // Ignore undefined/null values
@@ -345,7 +347,7 @@ export class _LimitVisResults {
         const aggregationResult: IAggregationResult = this.applyAggregation(aggregatedRowInfo, params.aggregationMethod);
 
         limitedResults.orderedXValues = _.map(limitedResults.rows, (row) => {
-             return row[params.indexOfXColumn];
+             return row[params.axesIndexes.xAxis];
         }) || [];
 
         limitedResults.isAggregationApplied = aggregationResult.isAggregated;
