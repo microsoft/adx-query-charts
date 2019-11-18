@@ -215,7 +215,7 @@ export class KustoChartHelper implements IChartHelper {
 
         let numberOfDefaultYAxes: number = 1;
 
-        // The y-axis is a single select when there is split-by, ot for Pie / Donut charts
+        // The y-axis is a single select when there is split-by, or for Pie / Donut charts
         if (chartType !== ChartType.Pie && chartType !== ChartType.Donut && !selectedSplitBy) {
             numberOfDefaultYAxes = KustoChartHelper.maxDefaultYAxesSelection;
         }
