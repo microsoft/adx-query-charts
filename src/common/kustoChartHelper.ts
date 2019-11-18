@@ -83,7 +83,7 @@ export class KustoChartHelper implements IChartHelper {
 
         const defaultXAxis: IColumn = this.selectDefaultXAxis(supportedColumnsForChart.xAxis);
         const defaultSplitBy: IColumn = this.selectDefaultSplitByColumn(supportedColumnsForChart.splitBy, defaultXAxis, chartType);
-        const defaultYAxes: IColumn[] = this.selectDefaultYAxes(supportedColumnsForChart.yAxis, defaultXAxis, defaultSplitBy);
+        const defaultYAxes: IColumn[] = this.selectDefaultYAxes(supportedColumnsForChart.yAxis, defaultXAxis, defaultSplitBy, chartType);
 
         return {
             xAxis: defaultXAxis,
@@ -196,7 +196,7 @@ export class KustoChartHelper implements IChartHelper {
         return supportedColumns[0];
     }
 
-    private selectDefaultYAxes(supportedColumns: IColumn[], selectedXAxis: IColumn, selectedSplitBy?: IColumn): IColumn[] {
+    private selectDefaultYAxes(supportedColumns: IColumn[], selectedXAxis: IColumn, selectedSplitBy: IColumn, chartType: ChartType): IColumn[] {
         if (!supportedColumns || supportedColumns.length === 0 || !selectedXAxis) {
             return null;
         }
@@ -213,7 +213,13 @@ export class KustoChartHelper implements IChartHelper {
             return null;
         }
 
-        const numberOfDefaultYAxes: number = selectedSplitBy ? 1 : KustoChartHelper.maxDefaultYAxesSelection;
+        let numberOfDefaultYAxes: number = 1;
+
+        // The y-axis is a single select when there is split-by, ot for Pie / Donut charts
+        if (chartType !== ChartType.Pie && chartType !== ChartType.Donut && !selectedSplitBy) {
+            numberOfDefaultYAxes = KustoChartHelper.maxDefaultYAxesSelection;
+        }
+
         const selectedYAxes: IColumn[] = updatedSupportedColumns.slice(0, numberOfDefaultYAxes);
 
         return selectedYAxes;
