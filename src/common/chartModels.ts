@@ -82,8 +82,9 @@ export interface IChartOptions {
 
     /**
      * The columns selection for the Axes and the split-by of the chart
+     * If not provided, default columns will be selected. See: getDefaultSelection method
      */
-    columnsSelection: IAxesInfo<IColumn>;
+    columnsSelection?: IAxesInfo<IColumn>;
 
     /**
      * The maximum number of the unique X-axis values.

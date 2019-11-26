@@ -12,7 +12,6 @@ import { ChartAggregation, IAggregationMethod } from './chartAggregation';
 export class LimitedResults {
     public constructor(
         public rows: any[] = [],
-        public orderedXValues: any[] = [],
         public isAggregationApplied: boolean = false,
         public isPartialData: boolean = false) { }
 }
@@ -75,11 +74,24 @@ export class _LimitVisResults {
         this.limitAllRows(internalParams, limitedResults);
         this.aggregateAndEscapeRows(internalParams, limitedResults);
 
+        const xIndex = params.axesIndexes.xAxis;
+
         // Sort the x-Axis only if it's a date time column
         if (params.xColumnType === DraftColumnType.DateTime) {
-            limitedResults.rows = _.sortBy(limitedResults.rows, (row) => {
-                return moment(row[0]).valueOf();
+            // Remove empty dates since they can't be placed on the x-axis
+            let validRows = [];
+
+            _.forEach(limitedResults.rows, (row) => {
+                if(row[xIndex] != null) {
+                    validRows.push(row);
+                }
             });
+
+            const sortedAndValidRows = _.sortBy(validRows, (row) => {
+                return moment(row[xIndex]).valueOf();
+            });
+
+            limitedResults.rows = sortedAndValidRows;
         }
 
         return limitedResults;
@@ -342,14 +354,18 @@ export class _LimitVisResults {
             });
         });
 
-        // Restore rows order
-        const aggregatedRowInfo: IAggregatedRowInfo[] = _.sortBy(aggregatedRowInfoMap, 'order');
+        
+        let aggregatedRowInfo: IAggregatedRowInfo[];
+        
+        if(params.xColumnType === DraftColumnType.DateTime) {
+            aggregatedRowInfo = _.map(aggregatedRowInfoMap);
+        } else {
+            // Restore rows order
+            aggregatedRowInfo = _.sortBy(aggregatedRowInfoMap, 'order');
+        }
+
         const aggregationResult: IAggregationResult = this.applyAggregation(aggregatedRowInfo, params.aggregationMethod);
-
-        limitedResults.orderedXValues = _.map(limitedResults.rows, (row) => {
-             return row[params.axesIndexes.xAxis];
-        }) || [];
-
+        
         limitedResults.isAggregationApplied = aggregationResult.isAggregated;
         limitedResults.rows = aggregationResult.rows;
     }
