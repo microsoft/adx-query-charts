@@ -298,7 +298,7 @@ export class KustoChartHelper implements IChartHelper {
     private updateDefaultChartOptions(queryResultData: IQueryResultData, chartOptions: IChartOptions): IChartOptions {
         const updatedChartOptions: IChartOptions = { ...KustoChartHelper.defaultChartOptions, ...chartOptions };
 
-        // Apply default columns selection is columns selection wasn't provided
+        // Apply default columns selection if columns selection wasn't provided
         if(!updatedChartOptions.columnsSelection) {
             updatedChartOptions.columnsSelection = this.getDefaultSelection(queryResultData, updatedChartOptions.chartType);
         }

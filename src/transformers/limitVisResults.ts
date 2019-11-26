@@ -78,7 +78,7 @@ export class _LimitVisResults {
 
         // Sort the x-Axis only if it's a date time column
         if (params.xColumnType === DraftColumnType.DateTime) {
-            // Remove empty dates since they can't be placed on the x-axis
+            // Remove empty date values since they can't be placed on the x-axis timeline
             let validRows = [];
 
             _.forEach(limitedResults.rows, (row) => {
