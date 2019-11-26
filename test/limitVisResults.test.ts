@@ -373,41 +373,10 @@ describe('Unit tests for LimitVisResults', () => {
                 ["2019-09-16T00:00:00Z", "United States", 52451]
             ];
 
-            const expectedOrderedXValues = [
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-16T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z",
-                "2019-09-15T00:00:00Z"
-            ];
-
             // Assert
             expect(limitedResults.isPartialData).toEqual(false);
             expect(limitedResults.isAggregationApplied).toEqual(true);
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
-            expect(limitedResults.orderedXValues).toEqual(expectedOrderedXValues);
         });
 
         it("When the X have the same value, and there is no split-by, the X values are aggregated", () => {
@@ -445,41 +414,10 @@ describe('Unit tests for LimitVisResults', () => {
                 ["Kfar Saba", 95]
             ];
 
-            const expectedOrderedXValues = [
-                "Chicago",
-                "San Antonio",
-                "Washington",
-                "Washington",
-                "Washington",
-                "Ogden",
-                "New York",
-                "New York",
-                "Atlanta",
-                "Atlanta",
-                "San Jose",
-                "Ashburn",
-                "",
-                "",
-                "Cazadero",
-                "Des Moines",
-                "Los Angeles",
-                "Santa Clara",
-                "San Antonio",
-                "Chicago",
-                "Washington",
-                "Washington",
-                "Washington",
-                "Mountain View",
-                "San Jose",
-                "Kfar Saba",
-                "Kfar Saba",
-            ];
-
             // Assert
             expect(limitedResults.isPartialData).toEqual(false);
             expect(limitedResults.isAggregationApplied).toEqual(true);
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
-            expect(limitedResults.orderedXValues).toEqual(expectedOrderedXValues);
             });
 
         it("When the X values exceeds maximum size, they are limited", () => {
@@ -505,25 +443,46 @@ describe('Unit tests for LimitVisResults', () => {
                 [exceedMaxDataPointLabel, 1929],
             ];
 
-            const expectedOrderedXValues = [
-                "Chicago",
-                "San Antonio",
-                "Washington",
-                "Washington",
-                "Washington",
-                "San Antonio",
-                "Chicago",
-                "Washington",
-                "Washington",
-                "Washington",
-                exceedMaxDataPointLabel
-            ];
-
             // Assert
             expect(limitedResults.isPartialData).toEqual(true);
             expect(limitedResults.isAggregationApplied).toEqual(true);
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
-            expect(limitedResults.orderedXValues).toEqual(expectedOrderedXValues);
+        });
+
+        it("When the X is Date, and there is an empty date value in the results - this value is ignored", () => {
+            const rows = [
+                ["2019-09-16T00:00:00Z", "United States", 10],
+                [null, "United States", 50],
+                ["2019-09-16T00:00:00Z", "United States", 20],
+                ["2019-09-15T00:00:00Z", "Israel", 100],
+                [null, "Israel", 200]
+            ];
+
+            const limitAndAggregateParams: ILimitAndAggregateParams = {
+                queryResultData: { rows: rows, columns: [] },
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [2],
+                    splitBy: [1]
+                },
+                xColumnType: DraftColumnType.DateTime,
+                aggregationType: AggregationType.Sum,
+                maxUniqueXValues: maxUniqueXValues,
+                otherStr: exceedMaxDataPointLabel
+            }
+
+            // Act
+            const limitedResults = LimitVisResultsSingleton.limitAndAggregateRows(limitAndAggregateParams);
+
+            const expectedLimitesRows = [
+                ["2019-09-15T00:00:00Z", "Israel", 100],
+                ["2019-09-16T00:00:00Z", "United States", 30]
+            ];
+
+            // Assert
+            expect(limitedResults.isPartialData).toEqual(false);
+            expect(limitedResults.isAggregationApplied).toEqual(true);
+            expect(limitedResults.rows).toEqual(expectedLimitesRows);
         });
     });
     

@@ -104,7 +104,7 @@ export class KustoChartHelper implements IChartHelper {
     */
     public transformQueryResultData(queryResultData: IQueryResultData, chartOptions: IChartOptions): ITransformedQueryResultData {
         // Update the chart options with defaults for optional values that weren't provided
-        chartOptions = this.updateDefaultChartOptions(chartOptions);
+        chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
         const chartColumns: IColumn[] = [];
         const indexOfXAxisColumn: number[] = [];
 
@@ -113,9 +113,10 @@ export class KustoChartHelper implements IChartHelper {
         }
 
         // Get all the indexes for all the splitBy columns
+        const splitByColumnsSelection = chartOptions.columnsSelection.splitBy;
         const indexesOfSplitByColumns: number[] = [];
 
-        if (!this.addColumnsIfExistInResult(chartOptions.columnsSelection.splitBy, queryResultData, indexesOfSplitByColumns, chartColumns)) {
+        if (splitByColumnsSelection && !this.addColumnsIfExistInResult(splitByColumnsSelection, queryResultData, indexesOfSplitByColumns, chartColumns)) {
             return null;
         }
 
@@ -294,8 +295,13 @@ export class KustoChartHelper implements IChartHelper {
         return true;
     }
 
-    private updateDefaultChartOptions(chartOptions: IChartOptions): IChartOptions {
+    private updateDefaultChartOptions(queryResultData: IQueryResultData, chartOptions: IChartOptions): IChartOptions {
         const updatedChartOptions: IChartOptions = { ...KustoChartHelper.defaultChartOptions, ...chartOptions };
+
+        // Apply default columns selection if columns selection wasn't provided
+        if(!updatedChartOptions.columnsSelection) {
+            updatedChartOptions.columnsSelection = this.getDefaultSelection(queryResultData, updatedChartOptions.chartType);
+        }
 
         return updatedChartOptions;
     }
