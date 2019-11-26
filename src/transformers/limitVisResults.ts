@@ -78,20 +78,10 @@ export class _LimitVisResults {
 
         // Sort the x-Axis only if it's a date time column
         if (params.xColumnType === DraftColumnType.DateTime) {
-            // Remove empty date values since they can't be placed on the x-axis timeline
-            let validRows = [];
-
-            _.forEach(limitedResults.rows, (row) => {
-                if(row[xIndex] != null) {
-                    validRows.push(row);
-                }
+            // Remove empty date values since they can't be placed on the x-axis timeline, then sort by the date
+            limitedResults.rows = _.sortBy(limitedResults.rows.filter(row => row[xIndex] != null), (row) => {
+                return moment(row[0]).valueOf();
             });
-
-            const sortedAndValidRows = _.sortBy(validRows, (row) => {
-                return moment(row[xIndex]).valueOf();
-            });
-
-            limitedResults.rows = sortedAndValidRows;
         }
 
         return limitedResults;
@@ -358,7 +348,7 @@ export class _LimitVisResults {
         let aggregatedRowInfo: IAggregatedRowInfo[];
         
         if(params.xColumnType === DraftColumnType.DateTime) {
-            aggregatedRowInfo = _.map(aggregatedRowInfoMap);
+            aggregatedRowInfo = _.values(aggregatedRowInfoMap);
         } else {
             // Restore rows order
             aggregatedRowInfo = _.sortBy(aggregatedRowInfoMap, 'order');
