@@ -26,7 +26,7 @@ export class Utilities {
     /**
     * Adds the desired offset (from UTC) to the date, and return a valid Date object
     * @param dateStr - The string value that represents the date to transform.
-    * @param utcOffset - The offset from UTC.
+    * @param utcOffset - The offset in hours from UTC.
     * @returns A valid Date object.
     */
     public static getValidDate(dateStr: string, utcOffset: number): Date {
