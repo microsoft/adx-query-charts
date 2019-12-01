@@ -29,7 +29,7 @@ export class Utilities {
     * @param utcOffset - The offset from UTC.
     * @returns A valid Date object.
     */
-    public static getValideDate(dateVal: any, utcOffset: number): Date {
+    public static getValidDate(dateVal: any, utcOffset: number): Date {
         const date = new Date(dateVal);
         
         if (date.toDateString() === 'Invalid Date') {

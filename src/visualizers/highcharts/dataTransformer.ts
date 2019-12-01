@@ -47,9 +47,9 @@ export class DataTransformer {
         options.queryResultData.rows.forEach((row) => {
             let xAxisValue: any = row[xAxisColumnIndex];
     
-            // If the a-axis is a date, convert it's value to MS as this is what expected by 'Highcharts'
+            // If the x-axis is a date, convert it's value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
-                const dateValue = Utilities.getValideDate(xAxisValue, chartOptions.utcOffset);
+                const dateValue = Utilities.getValidDate(xAxisValue, chartOptions.utcOffset);
 
                 xAxisValue = dateValue.valueOf();
             } else {
@@ -146,7 +146,7 @@ export class DataTransformer {
             let xValue = row[xAxisColumnIndex];
 
             // For date the a-axis, convert it's value to ms as this is what expected by Highcharts
-            const dateValue = Utilities.getValideDate(xValue, options.chartOptions.utcOffset);
+            const dateValue = Utilities.getValidDate(xValue, options.chartOptions.utcOffset);
 
             xValue = dateValue.valueOf();
 

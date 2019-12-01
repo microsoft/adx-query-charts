@@ -33,14 +33,58 @@ chartHelper.draw(queryResultData, chartOptions);
 ```
 ## API
 ### IChartOptions
-| Option name:           | Type:              | Details:                                                         | Default value:  |
-| -------------------    |--------------------| ---------------------------------------------                    | ----------------|
-| chartType              | ChartType          | Mandatory. <br>The type of the chart to draw                     |                 |
-| columnsSelection       | IAxesInfo<IColumn> | The columns selection for the Axes and the split-by of the chart | If not provided, default columns will be selected. <br>See: getDefaultSelection method|
-| maxUniqueXValues | number | The maximum number of the unique X-axis values.<br>The chart will show the biggest values, and the rest will be aggregated to a separate data point.| 100 |
-| exceedMaxDataPointLabel| string | The label of the data point that contains the aggregated value of all the X-axis values that exceed the 'maxUniqueXValues'.| 'OTHER' |
-| aggregationType| AggregationType | Multiple rows with the same values for the X-axis and the split-by will be aggregated using a function of this type.<br>For example, assume we get the following query result data:<br>['2016-08-02T10:00:00Z', 'Chrome 51.0', 15], ['2016-08-02T10:00:00Z', 'Internet Explorer 9.0', 4]<br>When drawing a chart with columnsSelection = { xAxis: timestamp, yAxes: count_ }, and aggregationType = AggregationType.Sum we need to aggregate the values of the same timestamp value and return one row with ["2016-08-02T10:00:00Z", 19] |AggregationType.Sum|
-| utcOffset              | number          | The desired offset from UTC for date values. Used to handle timezone.<br>The offset will be added to the original date from the query results data.|0 |
+| Option name:           | Type:                   | Details:                                                         | Default value:  |
+| -------------------    |--------------------     | ---------------------------------------------                    | ----------------|
+| chartType              | [ChartType](#ChartType) | Mandatory. <br>The type of the chart to draw                     |                 |
+| columnsSelection       | [IColumnsSelection](#IColumnsSelection)| The columns selection for the Axes and the split-by of the chart | If not provided, default columns will be selected. <br>See: getDefaultSelection method|
+| maxUniqueXValues       | number                  | The maximum number of the unique X-axis values.<br>The chart will show the biggest values, and the rest will be aggregated to a separate data point.| 100 |
+| exceedMaxDataPointLabel| string                  | The label of the data point that contains the aggregated value of all the X-axis values that exceed the 'maxUniqueXValues'.| 'OTHER' |
+| aggregationType        | [AggregationType](#AggregationType)         | Multiple rows with the same values for the X-axis and the split-by will be aggregated using a function of this type.<br>For example, assume we get the following query result data:<br>['2016-08-02T10:00:00Z', 'Chrome 51.0', 15], <br>['2016-08-02T10:00:00Z', 'Internet Explorer 9.0', 4]<br>When drawing a chart with columnsSelection = { xAxis: timestamp, yAxes: count_ }, and aggregationType = AggregationType.Sum we need to aggregate the values of the same timestamp value and return one row with ["2016-08-02T10:00:00Z", 19] | AggregationType.Sum |
+| utcOffset              | number                  | The desired offset from UTC in hours for date values. Used to handle timezone.<br>The offset will be added to the original date from the query results data.<br>For example:<br>For 'Africa/Harare'timezone provide utcOffset = 2 and the displayed date will be be:<br>'11/25/2019, 2:00 AM' instead of '11/25/2019, 12:00 AM' <br>See time zone [info](https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11)| 0 |
+
+### ChartType
+```typescript
+export enum ChartType {
+    Line = 'Line',
+    Scatter = 'Scatter',
+    Area = 'Area',
+    StackedArea = 'StackedArea',
+    PercentageArea = 'PercentageArea',
+    Column = 'Column',
+    StackedColumn = 'StackedColumn',
+    PercentageColumn = 'PercentageColumn',
+    Pie = 'Pie',
+    Donut = 'Donut',
+}
+```
+
+### IColumnsSelection
+```typescript
+
+export interface IColumn {
+    name: string;
+    type: DraftColumnType;
+}
+
+export interface IColumnsSelection {
+    xAxis: IColumn;
+    yAxes: IColumn[];
+    splitBy?: IColumn[];
+}
+
+```
+
+### AggregationType
+```typescript
+
+export enum AggregationType {
+    Sum = 'Sum',
+    Average = 'Average',
+    Min = 'Min',
+    Max = 'Max'
+}
+
+```
 
 ## Test
 Unit tests are written using [Jest](https://jestjs.io/).

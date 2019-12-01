@@ -2,7 +2,7 @@
 
 //#region Imports
 
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IAxesInfo, IChartOptions, AggregationType } from './chartModels';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
@@ -106,7 +106,7 @@ export class KustoChartHelper implements IChartHelper {
         }
     }
 
-    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IAxesInfo<IColumn> {
+    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection {
         if (!supportedColumnsForChart) {
             supportedColumnsForChart = this.getSupportedColumnsInResult(queryResultData, chartType);
         }
