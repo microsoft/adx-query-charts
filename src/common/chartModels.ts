@@ -113,6 +113,13 @@ export interface IChartOptions {
      * [Default value: AggregationType.Sum]
      */
     aggregationType?: AggregationType;
+        
+    /**
+     * The desired offset from UTC for date values. Used to handle timezone.
+     * The offset will be added to the original date from the query results data. 
+     * [Default value: 0]
+     */
+    utcOffset?: number;
 }
 
 export interface IChartHelper {
@@ -121,7 +128,7 @@ export interface IChartHelper {
      * @param queryResultData - The original query result data
      * @param options - The information required to draw the chart
      */
-    draw(queryResultData: IQueryResultData, options: IChartOptions): void;
+    draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void;
 
     /**
      * Return the supported column types for the axes and the split-by for a specific chart type
