@@ -146,7 +146,7 @@ export class DataTransformer {
             let xValue = row[xAxisColumnIndex];
 
             // For date the a-axis, convert it's value to ms as this is what expected by Highcharts
-            const dateValue = Utilities.getValidDate(xValue, options.chartOptions.utcOffset);
+            const dateValue = Utilities.getValidDate(<string>xValue, options.chartOptions.utcOffset);
 
             xValue = dateValue.valueOf();
 

@@ -5,6 +5,11 @@ import { DraftColumnType, IColumn } from '../../src/common/chartModels';
 import { DataTransformer, ICategoriesAndSeries } from '../../src/visualizers/highcharts/dataTransformer';
 
 describe('Unit tests for Highcharts CategoriesAndSeries', () => {
+    const dateStrToValueOf = {
+        '2019-05-26T00:00:00Z': 583286400000,
+        '2000-06-26T00:00:00Z': 961977600000
+    };
+
     //#region beforeEach
 
     beforeEach(() => {

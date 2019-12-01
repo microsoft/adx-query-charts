@@ -25,12 +25,12 @@ export class Utilities {
     
     /**
     * Adds the desired offset (from UTC) to the date, and return a valid Date object
-    * @param dateVal - The value that represents the date to transform.
+    * @param dateStr - The string value that represents the date to transform.
     * @param utcOffset - The offset from UTC.
     * @returns A valid Date object.
     */
-    public static getValidDate(dateVal: any, utcOffset: number): Date {
-        const date = new Date(dateVal);
+    public static getValidDate(dateStr: string, utcOffset: number): Date {
+        const date = new Date(dateStr);
         
         if (date.toDateString() === 'Invalid Date') {
             return null;
@@ -39,17 +39,15 @@ export class Utilities {
         const utcVal = date.toUTCString();
         const utcMoment = moment.utc(utcVal, 'ddd, DD MMM YYYY HH:mm:ss Z');
         
-        // Since moment.utc doesn't update milliseconds -> fall-back to Date.getMilliseconds
-        utcMoment.milliseconds = () => {
-            return date.getMilliseconds() || (dateVal.getMilliseconds && dateVal.getMilliseconds()) || 0;
-        };
-        
         if (!utcMoment.isValid()) {
             return null;
         }
         
         const dateWithOffset = utcMoment.utcOffset(utcOffset);
-        const isoDateStr = dateWithOffset.format('YYYY-MM-DDTHH:mm:ss.sss');
+        let isoDateStr = dateWithOffset.format('YYYY-MM-DDTHH:mm:ss');
+
+        // Since moment.utc doesn't update milliseconds add the milliseconds to the isoDateStr
+        isoDateStr += '.' + (date.getMilliseconds() || 0);
 
         return new Date(isoDateStr);
     }
