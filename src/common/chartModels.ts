@@ -71,6 +71,8 @@ export interface IAxesInfo<T> {
     splitBy?: T[];
 }
 
+export interface IColumnsSelection extends IAxesInfo<IColumn> {}
+
 /**
  * The information required to draw the chart
  */
@@ -84,7 +86,7 @@ export interface IChartOptions {
      * The columns selection for the Axes and the split-by of the chart
      * If not provided, default columns will be selected. See: getDefaultSelection method
      */
-    columnsSelection?: IAxesInfo<IColumn>;
+    columnsSelection?: IColumnsSelection;
 
     /**
      * The maximum number of the unique X-axis values.
@@ -113,15 +115,25 @@ export interface IChartOptions {
      * [Default value: AggregationType.Sum]
      */
     aggregationType?: AggregationType;
+        
+    /**
+     * The desired offset from UTC in hours for date values. Used to handle timezone.
+     * The offset will be added to the original date from the query results data.
+     * For example:
+     * For 'Africa/Harare' timezone provide utcOffset = 2 and the displayed date will be be '11/25/2019, 2:00 AM' instead of '11/25/2019, 12:00 AM' 
+     * See time zone info: https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11).aspx
+     * [Default value: 0]
+     */
+    utcOffset?: number;
 }
 
 export interface IChartHelper {
     /**
      * Draw the chart
      * @param queryResultData - The original query result data
-     * @param options - The information required to draw the chart
+     * @param chartOptions - The information required to draw the chart
      */
-    draw(queryResultData: IQueryResultData, options: IChartOptions): void;
+    draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void;
 
     /**
      * Return the supported column types for the axes and the split-by for a specific chart type
@@ -143,5 +155,5 @@ export interface IChartHelper {
      * @param chartType - The type of the chart
      * @param supportedColumnsForChart - [Optional] The list of the supported column types for the axes and the split-by
      */
-    getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IAxesInfo<IColumn>;
+    getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection;
 }

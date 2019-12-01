@@ -2,9 +2,11 @@
 
 //#region Imports
 
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IAxesInfo, IChartOptions, AggregationType } from './chartModels';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
+import { IVisualizer } from '../visualizers/IVisualizer';
+import { Utilities } from './utilities';
 
 //#endregion Imports
 
@@ -31,17 +33,45 @@ export class KustoChartHelper implements IChartHelper {
         columnsSelection: undefined,
         maxUniqueXValues: 100,
         exceedMaxDataPointLabel: 'OTHER',
-        aggregationType: AggregationType.Sum
+        aggregationType: AggregationType.Sum,
+        utcOffset: 0
     }
 
-    private queryResultData: IQueryResultData;
+    private readonly seriesVisualize: SeriesVisualize;
+    private readonly elementId: string;
+    private readonly visualizer: IVisualizer;
 
     //#endregion Private members
 
+    //#region Constructor
+
+    public constructor(elementId: string, visualizer: IVisualizer) {
+        this.elementId = elementId;
+        this.visualizer = visualizer;
+        this.seriesVisualize = SeriesVisualize.getInstance();
+    }
+
+    //#endregion Constructor
+
     //#region Public methods
 
-    public draw(queryResultData: IQueryResultData, options: IChartOptions): void {
-        // TODO: Not implemented yet
+    public draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void {
+        // Update the chart options with defaults for optional values that weren't provided
+        chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
+
+        // Apply query data transformation
+        const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
+        const transformed = this.transformQueryResultData(resolvedAsSeriesData, chartOptions);
+
+        this.transformedQueryResultData = transformed.data;
+
+        const visualizerOptions = {
+            elementId: this.elementId,
+            queryResultData: this.transformedQueryResultData,
+            chartOptions: chartOptions
+        };
+
+        this.visualizer.drawNewChart(visualizerOptions);
     }
 
     public getSupportedColumnTypes(chartType: ChartType): ISupportedColumnTypes {
@@ -76,7 +106,7 @@ export class KustoChartHelper implements IChartHelper {
         }
     }
 
-    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IAxesInfo<IColumn> {
+    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection {
         if (!supportedColumnsForChart) {
             supportedColumnsForChart = this.getSupportedColumnsInResult(queryResultData, chartType);
         }
@@ -153,22 +183,9 @@ export class KustoChartHelper implements IChartHelper {
     }
 
     private tryResolveResultsAsSeries(queryResultData: IQueryResultData): IQueryResultData {
-        // Transform the query results only once
-        if (this.queryResultData !== queryResultData) {
-            this.queryResultData = queryResultData;
-            this.transformedQueryResultData = queryResultData;
+        const resolvedAsSeriesData: IQueryResultData = this.seriesVisualize.tryResolveResultsAsSeries(queryResultData);
 
-            // Tries to resolve the results as series
-            const seriesVisualize = SeriesVisualize.getInstance();
-            const updatedQueryResultData: IQueryResultData = seriesVisualize.tryResolveResultsAsSeries(queryResultData);
-
-            if (updatedQueryResultData) {
-                this.isResolveAsSeries = true;
-                this.transformedQueryResultData = updatedQueryResultData;
-            }
-        }
-
-        return this.transformedQueryResultData;
+        return resolvedAsSeriesData || queryResultData;
     }
 
     private getSupportedColumns(queryResultData: IQueryResultData, supportedTypes: DraftColumnType[]): IColumn[] {
@@ -244,25 +261,6 @@ export class KustoChartHelper implements IChartHelper {
         return null;
     }
 
-    // Returns the index of the column with the same name and type in the columns array
-    private getColumnIndex(queryResultData: IQueryResultData, columnToFind: IColumn): number {
-        const columns: IColumn[] = queryResultData && queryResultData.columns;
-
-        if (!columns) {
-            return -1;
-        }
-
-        for (let i = 0; i < columns.length; i++) {
-            const currentColumn: IColumn = columns[i];
-
-            if (currentColumn.name == columnToFind.name && currentColumn.type == columnToFind.type) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
     /**
      * Search for certain columns in the 'queryResultData'. If the column exist:
      * 1. Add the column name and type to the 'chartColumns' array
@@ -277,7 +275,7 @@ export class KustoChartHelper implements IChartHelper {
     private addColumnsIfExistInResult(columnsToAdd: IColumn[], queryResultData: IQueryResultData, indexes: number[], chartColumns: IColumn[]): boolean {
         for (let i = 0; i < columnsToAdd.length; ++i) {
             const column = columnsToAdd[i];
-            const indexOfColumn = this.getColumnIndex(queryResultData, column);
+            const indexOfColumn = Utilities.getColumnIndex(queryResultData, column);
 
             if (indexOfColumn < 0) {
                 return false;
