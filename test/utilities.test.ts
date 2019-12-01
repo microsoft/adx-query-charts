@@ -3,11 +3,6 @@
 import { Utilities } from '../src/common/utilities';
 
 describe('Unit tests for Utilities', () => {
-    //#region beforeEach
-
-    //#endregion beforeEach
-
-
     //#region Tests
 
     describe('Validate getValidDate method', () => {
@@ -22,7 +17,7 @@ describe('Unit tests for Utilities', () => {
             expect(actual.getMilliseconds()).toEqual(expected.getMilliseconds());
         }
 
-        it("Validate getValidDate: no offset", () => {
+        it('Validate getValidDate: no offset', () => {
             const dateStr: string = '2019-11-25T14:00:00Z';
             const utcOffset: number = 0;
 
@@ -34,7 +29,7 @@ describe('Unit tests for Utilities', () => {
             validateDateResult(result, expectedResult);
         });
 
-        it("Validate getValidDate: positive offset", () => {
+        it('Validate getValidDate: positive offset', () => {
             const dateStr: string = '2019-11-25T14:00:00Z';
             const utcOffset: number = 5;
 
@@ -46,7 +41,7 @@ describe('Unit tests for Utilities', () => {
             validateDateResult(result, expectedResult);
         });
 
-        it("Validate getValidDate: negative offset", () => {
+        it('Validate getValidDate: negative offset', () => {
             const dateStr: string = '2019-11-25T14:00:00Z';
             const utcOffset: number = -7;
 
@@ -58,7 +53,7 @@ describe('Unit tests for Utilities', () => {
             validateDateResult(result, expectedResult);
         });
 
-        it("Validate getValidDate: date with milliseconds, no offset", () => {
+        it('Validate getValidDate: date with milliseconds, no offset', () => {
             const dateStr: string = '2019-12-01T14:13:19.231Z';
             const utcOffset: number = 0;
 
@@ -70,7 +65,7 @@ describe('Unit tests for Utilities', () => {
             validateDateResult(result, expectedResult);
         });
 
-        it("Validate getValidDate: date with milliseconds, positive offset - next date", () => {
+        it('Validate getValidDate: date with milliseconds, positive offset - next date', () => {
             const dateStr: string = '2019-12-01T23:13:19.300Z';
             const utcOffset: number = 8;
 

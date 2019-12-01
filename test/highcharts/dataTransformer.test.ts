@@ -5,11 +5,6 @@ import { DraftColumnType, IColumn } from '../../src/common/chartModels';
 import { DataTransformer, ICategoriesAndSeries } from '../../src/visualizers/highcharts/dataTransformer';
 
 describe('Unit tests for Highcharts CategoriesAndSeries', () => {
-    const dateStrToValueOf = {
-        '2019-05-26T00:00:00Z': 583286400000,
-        '2000-06-26T00:00:00Z': 961977600000
-    };
-
     //#region beforeEach
 
     beforeEach(() => {
@@ -31,7 +26,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
     describe('Validate getCategoriesAndSeries method', () => {
         //#region getStandardCategoriesAndSeries
 
-        it("Validate getStandardCategoriesAndSeries: non-date x-axis and 1 y-axis", () => {
+        it('Validate getStandardCategoriesAndSeries: non-date x-axis and 1 y-axis', () => {
             const rows = [
                 ['Israel', 'Herzliya', 30],
                 ['United States', 'New York', 100],
@@ -74,7 +69,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             expect(result).toEqual(expectedCategoriesAndSeries);
         });
 
-        it("Validate getStandardCategoriesAndSeries: date x-axis and 1 y-axis", () => {
+        it('Validate getStandardCategoriesAndSeries: date x-axis and 1 y-axis', () => {
             const rows = [
                 ['Israel', '2019-05-25T00:00:00Z', 'Herzliya', 30],
                 ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', 20],
@@ -118,7 +113,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             expect(result).toEqual(expectedCategoriesAndSeries);
         });
 
-        it("Validate getStandardCategoriesAndSeries: non-date x-axis and multiple y-axis", () => {
+        it('Validate getStandardCategoriesAndSeries: non-date x-axis and multiple y-axis', () => {
             const rows = [
                 ['Israel', 'Herzliya', 30, 300],
                 ['United States', 'New York', 100, 150],
@@ -166,7 +161,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             expect(result).toEqual(expectedCategoriesAndSeries);
         });
    
-        it("Validate getStandardCategoriesAndSeries: date x-axis and multiple y-axis", () => {
+        it('Validate getStandardCategoriesAndSeries: date x-axis and multiple y-axis', () => {
             const rows = [
                 ['2019-05-25T00:00:00Z', 'Israel', 'Herzliya', 30, 300],
                 ['2019-05-25T00:00:00Z', 'Japan', 'Tokyo', 20, 150],
@@ -219,7 +214,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
 
         //#region getSplitByCategoriesAndSeries
 
-        it("Validate getCategoriesAndSeries: non-date x-axis with splitBy", () => {
+        it('Validate getCategoriesAndSeries: non-date x-axis with splitBy', () => {
             const rows = [
                 ['United States', 'Atlanta', 300],
                 ['United States', 'Redmond', 20],
@@ -296,7 +291,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             expect(result).toEqual(expectedCategoriesAndSeries);
         });
 
-        it("Validate getCategoriesAndSeries: date x-axis with splitBy", () => {
+        it('Validate getCategoriesAndSeries: date x-axis with splitBy', () => {
             const rows = [
                 ['Israel', '1988-06-26T00:00:00Z', 'Jerusalem', 500],
                 ['Israel', '2000-06-26T00:00:00Z', 'Herzliya', 1000],
