@@ -377,7 +377,9 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             const seriesToValidate = _.map(result.series, (currentSeries) => {
                 return {
                     name: currentSeries.name,
-                    data: currentSeries.data
+                    data: currentSeries.data,
+                    size: currentSeries.size,
+                    innerSize: currentSeries.innerSize
                 }
             });
 
@@ -426,6 +428,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             const expectedCategoriesAndSeries: ICategoriesAndSeries = {
                 series: [{
                     name: 'country',
+                    size: '50%',
                     data: [
                         { name: 'Israel',  y: 90 },
                         { name: 'United States', y: 11}
@@ -433,6 +436,8 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
                 }, 
                 {
                     name: 'city',
+                    size: '60%',
+                    innerSize: '50%',
                     data: [
                         { name: 'Tel Aviv', y: 10 },
                         { name: 'Herzliya', y: 30 },
@@ -499,6 +504,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             const expectedCategoriesAndSeries: ICategoriesAndSeries = {
                 series: [{
                     name: 'browser',
+                    size: '33%',
                     data: [
                         { name: 'Internet Explorer',  y: 20 },
                         { name: 'Chrome', y: 50 },
@@ -508,6 +514,8 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
                 }, 
                 {
                     name: 'version',
+                    size: '43%',
+                    innerSize: '33%',
                     data: [
                         { name: 'v8', y: 19 },
                         { name: 'v11', y: 1 },
@@ -520,6 +528,8 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
                 }, 
                 {
                     name: 'minor_version',
+                    size: '53%',
+                    innerSize: '43%',
                     data: [
                         { name: '0', y: 10 },
                         { name: '1', y: 1 },
