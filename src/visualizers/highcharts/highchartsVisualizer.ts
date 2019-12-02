@@ -9,19 +9,22 @@ import { Utilities } from '../../common/utilities';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { DataTransformer } from './dataTransformer';
+import { CommonChartTypeToHighcharts } from './commonChartTypeToHighcharts';
 
 //#endregion Imports
 
 export class HighchartsVisualizer implements IVisualizer {
     public drawNewChart(options: IVisualizerOptions): void {
         const chartOptions = options.chartOptions;
+        const chartTypeOptions = CommonChartTypeToHighcharts[chartOptions.chartType];
         const isDatetimeAxis = Utilities.isDate(chartOptions.columnsSelection.xAxis.type);
         const categoriesAndSeries = DataTransformer.getCategoriesAndSeries(options, isDatetimeAxis);
 
         const highchartsOptions: Highcharts.Options = {
             chart: {
-                type: 'column'
+                type: chartTypeOptions.chartType
             },
+            plotOptions: chartTypeOptions.plotOptions,
             xAxis: {
                 type: isDatetimeAxis ? 'datetime' : undefined,
                 categories: categoriesAndSeries.categories,
