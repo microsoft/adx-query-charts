@@ -36,10 +36,10 @@ export interface IQueryResultData {
 export enum ChartType {
     Line = 'Line',
     Scatter = 'Scatter',
-    Area = 'Area',
+    UnstackedArea = 'UnstackedArea',
     StackedArea = 'StackedArea',
     PercentageArea = 'PercentageArea',
-    Column = 'Column',
+    UnstackedColumn = 'UnstackedColumn',
     StackedColumn = 'StackedColumn',
     PercentageColumn = 'PercentageColumn',
     Pie = 'Pie',

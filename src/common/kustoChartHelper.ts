@@ -29,7 +29,7 @@ export class KustoChartHelper implements IChartHelper {
     private static readonly maxDefaultYAxesSelection: number = 4;
 
     private static readonly defaultChartOptions: IChartOptions = {
-        chartType: ChartType.Column,
+        chartType: ChartType.UnstackedColumn,
         columnsSelection: undefined,
         maxUniqueXValues: 100,
         exceedMaxDataPointLabel: 'OTHER',
