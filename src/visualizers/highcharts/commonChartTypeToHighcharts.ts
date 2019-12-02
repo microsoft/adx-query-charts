@@ -7,29 +7,33 @@ export interface ChartTypeOptions {
     plotOptions?: Highcharts.PlotOptions;
 }
 
+const PERCENTAGE = 'percent';
+const STACKED = 'normal';
+const UNSTACKED = undefined;
+
 // See: https://api.highcharts.com/highcharts/plotOptions
 export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions; } = {
     [ChartType.Line]: {
         chartType: 'line',
         plotOptions: {
-            line: {
-              stacking: undefined
+            line:  {
+                stacking: UNSTACKED
             }
         }
     },
     [ChartType.Scatter]: {
         chartType: 'scatter',
         plotOptions: {
-            scatter: {
-              stacking: undefined
+            scatter:  {
+                stacking: UNSTACKED
             }
         }
     },
     [ChartType.Area]: {
         chartType: 'area',
         plotOptions: {
-            area: {
-              stacking: undefined
+            area:  {
+                stacking: UNSTACKED
             }
         }
     },
@@ -37,7 +41,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'area',
         plotOptions: {
             area: {
-              stacking: 'normal'
+                stacking: STACKED
             }
         }
     },
@@ -45,7 +49,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'area',
         plotOptions: {
             area: {
-              stacking: 'percent'
+              stacking: PERCENTAGE
             }
         }
     },
@@ -53,7 +57,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'column',
         plotOptions: {
             column: {
-              stacking: undefined
+              stacking: UNSTACKED
             }
         }
     },
@@ -61,7 +65,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'column',
         plotOptions: {
             column: {
-                stacking: 'normal'
+                stacking: STACKED
             }
         }
     },
@@ -69,7 +73,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'column',
         plotOptions: {
             column: {
-                stacking: 'percent'
+                stacking: PERCENTAGE
             }
         }
     },
