@@ -29,7 +29,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
             }
         }
     },
-    [ChartType.Area]: {
+    [ChartType.UnstackedArea]: {
         chartType: 'area',
         plotOptions: {
             area:  {
@@ -53,7 +53,7 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
             }
         }
     },
-    [ChartType.Column]: {
+    [ChartType.UnstackedColumn]: {
         chartType: 'column',
         plotOptions: {
             column: {

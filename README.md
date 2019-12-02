@@ -21,7 +21,7 @@ import * as Charts from 'adx-query-charts';
 const highchartsVisualizer = new Charts.HighchartsVisualizer();
 const chartHelper = chartHelper = new Charts.KustoChartHelper('chart-elem-id', highchartsVisualizer);
 const chartOptions: Charts.IChartOptions = {
-    chartType: Charts.ChartType.Column,
+    chartType: Charts.ChartType.UnstackedColumn,
     columnsSelection: {
         xAxis: { name: 'timestamp', type: Charts.DraftColumnType.DateTime },
         yAxes: [{ name: 'requestCount', type: Charts.DraftColumnType.Int }]
@@ -47,10 +47,10 @@ chartHelper.draw(queryResultData, chartOptions);
 export enum ChartType {
     Line = 'Line',
     Scatter = 'Scatter',
-    Area = 'Area',
+    UnstackedArea = 'UnstackedArea',
     StackedArea = 'StackedArea',
     PercentageArea = 'PercentageArea',
-    Column = 'Column',
+    UnstackedColumn = 'UnstackedColumn',
     StackedColumn = 'StackedColumn',
     PercentageColumn = 'PercentageColumn',
     Pie = 'Pie',
