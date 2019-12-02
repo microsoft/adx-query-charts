@@ -163,6 +163,8 @@ describe('Unit tests for Utilities', () => {
             // Assert
             validateDateResult(result, expectedResult);
         });
+
+        //#endregion getValidDate
     });
    
     //#endregion Tests
