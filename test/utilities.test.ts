@@ -6,9 +6,7 @@ import { DraftColumnType } from '../src/common/chartModels';
 describe('Unit tests for Utilities', () => {
     //#region Tests
 
-    describe('Validate getValidDate method', () => {    
-        //#region getColumnIndex
-
+    describe('Validate getColumnIndex method', () => {
         const columns = [
             { name: 'country', type: DraftColumnType.String },
             { name: 'country', type: DraftColumnType.Long },
@@ -90,11 +88,9 @@ describe('Unit tests for Utilities', () => {
             // Assert
             expect(result).toEqual(3);
         });
+    });
 
-        //#endregion getColumnIndex
-
-        //#region getValidDate
-
+    describe('Validate getValidDate method', () => {    
         function validateDateResult(actual: Date, expected: Date) {
             expect(actual.getFullYear()).toEqual(expected.getFullYear());
             expect(actual.getMonth()).toEqual(expected.getMonth());
@@ -163,8 +159,6 @@ describe('Unit tests for Utilities', () => {
             // Assert
             validateDateResult(result, expectedResult);
         });
-
-        //#endregion getValidDate
     });
    
     //#endregion Tests
