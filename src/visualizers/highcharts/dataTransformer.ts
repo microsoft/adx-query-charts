@@ -5,6 +5,7 @@
 import * as _ from 'lodash';
 import { Utilities } from '../../common/utilities';
 import { IVisualizerOptions } from '../IVisualizerOptions';
+import { ChartType, IChartOptions } from '../../common/chartModels';
 
 //#endregion Imports
 
@@ -26,7 +27,11 @@ export class DataTransformer {
         };
         
         if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
-            DataTransformer.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            if(options.chartOptions.chartType === ChartType.Pie || options.chartOptions.chartType === ChartType.Donut) {
+                DataTransformer.getPieCategoriesAndSeriesForSplitBy(options, xAxisColumnIndex, categoriesAndSeries);
+            } else {
+                DataTransformer.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            }
         } else {
             DataTransformer.getStandardCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
         }
@@ -163,5 +168,92 @@ export class DataTransformer {
                 data: splitByMap[splitByValue]
             });
         }
+    }
+
+    private static getPieCategoriesAndSeriesForSplitBy(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // When there is a splitBy column, we allow only 1 yAxis
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+        const splitByIndexes = [xAxisColumnIndex];
+        
+        options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {
+            splitByIndexes.push(Utilities.getColumnIndex(options.queryResultData, splitByColumn));
+        });
+
+        // Build the data for the multi-level pie
+        let pieData = {};
+        let pieLevelData = pieData;
+
+        options.queryResultData.rows.forEach((row) => {
+            const yAxisValue = row[yAxisColumnIndex];
+
+            splitByIndexes.forEach((splitByIndex) => {  
+                const splitByValue: string = <string>row[splitByIndex];
+                let splitByMap = pieLevelData[splitByValue];
+
+                if(!splitByMap) {
+                    pieLevelData[splitByValue] = {
+                        drillDown: {},
+                        y: 0
+                    };
+                }
+
+                pieLevelData[splitByValue].y += yAxisValue;
+                pieLevelData = pieLevelData[splitByValue].drillDown;
+            });
+
+            pieLevelData = pieData;
+        });
+
+        categoriesAndSeries.series = DataTransformer.spreadMultiLevelSeries(options.chartOptions, pieData);
+    }
+
+    private static spreadMultiLevelSeries(chartOptions: IChartOptions, pieData: any, level: number = 0, series: any[] = []): any[] {
+        const levelsCount = chartOptions.columnsSelection.splitBy.length + 1;
+        const firstLevelSize =  Math.round(100 / levelsCount);
+
+        for (let key in pieData) {
+            let currentSeries = series[level];
+            let pieLevelValue = pieData[key];
+
+            if(!currentSeries) {
+                let column = (level === 0) ? chartOptions.columnsSelection.xAxis : chartOptions.columnsSelection.splitBy[level - 1];
+            
+                currentSeries = {
+                    name: column.name,
+                    data: []
+                };
+
+                if(level === 0) {
+                    currentSeries.size = `${firstLevelSize}%`;
+                } else {
+                    const prevLevelSizeStr = series[level - 1].size;
+                    const prevLevelSize = Number(prevLevelSizeStr.substring(0, 2));
+
+                    currentSeries.size = `${prevLevelSize + 10}%`;
+                    currentSeries.innerSize = `${prevLevelSize}%`;
+                }
+
+                
+                // We do not show labels for multi-level pie
+                currentSeries.dataLabels = {
+                    enabled: false
+                }
+
+                series.push(currentSeries);
+            }
+  
+            currentSeries.data.push({
+                name: key,
+                y: pieLevelValue.y
+            });
+
+            let drillDown = pieLevelValue.drillDown;
+
+            if(!_.isEmpty(drillDown)) {
+                DataTransformer.spreadMultiLevelSeries(chartOptions, drillDown, level + 1, series);
+            }
+        }
+
+        return series;
     }
 }
