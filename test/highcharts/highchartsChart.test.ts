@@ -468,7 +468,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             expect(result.categories).toEqual(expected.categories);
         }
 
-        it('Validate getSplitByCategoriesAndSeries for Line chart: pie chart with 2 levels', () => {
+        it('Validate getSplitByCategoriesAndSeries for Pie chart: pie chart with 2 levels', () => {
             const rows = [
                 ['Israel', 'Tel Aviv', 10],
                 ['United States', 'Redmond', 5],
@@ -537,7 +537,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             validateResults(result, expected);
         });
 
-        it('Validate getSplitByCategoriesAndSeries for Line chart: pie chart with 3 levels', () => {
+        it('Validate getSplitByCategoriesAndSeries for Donut chart: pie chart with 3 levels', () => {
             const rows = [                
                 ['Internet Explorer', 'v8', '0', 10],
                 ['Chrome', 'v65', '0', 5],
