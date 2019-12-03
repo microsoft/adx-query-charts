@@ -371,7 +371,68 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
 
         //#endregion getSplitByCategoriesAndSeries
         
-        //#region getPieCategoriesAndSeriesForSplitBy
+        //#region getPieStandardCategoriesAndSeries
+        
+        it('Validate getPieStandardCategoriesAndSeries', () => {
+            const rows = [
+                ['Israel', 'Tel Aviv', 10],
+                ['United States', 'Redmond', 5],
+                ['United States', 'New York', 2],
+                ['United States', 'Miami', 3],
+                ['Israel', 'Herzliya', 30],
+                ['Israel', 'Jaffa', 50],
+                ['United States', 'Boston', 1],
+            ];
+        
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+            ];
+        
+            // Input
+            const options: any = {
+                chartOptions: {
+                    chartType: ChartType.Pie,
+                    columnsSelection: {
+                        xAxis: columns[1],    // city
+                        yAxes: [columns[2]],  // request_count
+                    },
+                    utcOffset: 0
+                },
+                queryResultData: {
+                    rows: rows,
+                    columns: columns
+                }
+            }
+        
+            // Act
+            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
+        
+            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+                series: [{
+                    name: 'request_count',
+                    data: [
+                        { name: 'Tel Aviv', y: 10 },
+                        { name: 'Redmond', y: 5 },
+                        { name: 'New York', y: 2 },
+                        { name: 'Miami', y: 3 },
+                        { name: 'Herzliya', y: 30 },
+                        { name: 'Jaffa', y: 50 },
+                        { name: 'Boston', y: 1 }
+                    ]
+                }],
+                categories: []
+            };
+        
+            // Assert
+            expect(result.series).toEqual(expectedCategoriesAndSeries.series);
+            expect(result.categories).toEqual(expectedCategoriesAndSeries.categories);
+        });
+
+        //#endregion getPieStandardCategoriesAndSeries
+        
+        //#region getPieSplitByCategoriesAndSeries
 
         function validateResults(result, expected) {
             const seriesToValidate = _.map(result.series, (currentSeries) => {
@@ -388,7 +449,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             expect(result.categories).toEqual(expected.categories);
         }
 
-        it('Validate getPieCategoriesAndSeriesForSplitBy: pie chart with 2 levels', () => {
+        it('Validate getPieSplitByCategoriesAndSeries: pie chart with 2 levels', () => {
             const rows = [
                 ['Israel', 'Tel Aviv', 10],
                 ['United States', 'Redmond', 5],
@@ -456,7 +517,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             validateResults(result, expectedCategoriesAndSeries);
         });
 
-        it('Validate getPieCategoriesAndSeriesForSplitBy: pie chart with 3 levels', () => {
+        it('Validate getPieSplitByCategoriesAndSeries: pie chart with 3 levels', () => {
             const rows = [                
                 ['Internet Explorer', 'v8', '0', 10],
                 ['Chrome', 'v65', '0', 5],
@@ -554,7 +615,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             validateResults(result, expectedCategoriesAndSeries);
         });
 
-        //#endregion getPieCategoriesAndSeriesForSplitBy
+        //#endregion getPieSplitByCategoriesAndSeries
     });
    
     //#endregion Tests

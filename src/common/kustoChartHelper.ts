@@ -245,7 +245,7 @@ export class KustoChartHelper implements IChartHelper {
 
     private selectDefaultSplitByColumn(supportedColumns: IColumn[], selectedXAxis: IColumn, chartType: ChartType): IColumn {
         // Pie / Donut chart default is without a splitBy column
-        if (!supportedColumns || supportedColumns.length === 0 || !selectedXAxis || chartType === ChartType.Pie || chartType === ChartType.Donut) {
+        if (!supportedColumns || supportedColumns.length === 0 || !selectedXAxis || Utilities.isPieOrDonut(chartType)) {
             return null;
         }
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import * as moment from 'moment';
-import { IQueryResultData, IColumn, DraftColumnType } from './chartModels';
+import { IQueryResultData, IColumn, DraftColumnType, ChartType } from './chartModels';
 
 export class Utilities {
     // Returns the index of the column with the same name and type in the columns array
@@ -66,5 +66,9 @@ export class Utilities {
 
     public static areColumnsEqual(first: IColumn, second: IColumn): boolean {
         return first.name == second.name && first.type == second.type;
+    }
+
+    public static isPieOrDonut(chartType: ChartType): boolean {
+        return chartType === ChartType.Pie || chartType === ChartType.Donut;
     }
 }

@@ -21,19 +21,24 @@ export class DataTransformer {
         const columnsSelection = options.chartOptions.columnsSelection;
         const xAxisColumn = columnsSelection.xAxis;
         const xAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, xAxisColumn);  
+        const isSplitByChart = columnsSelection.splitBy && columnsSelection.splitBy.length > 0;
         let categoriesAndSeries = {
             series: [],
             categories: isDatetimeAxis ? undefined : [] 
         };
         
-        if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
-            if(options.chartOptions.chartType === ChartType.Pie || options.chartOptions.chartType === ChartType.Donut) {
-                DataTransformer.getPieCategoriesAndSeriesForSplitBy(options, xAxisColumnIndex, categoriesAndSeries);
+        if(Utilities.isPieOrDonut(options.chartOptions.chartType)) {
+            if(isSplitByChart) {
+                DataTransformer.getPieSplitByCategoriesAndSeries(options, xAxisColumnIndex, categoriesAndSeries);
             } else {
-                DataTransformer.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+                DataTransformer.getPieStandardCategoriesAndSeries(options, xAxisColumnIndex, categoriesAndSeries);
             }
         } else {
-            DataTransformer.getStandardCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            if(isSplitByChart) {
+                DataTransformer.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            } else {
+                DataTransformer.getStandardCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            }
         }
 
         return categoriesAndSeries;
@@ -170,8 +175,31 @@ export class DataTransformer {
         }
     }
 
-    private static getPieCategoriesAndSeriesForSplitBy(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
-        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // When there is a splitBy column, we allow only 1 yAxis
+    private static getPieStandardCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+
+        // Build the data for the pie
+        const pieSeries = {
+            name: yAxisColumn.name,
+            data: []
+        }
+
+        options.queryResultData.rows.forEach((row) => {
+            const xAxisValue = row[xAxisColumnIndex];
+            const yAxisValue = row[yAxisColumnIndex];
+
+            pieSeries.data.push({
+                name: xAxisValue,
+                y: yAxisValue 
+            })
+        });
+
+        categoriesAndSeries.series.push(pieSeries);
+    }
+
+    private static getPieSplitByCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
         const splitByIndexes = [xAxisColumnIndex];
         
@@ -232,8 +260,7 @@ export class DataTransformer {
                     currentSeries.size = `${prevLevelSize + 10}%`;
                     currentSeries.innerSize = `${prevLevelSize}%`;
                 }
-
-                
+            
                 // We do not show labels for multi-level pie
                 currentSeries.dataLabels = {
                     enabled: false
