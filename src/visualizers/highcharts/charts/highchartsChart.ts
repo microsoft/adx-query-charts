@@ -54,15 +54,15 @@ export abstract class HighchartsChart {
         };
         
         if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
-            this.getSplitByCategoriesAndSeries(xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            this.getSplitByCategoriesAndSeries(xAxisColumnIndex, categoriesAndSeries, isDatetimeAxis);
         } else {
-            this.getStandardCategoriesAndSeries(xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            this.getStandardCategoriesAndSeries(xAxisColumnIndex, categoriesAndSeries, isDatetimeAxis);
         }
 
         return categoriesAndSeries;
     }  
     
-    protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, isDatetimeAxis: boolean, categoriesAndSeries: ICategoriesAndSeries): void {
+    protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries, isDatetimeAxis: boolean = false): void {
         const chartOptions = this.options.chartOptions;
         const yAxesIndexes = _.map(chartOptions.columnsSelection.yAxes, (yAxisColumn) => {
             return Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
@@ -104,7 +104,7 @@ export abstract class HighchartsChart {
         }
     }
     
-    protected getSplitByCategoriesAndSeries( xAxisColumnIndex: number, isDatetimeAxis: boolean, categoriesAndSeries: ICategoriesAndSeries): void {
+    protected getSplitByCategoriesAndSeries( xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries, isDatetimeAxis: boolean = false): void {
         if(isDatetimeAxis) {
             this.getSplitByCategoriesAndSeriesForDateXAxis(this.options, xAxisColumnIndex, categoriesAndSeries);
 

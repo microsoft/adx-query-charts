@@ -20,7 +20,7 @@ export class Pie extends HighchartsChart {
         }
     }
 
-    protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, isDatetimeAxis: boolean, categoriesAndSeries: ICategoriesAndSeries): void {
+    protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
         const yAxisColumn = this.options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
 
@@ -44,7 +44,7 @@ export class Pie extends HighchartsChart {
         categoriesAndSeries.categories = undefined;
     }
 
-    protected getSplitByCategoriesAndSeries(xAxisColumnIndex: number, isDatetimeAxis: boolean, categoriesAndSeries: ICategoriesAndSeries): void {
+    protected getSplitByCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
         const yAxisColumn = this.options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
         const splitByIndexes = [xAxisColumnIndex];
