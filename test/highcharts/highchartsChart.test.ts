@@ -2,9 +2,10 @@
 
 import * as _ from 'lodash';
 import { DraftColumnType, IColumn, ChartType } from '../../src/common/chartModels';
-import { DataTransformer, ICategoriesAndSeries } from '../../src/visualizers/highcharts/dataTransformer';
+import { HighchartsChartFactory } from '../../src/visualizers/highcharts/charts/highchartsChartFactory';
+import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/highchartsChart';
 
-describe('Unit tests for Highcharts CategoriesAndSeries', () => {
+describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
     //#region beforeEach
 
     beforeEach(() => {
@@ -24,9 +25,9 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
     //#region Tests
 
     describe('Validate getCategoriesAndSeries method', () => {
-        //#region getStandardCategoriesAndSeries
+        //#region Line chart getStandardCategoriesAndSeries
 
-        it('Validate getStandardCategoriesAndSeries: non-date x-axis and 1 y-axis', () => {
+        it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and 1 y-axis', () => {
             const rows = [
                 ['Israel', 'Herzliya', 30],
                 ['United States', 'New York', 100],
@@ -41,6 +42,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
 
             // Input
             const options: any = {
+                chartType: ChartType.Line,
                 chartOptions: {
                     columnsSelection: {
                         xAxis: columns[0],  // country
@@ -55,9 +57,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
                     data: [30, 100, 20]
@@ -66,10 +69,11 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             };
 
             // Assert
-            expect(result).toEqual(expectedCategoriesAndSeries);
+            expect(result.series).toEqual(expected.series);
+            expect(result.xAxis.categories).toEqual(expected.categories);
         });
 
-        it('Validate getStandardCategoriesAndSeries: date x-axis and 1 y-axis', () => {
+        it('Validate getStandardCategoriesAndSeries for Line chart: date x-axis and 1 y-axis', () => {
             const rows = [
                 ['Israel', '2019-05-25T00:00:00Z', 'Herzliya', 30],
                 ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', 20],
@@ -85,6 +89,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
 
             // Input
             const options: any = {
+                chartType: ChartType.Line,
                 chartOptions: {
                     columnsSelection: {
                         xAxis: columns[1],  // timestamp
@@ -99,9 +104,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ true);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
                     data: [[2019,  30], [2019, 20], [2000, 100]]
@@ -110,10 +116,11 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             };
 
             // Assert
-            expect(result).toEqual(expectedCategoriesAndSeries);
+            expect(result.series).toEqual(expected.series);
+            expect(result.xAxis.categories).toEqual(expected.categories);
         });
 
-        it('Validate getStandardCategoriesAndSeries: non-date x-axis and multiple y-axis', () => {
+        it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and multiple y-axis', () => {
             const rows = [
                 ['Israel', 'Herzliya', 30, 300],
                 ['United States', 'New York', 100, 150],
@@ -129,6 +136,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
 
             // Input
             const options: any = {
+                chartType: ChartType.Line,
                 chartOptions: {
                     columnsSelection: {
                         xAxis: columns[1], // city
@@ -143,9 +151,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
                     data: [30, 100, 20]
@@ -158,10 +167,11 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             };
 
             // Assert
-            expect(result).toEqual(expectedCategoriesAndSeries);
+            expect(result.series).toEqual(expected.series);
+            expect(result.xAxis.categories).toEqual(expected.categories);
         });
-   
-        it('Validate getStandardCategoriesAndSeries: date x-axis and multiple y-axis', () => {
+
+        it('Validate getStandardCategoriesAndSeries for Line chart: date x-axis and multiple y-axis', () => {
             const rows = [
                 ['2019-05-25T00:00:00Z', 'Israel', 'Herzliya', 30, 300],
                 ['2019-05-25T00:00:00Z', 'Japan', 'Tokyo', 20, 150],
@@ -192,9 +202,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ true);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
                     data: [[2019,  30], [2019, 20], [2000, 100]]
@@ -207,14 +218,15 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             };
 
             // Assert
-            expect(result).toEqual(expectedCategoriesAndSeries);
+            expect(result.series).toEqual(expected.series);
+            expect(result.xAxis.categories).toEqual(expected.categories);
         });
 
-        //#endregion getStandardCategoriesAndSeries
+        //#endregion Line chart getStandardCategoriesAndSeries
 
-        //#region getSplitByCategoriesAndSeries
+        //#region Line chart getSplitByCategoriesAndSeries
 
-        it('Validate getCategoriesAndSeries: non-date x-axis with splitBy', () => {
+        it('Validate getCategoriesAndSeries for Line chart: non-date x-axis with splitBy', () => {
             const rows = [
                 ['United States', 'Atlanta', 300],
                 ['United States', 'Redmond', 20],
@@ -234,6 +246,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
 
             // Input
             const options: any = {
+                chartType: ChartType.Line,
                 chartOptions: {
                     columnsSelection: {
                         xAxis: columns[0],    // country
@@ -249,9 +262,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'Atlanta',
                     data: [300, null, null]
@@ -288,10 +302,11 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             };
 
             // Assert
-            expect(result).toEqual(expectedCategoriesAndSeries);
+            expect(result.series).toEqual(expected.series);
+            expect(result.xAxis.categories).toEqual(expected.categories);
         });
 
-        it('Validate getCategoriesAndSeries: date x-axis with splitBy', () => {
+        it('Validate getCategoriesAndSeries for Line chart: date x-axis with splitBy', () => {
             const rows = [
                 ['Israel', '1988-06-26T00:00:00Z', 'Jerusalem', 500],
                 ['Israel', '2000-06-26T00:00:00Z', 'Herzliya', 1000],
@@ -313,6 +328,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             // Input
             const options: any = {
                 chartOptions: {
+                    chartType: ChartType.Line,
                     columnsSelection: {
                         xAxis: columns[1],   // timestamp
                         yAxes: [columns[3]], // request_count
@@ -327,9 +343,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ true);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'Jerusalem',
                     data: [[1988,  500]]
@@ -366,14 +383,15 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             };
 
             // Assert
-            expect(result).toEqual(expectedCategoriesAndSeries);
+            expect(result.series).toEqual(expected.series);
+            expect(result.xAxis.categories).toEqual(expected.categories);
         });
 
-        //#endregion getSplitByCategoriesAndSeries
+        //#endregion Line chart getSplitByCategoriesAndSeries
         
-        //#region getPieStandardCategoriesAndSeries
-        
-        it('Validate getPieStandardCategoriesAndSeries', () => {
+        //#region Pie chart getStandardCategoriesAndSeries
+                
+        it('Validate getCategoriesAndSeries for Pie chart', () => {
             const rows = [
                 ['Israel', 'Tel Aviv', 10],
                 ['United States', 'Redmond', 5],
@@ -407,9 +425,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
         
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
-        
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
+
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
                     data: [
@@ -422,17 +441,17 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
                         { name: 'Boston', y: 1 }
                     ]
                 }],
-                categories: []
+                categories: undefined
             };
         
             // Assert
-            expect(result.series).toEqual(expectedCategoriesAndSeries.series);
-            expect(result.categories).toEqual(expectedCategoriesAndSeries.categories);
+            expect(result.series).toEqual(expected.series);
+            expect(result.categories).toEqual(expected.categories);
         });
 
-        //#endregion getPieStandardCategoriesAndSeries
+        //#endregion Pie chart getStandardCategoriesAndSeries
         
-        //#region getPieSplitByCategoriesAndSeries
+        //#region Pie chart getSplitByCategoriesAndSeries
 
         function validateResults(result, expected) {
             const seriesToValidate = _.map(result.series, (currentSeries) => {
@@ -449,7 +468,7 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             expect(result.categories).toEqual(expected.categories);
         }
 
-        it('Validate getPieSplitByCategoriesAndSeries: pie chart with 2 levels', () => {
+        it('Validate getSplitByCategoriesAndSeries for Pie chart: pie chart with 2 levels', () => {
             const rows = [
                 ['Israel', 'Tel Aviv', 10],
                 ['United States', 'Redmond', 5],
@@ -484,9 +503,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'country',
                     size: '50%',
@@ -510,14 +530,14 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
     
                    ]
                 }],
-                categories: []
+                categories: undefined
             };
 
             // Assert
-            validateResults(result, expectedCategoriesAndSeries);
+            validateResults(result, expected);
         });
 
-        it('Validate getPieSplitByCategoriesAndSeries: pie chart with 3 levels', () => {
+        it('Validate getSplitByCategoriesAndSeries for Donut chart: pie chart with 3 levels', () => {
             const rows = [                
                 ['Internet Explorer', 'v8', '0', 10],
                 ['Chrome', 'v65', '0', 5],
@@ -560,9 +580,10 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
             }
 
             // Act
-            const result = DataTransformer.getCategoriesAndSeries(options, /*isDatetimeAxis*/ false);
+            const chart = HighchartsChartFactory.create(options);
+            const result: any = chart.getHighchartsOptions();
 
-            const expectedCategoriesAndSeries: ICategoriesAndSeries = {
+            const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'browser',
                     size: '33%',
@@ -608,14 +629,14 @@ describe('Unit tests for Highcharts CategoriesAndSeries', () => {
                         { name: '0', y: 20 }
                    ]
                 }],
-                categories: []
+                categories: undefined
             };
 
             // Assert
-            validateResults(result, expectedCategoriesAndSeries);
+            validateResults(result, expected);
         });
 
-        //#endregion getPieSplitByCategoriesAndSeries
+        //#endregion Pie chart getSplitByCategoriesAndSeries
     });
    
     //#endregion Tests

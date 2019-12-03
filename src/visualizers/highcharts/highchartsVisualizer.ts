@@ -4,61 +4,18 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
-import { IChartOptions } from '../../common/chartModels';
-import { Utilities } from '../../common/utilities';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
-import { DataTransformer } from './dataTransformer';
-import { CommonChartTypeToHighcharts } from './commonChartTypeToHighcharts';
+import { HighchartsChartFactory } from './charts/highchartsChartFactory';
 
 //#endregion Imports
 
 export class HighchartsVisualizer implements IVisualizer {
     public drawNewChart(options: IVisualizerOptions): void {
-        const chartOptions = options.chartOptions;
-        const chartTypeOptions = CommonChartTypeToHighcharts[chartOptions.chartType];
-        const isDatetimeAxis = Utilities.isDate(chartOptions.columnsSelection.xAxis.type);
-        const categoriesAndSeries = DataTransformer.getCategoriesAndSeries(options, isDatetimeAxis);
-
-        const highchartsOptions: Highcharts.Options = {
-            chart: {
-                type: chartTypeOptions.chartType
-            },
-            plotOptions: chartTypeOptions.plotOptions,
-            xAxis: {
-                type: isDatetimeAxis ? 'datetime' : undefined,
-                categories: categoriesAndSeries.categories,
-                title: {
-                    text: this.getXAxisTitle(options.chartOptions),
-                    align: 'middle'
-                }
-            },
-            yAxis: this.getYAxis(chartOptions),
-            series: categoriesAndSeries.series
-        };
+        const chart = HighchartsChartFactory.create(options);
+        const highchartsOptions = chart.getHighchartsOptions();
 
         // Draw the chart
         Highcharts.chart(options.elementId, highchartsOptions);
     }
-    
-    //#region Private methods
-
-    private getYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {
-        const yAxis = chartOptions.columnsSelection.yAxes[0];
-        const yAxisOptions = {
-            title: {
-                text: yAxis.name
-            }
-        }
-        
-        return yAxisOptions;
-    }
-
-    private getXAxisTitle(chartOptions: IChartOptions): string {
-        const xAxisColumn = chartOptions.columnsSelection.xAxis;
-
-        return xAxisColumn.name;
-    }
-
-    //#endregion Private methods
 }
