@@ -1,21 +1,51 @@
 'use strict';
 
+//#region Imports
+
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { ChartTypeOptions } from '../chartTypeOptions';
+import { ChartTheme } from '../../../common/chartModels';
 import { Utilities } from '../../../common/utilities';
+import { Themes } from '../themes/themes';
+
+//#endregion Imports
 
 export interface ICategoriesAndSeries {
     categories?: string[];
     series: any[];
 }
 
-export abstract class HighchartsChart {
-    protected options: IVisualizerOptions; 
+export abstract class Chart {
+    public options: IVisualizerOptions;
+    public highchartsChart: Highcharts.Chart;
+    public basicHighchartsOptions: Highcharts.Options;
+    public themeOptions: Highcharts.Options;       
 
     public constructor(options: IVisualizerOptions) {
         this.options = options;
+        this.basicHighchartsOptions = this.getHighchartsOptions();
+        this.themeOptions = Themes.getThemeOptions(options.chartOptions.chartTheme);
+    }
+
+    public draw(): void {                  
+        const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
+
+        this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
+    }
+  
+    public changeTheme(newTheme: ChartTheme): void {
+        if(this.options.chartOptions.chartTheme !== newTheme) {
+            // Update new theme options
+            this.themeOptions = Themes.getThemeOptions(newTheme);
+
+            // Destroy the existing chart
+            this.highchartsChart.destroy();
+
+            // Re-draw the a new chart with the new theme
+            this.draw();
+        }
     }
 
     public getHighchartsOptions(): Highcharts.Options {

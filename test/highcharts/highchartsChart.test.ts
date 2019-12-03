@@ -2,8 +2,8 @@
 
 import * as _ from 'lodash';
 import { DraftColumnType, IColumn, ChartType } from '../../src/common/chartModels';
-import { HighchartsChartFactory } from '../../src/visualizers/highcharts/charts/highchartsChartFactory';
-import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/highchartsChart';
+import { ChartFactory } from '../../src/visualizers/highcharts/charts/chartFactory';
+import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/chart';
 
 describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
     //#region beforeEach
@@ -57,7 +57,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -104,7 +104,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -151,7 +151,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -202,7 +202,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -262,7 +262,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -343,7 +343,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -425,7 +425,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
         
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -503,7 +503,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {
@@ -580,7 +580,7 @@ describe('Unit tests for HighchartsChart.getCategoriesAndSeries method', () => {
             }
 
             // Act
-            const chart = HighchartsChartFactory.create(options);
+            const chart = ChartFactory.create(options);
             const result: any = chart.getHighchartsOptions();
 
             const expected: ICategoriesAndSeries = {

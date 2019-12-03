@@ -1,11 +1,11 @@
 'use strict';
 
 import * as _ from 'lodash';
-import { HighchartsChart, ICategoriesAndSeries } from './highchartsChart';
+import { Chart, ICategoriesAndSeries } from './chart';
 import { ChartTypeOptions } from '../chartTypeOptions';
 import { Utilities } from '../../../common/utilities';
 
-export class Pie extends HighchartsChart {
+export class Pie extends Chart {
     //#region Methods override
 
     protected getChartTypeOptions(): ChartTypeOptions {

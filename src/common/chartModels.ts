@@ -53,6 +53,11 @@ export enum AggregationType {
     Max = 'Max'
 }
 
+export enum ChartTheme {
+    Dark = 'Dark',
+    Light = 'Light'
+}
+
 export interface ISupportedColumnTypes {
     xAxis: DraftColumnType[];
     yAxis: DraftColumnType[];
@@ -117,6 +122,12 @@ export interface IChartOptions {
     aggregationType?: AggregationType;
         
     /**
+     * The theme of the chart
+     * [Default value: ChartTheme.Light]
+     */
+    chartTheme?: ChartTheme;
+    
+    /**
      * The desired offset from UTC in hours for date values. Used to handle timezone.
      * The offset will be added to the original date from the query results data.
      * For example:
@@ -134,6 +145,12 @@ export interface IChartHelper {
      * @param chartOptions - The information required to draw the chart
      */
     draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void;
+
+    /**
+     * Change the theme of an existing chart
+     * @param newTheme - The theme to apply
+     */
+    changeTheme(newTheme: ChartTheme): void;
 
     /**
      * Return the supported column types for the axes and the split-by for a specific chart type
