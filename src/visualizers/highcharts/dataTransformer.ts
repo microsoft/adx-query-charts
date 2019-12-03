@@ -5,6 +5,7 @@
 import * as _ from 'lodash';
 import { Utilities } from '../../common/utilities';
 import { IVisualizerOptions } from '../IVisualizerOptions';
+import { ChartType, IChartOptions } from '../../common/chartModels';
 
 //#endregion Imports
 
@@ -20,15 +21,24 @@ export class DataTransformer {
         const columnsSelection = options.chartOptions.columnsSelection;
         const xAxisColumn = columnsSelection.xAxis;
         const xAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, xAxisColumn);  
+        const isSplitByChart = columnsSelection.splitBy && columnsSelection.splitBy.length > 0;
         let categoriesAndSeries = {
             series: [],
             categories: isDatetimeAxis ? undefined : [] 
         };
         
-        if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
-            DataTransformer.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+        if(Utilities.isPieOrDonut(options.chartOptions.chartType)) {
+            if(isSplitByChart) {
+                DataTransformer.getPieSplitByCategoriesAndSeries(options, xAxisColumnIndex, categoriesAndSeries);
+            } else {
+                DataTransformer.getPieStandardCategoriesAndSeries(options, xAxisColumnIndex, categoriesAndSeries);
+            }
         } else {
-            DataTransformer.getStandardCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            if(isSplitByChart) {
+                DataTransformer.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            } else {
+                DataTransformer.getStandardCategoriesAndSeries(options, xAxisColumnIndex, isDatetimeAxis, categoriesAndSeries);
+            }
         }
 
         return categoriesAndSeries;
@@ -163,5 +173,114 @@ export class DataTransformer {
                 data: splitByMap[splitByValue]
             });
         }
+    }
+
+    private static getPieStandardCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+
+        // Build the data for the pie
+        const pieSeries = {
+            name: yAxisColumn.name,
+            data: []
+        }
+
+        options.queryResultData.rows.forEach((row) => {
+            const xAxisValue = row[xAxisColumnIndex];
+            const yAxisValue = row[yAxisColumnIndex];
+
+            pieSeries.data.push({
+                name: xAxisValue,
+                y: yAxisValue 
+            })
+        });
+
+        categoriesAndSeries.series.push(pieSeries);
+    }
+
+    private static getPieSplitByCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+        const splitByIndexes = [xAxisColumnIndex];
+        
+        options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {
+            splitByIndexes.push(Utilities.getColumnIndex(options.queryResultData, splitByColumn));
+        });
+
+        // Build the data for the multi-level pie
+        let pieData = {};
+        let pieLevelData = pieData;
+
+        options.queryResultData.rows.forEach((row) => {
+            const yAxisValue = row[yAxisColumnIndex];
+
+            splitByIndexes.forEach((splitByIndex) => {  
+                const splitByValue: string = <string>row[splitByIndex];
+                let splitByMap = pieLevelData[splitByValue];
+
+                if(!splitByMap) {
+                    pieLevelData[splitByValue] = {
+                        drillDown: {},
+                        y: 0
+                    };
+                }
+
+                pieLevelData[splitByValue].y += yAxisValue;
+                pieLevelData = pieLevelData[splitByValue].drillDown;
+            });
+
+            pieLevelData = pieData;
+        });
+
+        categoriesAndSeries.series = DataTransformer.spreadMultiLevelSeries(options.chartOptions, pieData);
+    }
+
+    private static spreadMultiLevelSeries(chartOptions: IChartOptions, pieData: any, level: number = 0, series: any[] = []): any[] {
+        const levelsCount = chartOptions.columnsSelection.splitBy.length + 1;
+        const firstLevelSize =  Math.round(100 / levelsCount);
+
+        for (let key in pieData) {
+            let currentSeries = series[level];
+            let pieLevelValue = pieData[key];
+
+            if(!currentSeries) {
+                let column = (level === 0) ? chartOptions.columnsSelection.xAxis : chartOptions.columnsSelection.splitBy[level - 1];
+            
+                currentSeries = {
+                    name: column.name,
+                    data: []
+                };
+
+                if(level === 0) {
+                    currentSeries.size = `${firstLevelSize}%`;
+                } else {
+                    const prevLevelSizeStr = series[level - 1].size;
+                    const prevLevelSize = Number(prevLevelSizeStr.substring(0, 2));
+
+                    currentSeries.size = `${prevLevelSize + 10}%`;
+                    currentSeries.innerSize = `${prevLevelSize}%`;
+                }
+            
+                // We do not show labels for multi-level pie
+                currentSeries.dataLabels = {
+                    enabled: false
+                }
+
+                series.push(currentSeries);
+            }
+  
+            currentSeries.data.push({
+                name: key,
+                y: pieLevelValue.y
+            });
+
+            let drillDown = pieLevelValue.drillDown;
+
+            if(!_.isEmpty(drillDown)) {
+                DataTransformer.spreadMultiLevelSeries(chartOptions, drillDown, level + 1, series);
+            }
+        }
+
+        return series;
     }
 }

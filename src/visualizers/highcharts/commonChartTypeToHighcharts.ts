@@ -81,7 +81,8 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'pie',
         plotOptions: {
             pie: {
-                innerSize: '0'
+                innerSize: '0',
+                showInLegend: true
             }
         }
     },
@@ -89,7 +90,8 @@ export const CommonChartTypeToHighcharts: { [key in ChartType]: ChartTypeOptions
         chartType: 'pie',
         plotOptions: {
             pie: {
-                innerSize: '40%'
+                innerSize: '40%',
+                showInLegend: true
             }
         }
     },
