@@ -1,6 +1,12 @@
 'use strict';
 
 const textMainColor: string = '#ffffff';
+const labelsColor: string = '#e0e0e3';
+const lineColor: string = '#707073';
+const minorGridLineColor: string = '#505053';
+const dataLabelsColor: string = '#f0f0f3';
+const hiddenStyleColor: string = '#606063';
+const strokeColor: string = '000000';
 
 export const DarkThemeOptions: Highcharts.Options = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -16,12 +22,12 @@ export const DarkThemeOptions: Highcharts.Options = {
         gridLineColor: '#E10420',
         labels: {
             style: {
-                color: '#E0E0E3'
+                color: labelsColor
             }
         },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
+        lineColor: lineColor,
+        minorGridLineColor: minorGridLineColor,
+        tickColor: lineColor,
         title: {
             style: {
                 color: textMainColor
@@ -29,15 +35,15 @@ export const DarkThemeOptions: Highcharts.Options = {
         }
     },
     yAxis: {
-        gridLineColor: '#707073',
+        gridLineColor: lineColor,
         labels: {
             style: {
-                color: '#E0E0E3'
+                color: labelsColor
             }
         },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
+        lineColor: lineColor,
+        minorGridLineColor: minorGridLineColor,
+        tickColor: lineColor,
         title: {
             style: {
                 color: textMainColor
@@ -53,14 +59,14 @@ export const DarkThemeOptions: Highcharts.Options = {
     plotOptions: {
         series: {
             dataLabels: {
-                color: '#F0F0F3'
+                color: dataLabelsColor
             },
             marker: {
                 lineColor: '#333'
             }
         },
         boxplot: {
-            fillColor: '#505053'
+            fillColor: minorGridLineColor
         },
         candlestick: {
             lineColor: 'white'
@@ -72,13 +78,13 @@ export const DarkThemeOptions: Highcharts.Options = {
     legend: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {
-            color: '#E0E0E3'
+            color: labelsColor
         },
         itemHoverStyle: {
             color: '#FFF'
         },
         itemHiddenStyle: {
-            color: '#606063'
+            color: hiddenStyleColor
         },
         title: {
             style: {
@@ -93,46 +99,46 @@ export const DarkThemeOptions: Highcharts.Options = {
     },
     drilldown: {
         activeAxisLabelStyle: {
-            color: '#F0F0F3'
+            color: dataLabelsColor
         },
         activeDataLabelStyle: {
-            color: '#F0F0F3'
+            color: dataLabelsColor
         }
     },
     navigation: {
         buttonOptions: {
             symbolStroke: '#DDDDDD',
             theme: {
-                fill: '#505053'
+                fill: minorGridLineColor
             }
         }
     },
     // scroll charts
     rangeSelector: {
         buttonTheme: {
-            fill: '#505053',
-            stroke: '#000000',
+            fill: minorGridLineColor,
+            stroke: strokeColor,
             style: {
                 color: '#CCC'
             },
             states: {
                 hover: {
-                    fill: '#707073',
-                    stroke: '#000000',
+                    fill: lineColor,
+                    stroke: strokeColor,
                     style: {
                         color: 'white'
                     }
                 },
                 select: {
                     fill: '#000003',
-                    stroke: '#000000',
+                    stroke: strokeColor,
                     style: {
                         color: 'white'
                     }
                 }
             }
         },
-        inputBoxBorderColor: '#505053',
+        inputBoxBorderColor: minorGridLineColor,
         inputStyle: {
             backgroundColor: '#333',
             color: 'silver'
@@ -153,15 +159,15 @@ export const DarkThemeOptions: Highcharts.Options = {
             lineColor: '#A6C7ED'
         },
         xAxis: {
-            gridLineColor: '#505053'
+            gridLineColor: minorGridLineColor
         }
     },
     scrollbar: {
         barBackgroundColor: '#808083',
         barBorderColor: '#808083',
         buttonArrowColor: '#CCC',
-        buttonBackgroundColor: '#606063',
-        buttonBorderColor: '#606063',
+        buttonBackgroundColor: hiddenStyleColor,
+        buttonBorderColor: hiddenStyleColor,
         rifleColor: '#FFF',
         trackBackgroundColor: '#404043',
         trackBorderColor: '#404043'

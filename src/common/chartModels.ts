@@ -153,20 +153,20 @@ export interface IChartHelper {
     changeTheme(newTheme: ChartTheme): void;
 
     /**
-     * Return the supported column types for the axes and the split-by for a specific chart type
+     * Get the supported column types for the axes and the split-by for a specific chart type
      * @param chartType - The type of the chart
      */
     getSupportedColumnTypes(chartType: ChartType): ISupportedColumnTypes;
 
     /**
-     * Return the supported columns from the query result data for the axes and the split-by for a specific chart type
+     * Get the supported columns from the query result data for the axes and the split-by for a specific chart type
      * @param queryResultData - The original query result data
      * @param chartType - The type of the chart
      */
     getSupportedColumnsInResult(queryResultData: IQueryResultData, chartType: ChartType): ISupportedColumns;
 
     /**
-     * Return the default columns selection from the query result data.
+     * Get the default columns selection from the query result data.
      * Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type.
      * @param queryResultData - The original query result data
      * @param chartType - The type of the chart

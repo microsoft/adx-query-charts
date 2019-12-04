@@ -35,10 +35,6 @@ export class Themes {
     public static getThemeOptions(theme: ChartTheme): Highcharts.Options {
         const themeOptions = Themes.commonThemeTypeToHighcharts[theme];
 
-        if(themeOptions) {
-            return _.merge({}, Themes.defaultThemeOptions, themeOptions);
-        }
-        
-        return Themes.defaultThemeOptions;
+        return _.merge({}, Themes.defaultThemeOptions, themeOptions);
     }
 }
