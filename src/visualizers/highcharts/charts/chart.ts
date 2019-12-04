@@ -32,13 +32,13 @@ export abstract class Chart {
     public draw(): void {                  
         const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
 
-        this.destroyExistingChar();
+        this.destroyExistingChart();
         this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
     }
   
     public changeTheme(newTheme: ChartTheme): void {
         if(this.options.chartOptions.chartTheme !== newTheme) {
-            this.destroyExistingChar();
+            this.destroyExistingChart();
 
             // Update new theme options
             this.themeOptions = Themes.getThemeOptions(newTheme);
@@ -249,7 +249,7 @@ export abstract class Chart {
         return xAxisColumn.name;
     }
 
-    private destroyExistingChar(): void {
+    private destroyExistingChart(): void {
         if(this.highchartsChart) {
             this.highchartsChart.destroy();
         }
