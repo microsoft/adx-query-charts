@@ -37,6 +37,9 @@
     "moment": "^2.24.0",
     "@types/highcharts": "7.0.0"
   },
+  "dependencies": {
+    "css-element-queries": "^1.2.2"
+  },
   "jest": {
     "testMatch": [
       "**/dist/**/?(*.)(spec|test).js?(x)"
