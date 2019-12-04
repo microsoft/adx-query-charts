@@ -3,13 +3,12 @@
 //#region Imports
 
 import * as _ from 'lodash';
-import * as Highcharts from 'highcharts';
 import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
 import { ChartTheme } from '../../common/chartModels';
-import { Themes } from './themes/themes';
+import { ResizeSensor } from '../../external/css-element-queries/resizeSensor';
 
 //#endregion Imports
 
@@ -21,6 +20,13 @@ export class HighchartsVisualizer implements IVisualizer {
 
         // Draw the chart
         this.currentChart.draw();
+        
+        // Highcharts handle resize only on window resize, we need to handle resize when the chart's container size changes
+        const chartContainer = document.querySelector('#' + options.elementId);
+
+        new ResizeSensor(chartContainer, () => {
+            this.currentChart.highchartsChart.reflow();
+        });
     }
     
     public changeTheme(newTheme: ChartTheme): void {

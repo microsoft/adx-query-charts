@@ -120,7 +120,12 @@ export interface IChartOptions {
      * [Default value: AggregationType.Sum]
      */
     aggregationType?: AggregationType;
-        
+    
+    /**
+     * The chart's title
+     */
+    title?: string;
+
     /**
      * The theme of the chart
      * [Default value: ChartTheme.Light]

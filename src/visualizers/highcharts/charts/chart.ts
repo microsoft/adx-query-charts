@@ -59,6 +59,9 @@ export abstract class Chart {
                 type: chartTypeOptions.chartType
             },
             plotOptions: chartTypeOptions.plotOptions,
+            title: {
+                text: chartOptions.title
+            },
             xAxis: {
                 type: isDatetimeAxis ? 'datetime' : undefined,
                 categories: categoriesAndSeries.categories,
