@@ -2,7 +2,7 @@
 
 //#region Imports
 
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType } from './chartModels';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType, ChartTheme } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
@@ -41,6 +41,8 @@ export class KustoChartHelper implements IChartHelper {
     private readonly elementId: string;
     private readonly visualizer: IVisualizer;
 
+    private options: IChartOptions;
+
     //#endregion Private members
 
     //#region Constructor
@@ -59,6 +61,8 @@ export class KustoChartHelper implements IChartHelper {
         // Update the chart options with defaults for optional values that weren't provided
         chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
 
+        this.options = chartOptions;
+
         // Apply query data transformation
         const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
         const transformed = this.transformQueryResultData(resolvedAsSeriesData, chartOptions);
@@ -72,6 +76,13 @@ export class KustoChartHelper implements IChartHelper {
         };
 
         this.visualizer.drawNewChart(visualizerOptions);
+    }
+
+    public changeTheme(newTheme: ChartTheme): void {
+        if(this.options && this.options.chartTheme !== newTheme) {
+            this.visualizer.changeTheme(newTheme);
+            this.options.chartTheme = newTheme;
+        }
     }
 
     public getSupportedColumnTypes(chartType: ChartType): ISupportedColumnTypes {

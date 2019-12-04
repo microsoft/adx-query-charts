@@ -1,9 +1,9 @@
 'use strict';
 
-import { HighchartsChart } from './highchartsChart';
+import { Chart } from './chart';
 import { ChartTypeOptions, UNSTACKED } from '../chartTypeOptions';
 
-export class Line extends HighchartsChart {
+export class Line extends Chart {
     //#region Methods override
 
     protected getChartTypeOptions(): ChartTypeOptions {

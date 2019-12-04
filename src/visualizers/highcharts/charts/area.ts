@@ -1,9 +1,9 @@
 'use strict';
 
-import { HighchartsChart } from './highchartsChart';
+import { Chart } from './chart';
 import { ChartTypeOptions } from '../chartTypeOptions';
 
-export abstract class Area extends HighchartsChart {
+export abstract class Area extends Chart {
     //#region Methods override
 
     protected getChartTypeOptions(): ChartTypeOptions {

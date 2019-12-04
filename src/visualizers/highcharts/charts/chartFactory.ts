@@ -4,7 +4,7 @@
 
 import { ChartType } from '../../../common/chartModels';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
-import { HighchartsChart } from './highchartsChart';
+import { Chart } from './chart';
 import { Line } from './line';
 import { Scatter } from './scatter';
 import { UnstackedArea } from './unstackedArea';
@@ -18,8 +18,8 @@ import { Donut } from './donut';
 
 //#endregion Imports
 
-export class HighchartsChartFactory {
-    public static create(options: IVisualizerOptions): HighchartsChart {
+export class ChartFactory {
+    public static create(options: IVisualizerOptions): Chart {
         switch (options.chartOptions.chartType) {
             case ChartType.Line: {
                 return new Line(options);

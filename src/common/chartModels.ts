@@ -53,6 +53,11 @@ export enum AggregationType {
     Max = 'Max'
 }
 
+export enum ChartTheme {
+    Dark = 'Dark',
+    Light = 'Light'
+}
+
 export interface ISupportedColumnTypes {
     xAxis: DraftColumnType[];
     yAxis: DraftColumnType[];
@@ -117,6 +122,12 @@ export interface IChartOptions {
     aggregationType?: AggregationType;
         
     /**
+     * The theme of the chart
+     * [Default value: ChartTheme.Light]
+     */
+    chartTheme?: ChartTheme;
+    
+    /**
      * The desired offset from UTC in hours for date values. Used to handle timezone.
      * The offset will be added to the original date from the query results data.
      * For example:
@@ -136,20 +147,26 @@ export interface IChartHelper {
     draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void;
 
     /**
-     * Return the supported column types for the axes and the split-by for a specific chart type
+     * Change the theme of an existing chart
+     * @param newTheme - The theme to apply
+     */
+    changeTheme(newTheme: ChartTheme): void;
+
+    /**
+     * Get the supported column types for the axes and the split-by for a specific chart type
      * @param chartType - The type of the chart
      */
     getSupportedColumnTypes(chartType: ChartType): ISupportedColumnTypes;
 
     /**
-     * Return the supported columns from the query result data for the axes and the split-by for a specific chart type
+     * Get the supported columns from the query result data for the axes and the split-by for a specific chart type
      * @param queryResultData - The original query result data
      * @param chartType - The type of the chart
      */
     getSupportedColumnsInResult(queryResultData: IQueryResultData, chartType: ChartType): ISupportedColumns;
 
     /**
-     * Return the default columns selection from the query result data.
+     * Get the default columns selection from the query result data.
      * Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type.
      * @param queryResultData - The original query result data
      * @param chartType - The type of the chart
