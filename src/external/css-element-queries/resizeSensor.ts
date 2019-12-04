@@ -7,15 +7,15 @@
  */
 export class ResizeSensor {
     private element: Element;
-    private callback: () => void;
+    private onResize: () => void;
     private currentWidth: number;
     private currentHeight: number;
     private expand: HTMLDivElement;
     private shrink: HTMLDivElement;
 
-    public constructor(element: Element, callback: () => void) {
+    public constructor(element: Element, onResize: () => void) {
         this.element = element;
-        this.callback = callback;
+        this.onResize = onResize;
         let zIndex: any = window.document.defaultView.getComputedStyle(element).getPropertyValue('z-index');
         
         if(isNaN(zIndex)) { 
@@ -75,10 +75,12 @@ export class ResizeSensor {
     }
 
     private setScroll = () => {
-        this.expand.scrollLeft = 10000000;
-        this.expand.scrollTop = 10000000;
-        this.shrink.scrollLeft = 10000000;
-        this.shrink.scrollTop = 10000000;
+        const scrollPosition = 10000000;
+
+        this.expand.scrollLeft = scrollPosition;
+        this.expand.scrollTop = scrollPosition;
+        this.shrink.scrollLeft = scrollPosition;
+        this.shrink.scrollTop = scrollPosition;
     }
 
     private onScroll = () => {
@@ -90,7 +92,7 @@ export class ResizeSensor {
         {
             this.currentWidth = newWidth;
             this.currentHeight = newHeight;
-            this.callback();
+            this.onResize();
         }
 
         this.setScroll();
