@@ -13,7 +13,7 @@ Make sure to install the following packages before using the adx-query-charts li
 1. [moment](https://www.npmjs.com/package/moment): `npm i moment`
 2. [lodash](https://www.npmjs.com/package/lodash): `npm i lodash`
 3. [css-element-queries](https://www.npmjs.com/package/css-element-queries): `npm i css-element-queries`
-4. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts`
+4. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts` - Please notice that highcharts requires a commercial license purchase.
 
 ## Usage
 ```typescript
