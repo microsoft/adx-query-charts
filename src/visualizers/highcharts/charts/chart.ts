@@ -4,11 +4,11 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
+import { Themes } from '../themes/themes';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { ChartTypeOptions } from '../chartTypeOptions';
 import { ChartTheme } from '../../../common/chartModels';
 import { Utilities } from '../../../common/utilities';
-import { Themes } from '../themes/themes';
 
 //#endregion Imports
 
@@ -32,6 +32,7 @@ export abstract class Chart {
     public draw(): void {                  
         const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
 
+        this.destroyExistingChart();
         this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
     }
   
@@ -39,10 +40,7 @@ export abstract class Chart {
         if(this.options.chartOptions.chartTheme !== newTheme) {
             // Update new theme options
             this.themeOptions = Themes.getThemeOptions(newTheme);
-
-            // Destroy the existing chart
-            this.highchartsChart.destroy();
-
+            
             // Re-draw the a new chart with the new theme
             this.draw();
         }
@@ -59,6 +57,9 @@ export abstract class Chart {
                 type: chartTypeOptions.chartType
             },
             plotOptions: chartTypeOptions.plotOptions,
+            title: {
+                text: chartOptions.title
+            },
             xAxis: {
                 type: isDatetimeAxis ? 'datetime' : undefined,
                 categories: categoriesAndSeries.categories,
@@ -90,7 +91,7 @@ export abstract class Chart {
         }
 
         return categoriesAndSeries;
-    }  
+    }
     
     protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries, isDatetimeAxis: boolean = false): void {
         const chartOptions = this.options.chartOptions;
@@ -244,6 +245,12 @@ export abstract class Chart {
         const xAxisColumn = this.options.chartOptions.columnsSelection.xAxis;
 
         return xAxisColumn.name;
+    }
+
+    private destroyExistingChart(): void {
+        if(this.highchartsChart) {
+            this.highchartsChart.destroy();
+        }
     }
 
     //#endregion Private methods

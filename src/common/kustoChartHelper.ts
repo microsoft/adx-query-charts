@@ -34,6 +34,7 @@ export class KustoChartHelper implements IChartHelper {
         maxUniqueXValues: 100,
         exceedMaxDataPointLabel: 'OTHER',
         aggregationType: AggregationType.Sum,
+        chartTheme: ChartTheme.Light,
         utcOffset: 0
     }
 
