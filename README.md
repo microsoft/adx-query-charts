@@ -12,7 +12,8 @@ npm install adx-query-charts
 Make sure to install the following packages before using the adx-query-charts library:
 1. [moment](https://www.npmjs.com/package/moment): `npm i moment`
 2. [lodash](https://www.npmjs.com/package/lodash): `npm i lodash`
-3. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts`
+3. [css-element-queries](https://www.npmjs.com/package/css-element-queries): `npm i css-element-queries`
+4. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts`
 
 ## Usage
 ```typescript
