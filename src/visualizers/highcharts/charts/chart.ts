@@ -4,11 +4,11 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
+import { Themes } from '../themes/themes';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { ChartTypeOptions } from '../chartTypeOptions';
 import { ChartTheme } from '../../../common/chartModels';
 import { Utilities } from '../../../common/utilities';
-import { Themes } from '../themes/themes';
 
 //#endregion Imports
 
@@ -38,8 +38,6 @@ export abstract class Chart {
   
     public changeTheme(newTheme: ChartTheme): void {
         if(this.options.chartOptions.chartTheme !== newTheme) {
-            this.destroyExistingChart();
-
             // Update new theme options
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
@@ -93,7 +91,7 @@ export abstract class Chart {
         }
 
         return categoriesAndSeries;
-    }  
+    }
     
     protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries, isDatetimeAxis: boolean = false): void {
         const chartOptions = this.options.chartOptions;
