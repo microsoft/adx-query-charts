@@ -1,18 +1,18 @@
 'use strict';
 
 import { Chart } from './chart';
-import { ChartTypeOptions } from '../chartTypeOptions';
 
 export abstract class Column extends Chart {
     //#region Methods override
 
-    protected getChartTypeOptions(): ChartTypeOptions {
+    protected getChartType(): string {
+        return 'column';
+    };
+
+    protected plotOptions(): Highcharts.PlotOptions {
         return {
-            chartType: 'column',
-            plotOptions: {
-                column: {
-                  stacking: this.getStackingOption()
-                }
+            column: {
+              stacking: this.getStackingOption()
             }
         }
     }

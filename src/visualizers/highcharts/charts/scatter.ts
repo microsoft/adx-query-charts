@@ -1,18 +1,19 @@
 'use strict';
 
 import { Chart } from './chart';
-import { ChartTypeOptions, UNSTACKED } from '../chartTypeOptions';
+import { UNSTACKED } from '../chartTypeOptions';
 
 export class Scatter extends Chart {
     //#region Methods override
 
-    protected getChartTypeOptions(): ChartTypeOptions {
+    protected getChartType(): string {
+        return 'scatter';
+    };
+
+    protected plotOptions(): Highcharts.PlotOptions {
         return {
-            chartType: 'scatter',
-            plotOptions: {
-                scatter:  {
-                    stacking: UNSTACKED
-                }
+            scatter:  {
+                stacking: UNSTACKED
             }
         }
     }

@@ -2,27 +2,28 @@
 
 import * as _ from 'lodash';
 import { Chart, ICategoriesAndSeries } from './chart';
-import { ChartTypeOptions } from '../chartTypeOptions';
 import { Utilities } from '../../../common/utilities';
+import { IVisualizerOptions } from '../../IVisualizerOptions';
 
 export class Pie extends Chart {
     //#region Methods override
+ 
+    protected getChartType(): string {
+        return 'pie';
+    };
 
-    protected getChartTypeOptions(): ChartTypeOptions {
+    protected plotOptions(): Highcharts.PlotOptions {
         return {
-            chartType: 'pie',
-            plotOptions: {
-                pie: {
-                    innerSize: this.getInnerSize(),
-                    showInLegend: true
-                }
+            pie: {
+                innerSize: this.getInnerSize(),
+                showInLegend: true
             }
         }
     }
 
-    protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
-        const yAxisColumn = this.options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
-        const yAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
+    public getStandardCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
 
         // Build the data for the pie
         const pieSeries = {
@@ -30,7 +31,7 @@ export class Pie extends Chart {
             data: []
         }
 
-        this.options.queryResultData.rows.forEach((row) => {
+        options.queryResultData.rows.forEach((row) => {
             const xAxisValue = row[xAxisColumnIndex];
             const yAxisValue = row[yAxisColumnIndex];
 
@@ -40,24 +41,25 @@ export class Pie extends Chart {
             })
         });
 
-        categoriesAndSeries.series.push(pieSeries);
-        categoriesAndSeries.categories = undefined;
+        return {
+            series: [pieSeries]
+        }
     }
 
-    protected getSplitByCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
-        const yAxisColumn = this.options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
-        const yAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
+    public getSplitByCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
+        const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
         const splitByIndexes = [xAxisColumnIndex];
         
-        this.options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {
-            splitByIndexes.push(Utilities.getColumnIndex(this.options.queryResultData, splitByColumn));
+        options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {
+            splitByIndexes.push(Utilities.getColumnIndex(options.queryResultData, splitByColumn));
         });
 
         // Build the data for the multi-level pie
         let pieData = {};
         let pieLevelData = pieData;
 
-        this.options.queryResultData.rows.forEach((row) => {
+        options.queryResultData.rows.forEach((row) => {
             const yAxisValue = row[yAxisColumnIndex];
 
             splitByIndexes.forEach((splitByIndex) => {  
@@ -78,8 +80,11 @@ export class Pie extends Chart {
             pieLevelData = pieData;
         });
 
-        categoriesAndSeries.series = this.spreadMultiLevelSeries(pieData);
-        categoriesAndSeries.categories = undefined;
+        const series = this.spreadMultiLevelSeries(options, pieData);
+
+        return {
+            series: series
+        }
     }
 
     //#endregion Methods override
@@ -90,8 +95,8 @@ export class Pie extends Chart {
 
     //#region Private methods
 
-    private spreadMultiLevelSeries(pieData: any, level: number = 0, series: any[] = []): any[] {
-        const chartOptions = this.options.chartOptions;
+    private spreadMultiLevelSeries(options: IVisualizerOptions, pieData: any, level: number = 0, series: any[] = []): any[] {
+        const chartOptions = options.chartOptions;
         const levelsCount = chartOptions.columnsSelection.splitBy.length + 1;
         const firstLevelSize =  Math.round(100 / levelsCount);
 
@@ -133,7 +138,7 @@ export class Pie extends Chart {
             let drillDown = pieLevelValue.drillDown;
 
             if(!_.isEmpty(drillDown)) {
-                this.spreadMultiLevelSeries(drillDown, level + 1, series);
+                this.spreadMultiLevelSeries(options, drillDown, level + 1, series);
             }
         }
 
