@@ -134,7 +134,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 }
             },
             yAxis: this.getYAxis(chartOptions),
-            tooltip: this.getChartTooltip(chartOptions, isDatetimeAxis)
+            tooltip: this.getChartTooltip(chartOptions)
         };
 
         const categoriesAndSeries = this.getCategoriesAndSeries();
@@ -169,7 +169,7 @@ export class HighchartsVisualizer implements IVisualizer {
         };
     }
     
-    private getChartTooltip(chartOptions: IChartOptions, isDatetimeAxis: boolean): Highcharts.TooltipOptions {
+    private getChartTooltip(chartOptions: IChartOptions): Highcharts.TooltipOptions {
         return {
             formatter: function () {
                 const context = this;
@@ -186,17 +186,22 @@ export class HighchartsVisualizer implements IVisualizer {
                     return originalValue;
                 }
 
-                function getSingleTooltip(column: IColumn, originalValue: any) {
-                    const columnName = column.name;
+                function getSingleTooltip(column: IColumn, originalValue: any, columnName?: string) {
                     const formattedValue = getFormattedValue(originalValue, column.type);
 
-                    return `<tr><td style="color:${context.color};padding:0">${columnName}: </td><td style="padding:0"><b>${formattedValue}</b></td></tr>`;
+                    return `<tr><td style="color:${context.color};padding:0">${columnName || column.name}: </td><td style="padding:0"><b>${formattedValue}</b></td></tr>`;
                 }
 
-                let tooltip = getSingleTooltip(chartOptions.columnsSelection.xAxis, this.x !== undefined ? this.x : this.key);
+                // X axis
+                let xAxisColumn = chartOptions.columnsSelection.xAxis;
+                let xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
+                let xValue = this.x !== undefined ? this.x : this.key;
+                let tooltip = getSingleTooltip(xAxisColumn, xValue, xColumnTitle);
 
+                // Y axis
                 tooltip += getSingleTooltip(chartOptions.columnsSelection.yAxes[0], this.y);
                 
+                // Split by
                 const splitBy = chartOptions.columnsSelection.splitBy;
 
                 if(splitBy && splitBy.length > 0) {
