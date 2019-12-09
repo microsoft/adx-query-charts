@@ -54,12 +54,13 @@ export enum AggregationType {
 }
 
 export enum DateFormat {
-    FullDate = 'FullDate',
-    FullTime = 'FullTime',
-    HourAndMinute = 'HourAndMinute',
-    MonthAndDay = 'MonthAndDay',
-    MonthAndYear = 'MonthAndYear',
-    Year = 'Year'
+    FullDate = 'FullDate',           // The full date and time. For example: 12/7/2019, 2:30:00.600
+    Time = 'Time',                   // The full time, without the milliseconds. For example: 2:30:00
+    FullTime = 'FullTime',           // The full time, including the milliseconds. For example: 2:30:00.600
+    HourAndMinute = 'HourAndMinute', // The hours and minutes. For example: 2:30
+    MonthAndDay = 'MonthAndDay',     // The month and day. For example: July 12th
+    MonthAndYear = 'MonthAndYear',   // The month and day. For example: July 2019
+    Year = 'Year'                    // The year. For example: 2019
 }
 
 export enum ChartTheme {
@@ -153,28 +154,28 @@ export interface IChartOptions {
     
     /**
      * Callback that is used to format the date values both in the axis and the tooltip. If not provided - the default formatting will apply
-     * callback inputs:
+     * Callback inputs:
      *     @param dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset.
      *     @param defaultFormat - The default format of the label.
-     * callback return value:
+     * Callback return value:
      *     @returns The string represents the display value of the dateValue 
      */
     dateFormatter?: (dateValue: Date, defaultFormat: DateFormat) => string;
 
     /**
      * Callback that is used to format number values both in the axis and the tooltip. If isn't provided - the default formatting will apply.
-     * callback inputs:
+     * Callback inputs:
      *     @param numberValue - The original number
-     * callback return value:
+     * Callback return value:
      *     @returns The string or number represents the display value of the numberValue
      */
     numberFormatter?: (numberValue: number) => number | string;
 
     /**
      * Callback that is used to get the xAxis title. If isn't provided - the xAxis title will be the xAxis column name.
-     * callback inputs:
+     * Callback inputs:
      *     @param xAxisColumn - The x-axis column
-     * callback return value:
+     * Callback return value:
      *     @returns The desired x-axis title
      */
     xAxisTitleFormatter?: (xAxisColumn: IColumn) => string;
