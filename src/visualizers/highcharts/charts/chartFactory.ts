@@ -19,40 +19,40 @@ import { Donut } from './donut';
 //#endregion Imports
 
 export class ChartFactory {
-    public static create(options: IVisualizerOptions): Chart {
-        switch (options.chartOptions.chartType) {
+    public static create(chartType: ChartType): Chart {
+        switch (chartType) {
             case ChartType.Line: {
-                return new Line(options);
+                return new Line();
             }
             case ChartType.Scatter: {
-                return new Scatter(options);
+                return new Scatter();
             }
             case ChartType.UnstackedArea: {
-                return new UnstackedArea(options);
+                return new UnstackedArea();
             }
             case ChartType.StackedArea: {
-                return new StackedArea(options);
+                return new StackedArea();
             }
             case ChartType.PercentageArea: {
-                return new PercentageArea(options);
+                return new PercentageArea();
             }
             case ChartType.UnstackedColumn: {
-                return new UnstackedColumn(options);
+                return new UnstackedColumn();
             }
             case ChartType.StackedColumn: {
-                return new StackedColumn(options);
+                return new StackedColumn();
             }
             case ChartType.PercentageColumn: {
-                return new PercentageColumn(options);
+                return new PercentageColumn();
             }
             case ChartType.Pie: {
-                return new Pie(options);
+                return new Pie();
             }
             case ChartType.Donut: {
-                return new Donut(options);
+                return new Donut();
             }
             default: {
-                return new UnstackedColumn(options);
+                return new UnstackedColumn();
             }
         }
     }

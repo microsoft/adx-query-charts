@@ -4,11 +4,9 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
-import { Themes } from '../themes/themes';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
-import { ChartTypeOptions } from '../chartTypeOptions';
-import { ChartTheme } from '../../../common/chartModels';
 import { Utilities } from '../../../common/utilities';
+import { IColumn } from '../../../common/chartModels';
 
 //#endregion Imports
 
@@ -18,93 +16,26 @@ export interface ICategoriesAndSeries {
 }
 
 export abstract class Chart {
-    public options: IVisualizerOptions;
-    public highchartsChart: Highcharts.Chart;
-    public basicHighchartsOptions: Highcharts.Options;
-    public themeOptions: Highcharts.Options;       
+    public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+        const chartOptions = options.chartOptions;
+        const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
+        const isDatetimeAxis: boolean = Utilities.isDate(xColumn.type);
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
+        const yAxesIndexes = _.map(chartOptions.columnsSelection.yAxes, (yAxisColumn) => {
+            return Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+        });
 
-    public constructor(options: IVisualizerOptions) {
-        this.options = options;
-        this.basicHighchartsOptions = this.getHighchartsOptions();
-        this.themeOptions = Themes.getThemeOptions(options.chartOptions.chartTheme);
-    }
-
-    public draw(): void {                  
-        const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
-
-        this.destroyExistingChart();
-        this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
-    }
-  
-    public changeTheme(newTheme: ChartTheme): void {
-        if(this.options.chartOptions.chartTheme !== newTheme) {
-            // Update new theme options
-            this.themeOptions = Themes.getThemeOptions(newTheme);
-            
-            // Re-draw the a new chart with the new theme
-            this.draw();
-        }
-    }
-
-    public getHighchartsOptions(): Highcharts.Options {
-        const chartOptions = this.options.chartOptions;
-        const chartTypeOptions = this.getChartTypeOptions();
-        const isDatetimeAxis = Utilities.isDate(chartOptions.columnsSelection.xAxis.type);
-        const categoriesAndSeries = this.getCategoriesAndSeries(isDatetimeAxis);
-
-        const highchartsOptions: Highcharts.Options = {
-            chart: {
-                type: chartTypeOptions.chartType
-            },
-            plotOptions: chartTypeOptions.plotOptions,
-            title: {
-                text: chartOptions.title
-            },
-            xAxis: {
-                type: isDatetimeAxis ? 'datetime' : undefined,
-                categories: categoriesAndSeries.categories,
-                title: {
-                    text: this.getXAxisTitle(),
-                    align: 'middle'
-                }
-            },
-            yAxis: this.getYAxis(),
-            series: categoriesAndSeries.series
-        };
-
-        return highchartsOptions;
-    }
-
-    protected getCategoriesAndSeries(isDatetimeAxis: boolean): ICategoriesAndSeries {
-        const columnsSelection = this.options.chartOptions.columnsSelection;
-        const xAxisColumn = columnsSelection.xAxis;
-        const xAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, xAxisColumn);  
-        let categoriesAndSeries = {
+        const categoriesAndSeries: ICategoriesAndSeries = {
             series: [],
             categories: isDatetimeAxis ? undefined : [] 
         };
-        
-        if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
-            this.getSplitByCategoriesAndSeries(xAxisColumnIndex, categoriesAndSeries, isDatetimeAxis);
-        } else {
-            this.getStandardCategoriesAndSeries(xAxisColumnIndex, categoriesAndSeries, isDatetimeAxis);
-        }
-
-        return categoriesAndSeries;
-    }
-    
-    protected getStandardCategoriesAndSeries(xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries, isDatetimeAxis: boolean = false): void {
-        const chartOptions = this.options.chartOptions;
-        const yAxesIndexes = _.map(chartOptions.columnsSelection.yAxes, (yAxisColumn) => {
-            return Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
-        });
 
         const seriesMap = {};
 
-        this.options.queryResultData.rows.forEach((row) => {
+        options.queryResultData.rows.forEach((row) => {
             let xAxisValue: any = row[xAxisColumnIndex];
     
-            // If the x-axis is a date, convert it's value to milliseconds as this is what expected by 'Highcharts'
+            // If the x-axis is a date, convert its value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
                 const dateValue = Utilities.getValidDate(xAxisValue, chartOptions.utcOffset);
 
@@ -133,24 +64,32 @@ export abstract class Chart {
                 data: seriesMap[yAxisColumnName]
             });
         }
+
+        return categoriesAndSeries;
     }
     
-    protected getSplitByCategoriesAndSeries( xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries, isDatetimeAxis: boolean = false): void {
-        if(isDatetimeAxis) {
-            this.getSplitByCategoriesAndSeriesForDateXAxis(this.options, xAxisColumnIndex, categoriesAndSeries);
+    public getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+        const xColumn: IColumn =  options.chartOptions.columnsSelection.xAxis;
+        const isDatetimeAxis: boolean = Utilities.isDate(xColumn.type);
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
 
-            return;
+        if(isDatetimeAxis) {
+            return this.getSplitByCategoriesAndSeriesForDateXAxis(options, xAxisColumnIndex);
         }
 
-        const columnsSelection = this.options.chartOptions.columnsSelection;
+        const columnsSelection = options.chartOptions.columnsSelection;
         const yAxisColumn = columnsSelection.yAxes[0];
         const splitByColumn = columnsSelection.splitBy[0];
-        const yAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, yAxisColumn);
-        const splitByColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, splitByColumn);
+        const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+        const splitByColumnIndex = Utilities.getColumnIndex(options.queryResultData, splitByColumn);
         const uniqueXValues = {};
-        const uniqueSplitByValues = {};
-      
-        this.options.queryResultData.rows.forEach((row) => {
+        const uniqueSplitByValues = {};            
+        const categoriesAndSeries: ICategoriesAndSeries = {
+            series: [],
+            categories: undefined
+        };
+
+        options.queryResultData.rows.forEach((row) => {
         	const xValue = row[xAxisColumnIndex];
         	const yValue = row[yAxisColumnIndex];
         	const splitByValue = row[splitByColumnIndex];
@@ -187,22 +126,25 @@ export abstract class Chart {
         
         	categoriesAndSeries.series.push(currentSeries);
         }
+
+        return categoriesAndSeries;
     }
 
-    protected getSplitByCategoriesAndSeriesForDateXAxis(options: IVisualizerOptions, xAxisColumnIndex: number, categoriesAndSeries: ICategoriesAndSeries): void {
+    private getSplitByCategoriesAndSeriesForDateXAxis(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
         const columnsSelection = options.chartOptions.columnsSelection;
         const yAxisColumn = columnsSelection.yAxes[0];
         const splitByColumn = columnsSelection.splitBy[0];
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
         const splitByColumnIndex = Utilities.getColumnIndex(options.queryResultData, splitByColumn);
         const splitByMap = {};
+        const series = [];
 
         options.queryResultData.rows.forEach((row) => {
             const splitByValue: string = <string>row[splitByColumnIndex];
             const yValue = row[yAxisColumnIndex];
             let xValue = row[xAxisColumnIndex];
 
-            // For date the a-axis, convert it's value to ms as this is what expected by Highcharts
+            // For date the a-axis, convert its value to ms as this is what expected by Highcharts
             const dateValue = Utilities.getValidDate(<string>xValue, options.chartOptions.utcOffset);
 
             xValue = dateValue.valueOf();
@@ -215,43 +157,31 @@ export abstract class Chart {
         });
 
         for (let splitByValue in splitByMap) {
-            categoriesAndSeries.series.push({
+            series.push({
                 name: splitByValue,
                 data: splitByMap[splitByValue]
             });
         }
+
+        return {
+            series: series
+        }
+    }
+
+    public getChartTypeOptions(): Highcharts.Options {
+        return {
+            chart: {
+                type: this.getChartType()
+            },
+            plotOptions: this.plotOptions()
+        };
     }
 
     //#region Abstract methods
 
-    protected abstract getChartTypeOptions(): ChartTypeOptions;
+    protected abstract getChartType(): string;
+
+    protected abstract plotOptions(): Highcharts.PlotOptions;
 
     //#endregion Abstract methods
-        
-    //#region Private methods
-
-    private getYAxis(): Highcharts.YAxisOptions {
-        const yAxis = this.options.chartOptions.columnsSelection.yAxes[0];
-        const yAxisOptions = {
-            title: {
-                text: yAxis.name
-            }
-        }
-        
-        return yAxisOptions;
-    }
-
-    private getXAxisTitle(): string {
-        const xAxisColumn = this.options.chartOptions.columnsSelection.xAxis;
-
-        return xAxisColumn.name;
-    }
-
-    private destroyExistingChart(): void {
-        if(this.highchartsChart) {
-            this.highchartsChart.destroy();
-        }
-    }
-
-    //#endregion Private methods
 }

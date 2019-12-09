@@ -7,6 +7,8 @@ import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
 import { Utilities } from './utilities';
+import { ChartChange } from './chartChange';
+import { ChangeDetection } from './changeDetection';
 
 //#endregion Imports
 
@@ -42,6 +44,7 @@ export class KustoChartHelper implements IChartHelper {
     private readonly elementId: string;
     private readonly visualizer: IVisualizer;
 
+    private queryResultData: IQueryResultData; // The original query result data
     private options: IChartOptions;
 
     //#endregion Private members
@@ -62,13 +65,21 @@ export class KustoChartHelper implements IChartHelper {
         // Update the chart options with defaults for optional values that weren't provided
         chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
 
+        // Detect the changes from the current chart
+        const changes = ChangeDetection.detectChanges(this.queryResultData, this.options, queryResultData, chartOptions);
+
+        // Update current options and data
         this.options = chartOptions;
-
-        // Apply query data transformation
-        const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
-        const transformed = this.transformQueryResultData(resolvedAsSeriesData, chartOptions);
-
-        this.transformedQueryResultData = transformed.data;
+        this.queryResultData = queryResultData;
+        
+        // First initialization / query data change / columns selection change
+        if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {        
+            // Apply query data transformation
+            const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
+            const transformed = this.transformQueryResultData(resolvedAsSeriesData, chartOptions);
+    
+            this.transformedQueryResultData = transformed.data;
+        }
 
         const visualizerOptions = {
             elementId: this.elementId,
@@ -76,7 +87,12 @@ export class KustoChartHelper implements IChartHelper {
             chartOptions: chartOptions
         };
 
-        this.visualizer.drawNewChart(visualizerOptions);
+        // First initialization
+        if(!changes) {
+            this.visualizer.drawNewChart(visualizerOptions);
+        } else { // Change existing chart
+            this.visualizer.updateExistingChart(visualizerOptions, changes);
+        }
     }
 
     public changeTheme(newTheme: ChartTheme): void {
