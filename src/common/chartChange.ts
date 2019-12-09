@@ -9,8 +9,8 @@ export enum ChartChange {
 export type ChangesMap = { [key in ChartChange]+?: boolean};
 
 export class Changes {
-    public changesMap: ChangesMap;
     public count: number;
+    private changesMap: ChangesMap;
 
     public constructor() {
         this.changesMap = {};

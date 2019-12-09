@@ -2,8 +2,9 @@
 
 import * as _ from 'lodash';
 import { Chart, ICategoriesAndSeries } from './chart';
-import { Utilities } from '../../../common/utilities';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
+import { Utilities } from '../../../common/utilities';
+import { IColumn } from '../../../common/chartModels';
 
 export class Pie extends Chart {
     //#region Methods override
@@ -21,7 +22,9 @@ export class Pie extends Chart {
         }
     }
 
-    public getStandardCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
+    public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+        const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);    
         const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
 
@@ -46,9 +49,11 @@ export class Pie extends Chart {
         }
     }
 
-    public getSplitByCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
+    public getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
+        const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
         const splitByIndexes = [xAxisColumnIndex];
         
         options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {

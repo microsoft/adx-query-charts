@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
+import { IColumn } from '../../../common/chartModels';
 
 //#endregion Imports
 
@@ -15,8 +16,11 @@ export interface ICategoriesAndSeries {
 }
 
 export abstract class Chart {
-    public getStandardCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number, isDatetimeAxis: boolean = false): ICategoriesAndSeries {
+    public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const chartOptions = options.chartOptions;
+        const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
+        const isDatetimeAxis: boolean = Utilities.isDate(xColumn.type);
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
         const yAxesIndexes = _.map(chartOptions.columnsSelection.yAxes, (yAxisColumn) => {
             return Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
         });
@@ -31,7 +35,7 @@ export abstract class Chart {
         options.queryResultData.rows.forEach((row) => {
             let xAxisValue: any = row[xAxisColumnIndex];
     
-            // If the x-axis is a date, convert it's value to milliseconds as this is what expected by 'Highcharts'
+            // If the x-axis is a date, convert its value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
                 const dateValue = Utilities.getValidDate(xAxisValue, chartOptions.utcOffset);
 
@@ -64,7 +68,11 @@ export abstract class Chart {
         return categoriesAndSeries;
     }
     
-    public getSplitByCategoriesAndSeries(options: IVisualizerOptions, xAxisColumnIndex: number, isDatetimeAxis: boolean = false): ICategoriesAndSeries {
+    public getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+        const xColumn: IColumn =  options.chartOptions.columnsSelection.xAxis;
+        const isDatetimeAxis: boolean = Utilities.isDate(xColumn.type);
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
+
         if(isDatetimeAxis) {
             return this.getSplitByCategoriesAndSeriesForDateXAxis(options, xAxisColumnIndex);
         }

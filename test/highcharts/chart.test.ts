@@ -41,11 +41,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 0;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex],  // country
+                        xAxis: columns[0],  // country
                         yAxes: [columns[2]] // request_count
                     },
                     utcOffset: 0
@@ -58,7 +57,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
-            const result: any = chart.getStandardCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ false);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -87,11 +86,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 1;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex],  // timestamp
+                        xAxis: columns[1],  // timestamp
                         yAxes: [columns[3]] // request_count
                     },
                     utcOffset: 0
@@ -104,7 +102,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
-            const result: any = chart.getStandardCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ true);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -133,11 +131,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 1;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex], // city
+                        xAxis: columns[1], // city
                         yAxes: [columns[2], columns[3]] // request_count and second_count
                     },
                     utcOffset: 0
@@ -150,7 +147,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
-            const result: any = chart.getStandardCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ false);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -184,11 +181,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 0;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex], // timestamp
+                        xAxis: columns[0], // timestamp
                         yAxes: [columns[3], columns[4]] // request_count and second_count
                     },
                     utcOffset: 0
@@ -201,7 +197,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
-            const result: any = chart.getStandardCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ true);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -242,11 +238,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 0;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex],    // country
+                        xAxis: columns[0],    // country
                         yAxes: [columns[2]],  // request_count
                         splitBy: [columns[1]] // city
                     },
@@ -260,7 +255,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
-            const result: any = chart.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ false);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -322,11 +317,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 1;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex],   // timestamp
+                        xAxis: columns[1],   // timestamp
                         yAxes: [columns[3]], // request_count
                         splitBy: [columns[2]], // city
                     },
@@ -340,7 +334,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
-            const result: any = chart.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ true);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -404,11 +398,10 @@ describe('Unit tests for Chart methods', () => {
             ];
         
             // Input
-            const xAxisColumnIndex = 1;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex],    // city
+                        xAxis: columns[1],    // city
                         yAxes: [columns[2]],  // request_count
                     },
                     utcOffset: 0
@@ -421,7 +414,7 @@ describe('Unit tests for Chart methods', () => {
         
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
-            const result: any = chart.getStandardCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ false);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -481,11 +474,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 0;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex],    // country
+                        xAxis: columns[0],    // country
                         yAxes: [columns[2]],  // request_count
                         splitBy: [columns[1]] // city
                     },
@@ -499,7 +491,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
-            const result: any = chart.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ false);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{
@@ -558,11 +550,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const xAxisColumnIndex = 0;
             const options: any = {
                 chartOptions: {
                     columnsSelection: {
-                        xAxis: columns[xAxisColumnIndex], // browser
+                        xAxis: columns[0], // browser
                         yAxes:  [columns[3]], // usage
                         splitBy: [columns[1], columns[2]] // version, minor_version
                     },
@@ -576,7 +567,7 @@ describe('Unit tests for Chart methods', () => {
 
             // Act
             const chart = ChartFactory.create(ChartType.Donut);
-            const result: any = chart.getSplitByCategoriesAndSeries(options, xAxisColumnIndex, /*isDatetimeAxis*/ false);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
                 series: [{

@@ -45,7 +45,7 @@ describe('Unit tests for ChangeDetection', () => {
 
             // Assert
             expect(result.count).toEqual(expected.count);
-            expect(result.changesMap).toEqual(expected.changesMap);
+            expect(result['changesMap']).toEqual(expected.changesMap);
         });
         
         it('When only the chart type was changed - chart changes is as expected', () => {
@@ -80,7 +80,7 @@ describe('Unit tests for ChangeDetection', () => {
 
             // Assert
             expect(result.count).toEqual(expected.count);
-            expect(result.changesMap).toEqual(expected.changesMap);
+            expect(result['changesMap']).toEqual(expected.changesMap);
         });
                 
         it('When there was columns selection change - chart changes is as expected', () => {
@@ -115,7 +115,7 @@ describe('Unit tests for ChangeDetection', () => {
 
             // Assert
             expect(result.count).toEqual(expected.count);
-            expect(result.changesMap).toEqual(expected.changesMap);
+            expect(result['changesMap']).toEqual(expected.changesMap);
         });
                
         it('When there was both columns selection and chart type change - chart changes is as expected', () => {
@@ -151,7 +151,7 @@ describe('Unit tests for ChangeDetection', () => {
 
             // Assert
             expect(result.count).toEqual(expected.count);
-            expect(result.changesMap).toEqual(expected.changesMap);
+            expect(result['changesMap']).toEqual(expected.changesMap);
         });
         
         it('When only the query result data was changed - chart changes is as expected', () => {
@@ -184,7 +184,7 @@ describe('Unit tests for ChangeDetection', () => {
 
             // Assert
             expect(result.count).toEqual(expected.count);
-            expect(result.changesMap).toEqual(expected.changesMap);
+            expect(result['changesMap']).toEqual(expected.changesMap);
         });
     });
     
