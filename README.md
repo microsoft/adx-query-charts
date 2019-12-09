@@ -49,11 +49,14 @@ chartHelper.draw(queryResultData, chartOptions);
 | chartType              | [ChartType](#ChartType) | Mandatory. <br>The type of the chart to draw                     |                 |
 | columnsSelection       | [IColumnsSelection](#IColumnsSelection)| The columns selection for the Axes and the split-by of the chart | If not provided, default columns will be selected. <br>See: getDefaultSelection method|
 | maxUniqueXValues       | number                  | The maximum number of the unique X-axis values.<br>The chart will show the biggest values, and the rest will be aggregated to a separate data point.| 100 |
-| exceedMaxDataPointLabel| string                  | The label of the data point that contains the aggregated value of all the X-axis values that exceed the 'maxUniqueXValues'.| 'OTHER' |
+| exceedMaxDataPointLabel| string                  | The label of the data point that contains the aggregated value of all the X-axis values that exceed the 'maxUniqueXValues'| 'OTHER' |
 | aggregationType        | [AggregationType](#AggregationType)         | Multiple rows with the same values for the X-axis and the split-by will be aggregated using a function of this type.<br>For example, assume we get the following query result data:<br>['2016-08-02T10:00:00Z', 'Chrome 51.0', 15], <br>['2016-08-02T10:00:00Z', 'Internet Explorer 9.0', 4]<br>When drawing a chart with columnsSelection = { xAxis: timestamp, yAxes: count_ }, and aggregationType = AggregationType.Sum we need to aggregate the values of the same timestamp value and return one row with ["2016-08-02T10:00:00Z", 19] | AggregationType.Sum |
 | title                  | string                  | The title of the chart                                           | |
 | utcOffset              | number                  | The desired offset from UTC in hours for date values. Used to handle timezone.<br>The offset will be added to the original date from the query results data.<br>For example:<br>For 'Africa/Harare'timezone provide utcOffset = 2 and the displayed date will be be:<br>'11/25/2019, 2:00 AM' instead of '11/25/2019, 12:00 AM' <br>See time zone [info](https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11)| 0 |
 | chartTheme             |[ChartTheme](#ChartTheme)| The theme of the chart                                           | ChartTheme.Light |
+| dateFormatter             |Function<br>(dateValue: Date, defaultFormat: DateFormat): string| Callback that is used to format the date values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset<br>&nbsp;&nbsp;&nbsp;&nbsp;[DateFormat](#DateFormat) - The default format of the label<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the dateValue| If not provided - the default formatting will apply |
+| numberFormatter |Function<br>(numberValue: number): string / number| Callback that is used to format number values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;numberValue - The original number<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string or number represents the display value of the numberValue |If not provided - the default formatting will apply |
+| xAxisTitleFormatter |Function<br>(xAxisColumn: IColumn) : string| Callback that is used to get the xAxis title<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IColumn](#IColumn) - The x-axis column<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The desired x-axis title |If not provided -  the xAxis title will be the xAxis column name|
 
 ### ChartType
 ```typescript
@@ -100,6 +103,18 @@ enum AggregationType {
 enum ChartTheme {
     Dark,
     Light
+}
+```
+
+### DateFormat
+```typescript
+enum DateFormat {
+    FullDate,
+    FullTime,
+    HourAndMinute,
+    MonthAndDay,
+    MonthAndYear,
+    Year
 }
 ```
 

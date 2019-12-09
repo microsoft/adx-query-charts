@@ -53,6 +53,15 @@ export enum AggregationType {
     Max = 'Max'
 }
 
+export enum DateFormat {
+    FullDate = 'FullDate',
+    FullTime = 'FullTime',
+    HourAndMinute = 'HourAndMinute',
+    MonthAndDay = 'MonthAndDay',
+    MonthAndYear = 'MonthAndYear',
+    Year = 'Year'
+}
+
 export enum ChartTheme {
     Dark = 'Dark',
     Light = 'Light'
@@ -141,6 +150,34 @@ export interface IChartOptions {
      * [Default value: 0]
      */
     utcOffset?: number;
+    
+    /**
+     * Callback that is used to format the date values both in the axis and the tooltip. If not provided - the default formatting will apply
+     * callback inputs:
+     *     @param dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset.
+     *     @param defaultFormat - The default format of the label.
+     * callback return value:
+     *     @returns The string represents the display value of the dateValue 
+     */
+    dateFormatter?: (dateValue: Date, defaultFormat: DateFormat) => string;
+
+    /**
+     * Callback that is used to format number values both in the axis and the tooltip. If isn't provided - the default formatting will apply.
+     * callback inputs:
+     *     @param numberValue - The original number
+     * callback return value:
+     *     @returns The string or number represents the display value of the numberValue
+     */
+    numberFormatter?: (numberValue: number) => number | string;
+
+    /**
+     * Callback that is used to get the xAxis title. If isn't provided - the xAxis title will be the xAxis column name.
+     * callback inputs:
+     *     @param xAxisColumn - The x-axis column
+     * callback return value:
+     *     @returns The desired x-axis title
+     */
+    xAxisTitleFormatter?: (xAxisColumn: IColumn) => string;
 }
 
 export interface IChartHelper {
