@@ -74,12 +74,10 @@ export class _LimitVisResults {
         this.limitAllRows(internalParams, limitedResults);
         this.aggregateAndEscapeRows(internalParams, limitedResults);
 
-        const xIndex = params.axesIndexes.xAxis;
-
         // Sort the x-Axis only if it's a date time column
         if (params.xColumnType === DraftColumnType.DateTime) {
             // Remove empty date values since they can't be placed on the x-axis timeline, then sort by the date
-            limitedResults.rows = _.sortBy(limitedResults.rows.filter(row => row[xIndex] != null), (row) => {
+            limitedResults.rows = _.sortBy(limitedResults.rows.filter(row => row[0] != null), (row) => {
                 return moment(row[0]).valueOf();
             });
         }
