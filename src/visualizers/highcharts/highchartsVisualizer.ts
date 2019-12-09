@@ -35,6 +35,15 @@ export class HighchartsVisualizer implements IVisualizer {
     }
            
     public updateExistingChart(options: IVisualizerOptions, changes: Changes): void {
+        // Make sure the there is an existing chart
+        const chartContainer = document.querySelector('#' + this.options.elementId);
+    
+        if(!chartContainer || chartContainer.children.length === 0) {
+            this.drawNewChart(options);
+
+            return;
+        }
+
         // Only the chart type was changed
         if(changes.count === 1 && changes.changesMap[ChartChange.ChartType]) {
             const oldChart = this.currentChart;

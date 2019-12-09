@@ -21,7 +21,7 @@ export abstract class Chart {
             return Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
         });
 
-        const categoriesAndSeries = {
+        const categoriesAndSeries: ICategoriesAndSeries = {
             series: [],
             categories: isDatetimeAxis ? undefined : [] 
         };
@@ -76,7 +76,7 @@ export abstract class Chart {
         const splitByColumnIndex = Utilities.getColumnIndex(options.queryResultData, splitByColumn);
         const uniqueXValues = {};
         const uniqueSplitByValues = {};            
-        const categoriesAndSeries = {
+        const categoriesAndSeries: ICategoriesAndSeries = {
             series: [],
             categories: undefined
         };
@@ -131,13 +131,12 @@ export abstract class Chart {
         const splitByMap = {};
         const series = [];
 
-
         options.queryResultData.rows.forEach((row) => {
             const splitByValue: string = <string>row[splitByColumnIndex];
             const yValue = row[yAxisColumnIndex];
             let xValue = row[xAxisColumnIndex];
 
-            // For date the a-axis, convert it's value to ms as this is what expected by Highcharts
+            // For date the a-axis, convert its value to ms as this is what expected by Highcharts
             const dateValue = Utilities.getValidDate(<string>xValue, options.chartOptions.utcOffset);
 
             xValue = dateValue.valueOf();

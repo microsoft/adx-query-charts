@@ -22,7 +22,6 @@ export class ChangeDetection {
 
         if(ChangeDetection.isColumnsSelectionChanged(newChartOptions, oldChartOptions)) {
             changes.addChange(ChartChange.ColumnsSelection);
-
         }
 
         if(oldChartOptions.chartType !== newChartOptions.chartType) {
