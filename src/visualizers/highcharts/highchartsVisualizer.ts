@@ -200,19 +200,13 @@ export class HighchartsVisualizer implements IVisualizer {
 
                 // Y axis
                 const yAxes = chartOptions.columnsSelection.yAxes;
-                let yColumn;
-                
-                if(yAxes.length === 1) {
-                    yColumn = yAxes[0];
-                } else { // Multiple y-axes - find the current y column
-                    const yColumnIndex = _.findIndex(yAxes, (col) => { 
-                        return col.name === this.series.name 
-                    });
 
-                    yColumn = yAxes[yColumnIndex];
-                }
+                // Find the current y column
+                const yColumnIndex = _.findIndex(yAxes, (col) => { 
+                    return col.name === this.series.name 
+                });
 
-                tooltip += getSingleTooltip(yColumn, this.y);
+                tooltip += getSingleTooltip( yAxes[yColumnIndex], this.y);
                 
                 // Split by
                 const splitBy = chartOptions.columnsSelection.splitBy;

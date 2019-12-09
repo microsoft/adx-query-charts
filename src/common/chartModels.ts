@@ -167,9 +167,9 @@ export interface IChartOptions {
      * Callback inputs:
      *     @param numberValue - The original number
      * Callback return value:
-     *     @returns The string or number represents the display value of the numberValue
+     *     @returns The string represents the display value of the numberValue
      */
-    numberFormatter?: (numberValue: number) => number | string;
+    numberFormatter?: (numberValue: number) => string;
 
     /**
      * Callback that is used to get the xAxis title. If isn't provided - the xAxis title will be the xAxis column name.
