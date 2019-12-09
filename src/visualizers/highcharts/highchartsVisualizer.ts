@@ -14,7 +14,6 @@ import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
 import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
-import yargs = require('yargs');
 
 //#endregion Imports
 
