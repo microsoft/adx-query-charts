@@ -49,7 +49,7 @@ export class HighchartsVisualizer implements IVisualizer {
             const oldChart = this.currentChart;
             const newChart = ChartFactory.create(options.chartOptions.chartType);
 
-            // If the categories and series were changed - re-draw the chart
+            // If the new chart categories and series builder method is different from the previous chart's method - re-draw the chart
             if(oldChart.getSplitByCategoriesAndSeries !== newChart.getSplitByCategoriesAndSeries || 
                 oldChart.getStandardCategoriesAndSeries !== newChart.getStandardCategoriesAndSeries) {
                 this.drawNewChart(options);
