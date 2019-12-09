@@ -21,4 +21,8 @@ export class Changes {
         this.changesMap[chartChange] = true;
         this.count++;
     }
+
+    public isPendingChange(chartChange: ChartChange): boolean {
+        return !!this.changesMap[chartChange];
+    }
 }
