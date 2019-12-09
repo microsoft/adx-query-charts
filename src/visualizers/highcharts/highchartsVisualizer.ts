@@ -189,7 +189,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 function getSingleTooltip(column: IColumn, originalValue: any, columnName?: string) {
                     const formattedValue = getFormattedValue(originalValue, column.type);
 
-                    return `<tr><td style="color:${context.color};padding:0">${columnName || column.name}: </td><td style="padding:0"><b>${formattedValue}</b></td></tr>`;
+                    return `<tr><td style="color:${context.color}">${columnName || column.name}: </td><td><b>${formattedValue}</b></td></tr>`;
                 }
 
                 // X axis
