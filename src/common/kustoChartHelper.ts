@@ -73,7 +73,7 @@ export class KustoChartHelper implements IChartHelper {
         this.queryResultData = queryResultData;
         
         // First initialization / query data change / columns selection change
-        if(!changes || changes.changesMap[ChartChange.QueryData] || changes.changesMap[ChartChange.ColumnsSelection]) {        
+        if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {        
             // Apply query data transformation
             const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
             const transformed = this.transformQueryResultData(resolvedAsSeriesData, chartOptions);

@@ -36,7 +36,7 @@ export class HighchartsVisualizer implements IVisualizer {
     }
            
     public updateExistingChart(options: IVisualizerOptions, changes: Changes): void {
-        // Make sure the there is an existing chart
+        // Make sure that there is an existing chart
         const chartContainer = document.querySelector('#' + this.options.elementId);
     
         if(!chartContainer || chartContainer.children.length === 0) {
@@ -46,7 +46,7 @@ export class HighchartsVisualizer implements IVisualizer {
         }
 
         // Only the chart type was changed
-        if(changes.count === 1 && changes.changesMap[ChartChange.ChartType]) {
+        if(changes.count === 1 && changes.isPendingChange(ChartChange.ChartType)) {
             const oldChart = this.currentChart;
             const newChart = ChartFactory.create(options.chartOptions.chartType);
 
@@ -61,7 +61,7 @@ export class HighchartsVisualizer implements IVisualizer {
             this.currentChart = newChart;
             this.options = options;
             
-            // Build the options that needs to be updated
+            // Build the options that need to be updated
             let newOptions: Highcharts.Options = this.currentChart.getChartTypeOptions();
 
             // Apply the changes
