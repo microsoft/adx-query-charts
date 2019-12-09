@@ -50,7 +50,7 @@ export class HighchartsVisualizer implements IVisualizer {
             const oldChart = this.currentChart;
             const newChart = ChartFactory.create(options.chartOptions.chartType);
 
-            // If the categories and series were changed - re-draw the chart
+            // If the new chart categories and series builder method is different from the previous chart's method - re-draw the chart
             if(oldChart.getSplitByCategoriesAndSeries !== newChart.getSplitByCategoriesAndSeries || 
                 oldChart.getStandardCategoriesAndSeries !== newChart.getStandardCategoriesAndSeries) {
                 this.drawNewChart(options);
@@ -137,7 +137,7 @@ export class HighchartsVisualizer implements IVisualizer {
             tooltip: this.getChartTooltip(chartOptions, isDatetimeAxis)
         };
 
-        const categoriesAndSeries = this.getCategoriesAndSeries(isDatetimeAxis);
+        const categoriesAndSeries = this.getCategoriesAndSeries();
         const chartTypeOptions = this.currentChart.getChartTypeOptions();
         
         highchartsOptions = _.merge(highchartsOptions, chartTypeOptions, categoriesAndSeries);
@@ -239,16 +239,14 @@ export class HighchartsVisualizer implements IVisualizer {
         }
     }
 
-    private getCategoriesAndSeries(isDatetimeAxis: boolean): Highcharts.Options {
-        const columnsSelection = this.options.chartOptions.columnsSelection;
-        const xAxisColumn = columnsSelection.xAxis;
-        const xAxisColumnIndex = Utilities.getColumnIndex(this.options.queryResultData, xAxisColumn);  
+    private getCategoriesAndSeries(): Highcharts.Options {
+        const columnsSelection = this.options.chartOptions.columnsSelection; 
         let categoriesAndSeries;
 
         if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
-            categoriesAndSeries = this.currentChart.getSplitByCategoriesAndSeries(this.options, xAxisColumnIndex, isDatetimeAxis);
+            categoriesAndSeries = this.currentChart.getSplitByCategoriesAndSeries(this.options);
         } else {
-            categoriesAndSeries = this.currentChart.getStandardCategoriesAndSeries(this.options, xAxisColumnIndex, isDatetimeAxis);
+            categoriesAndSeries = this.currentChart.getStandardCategoriesAndSeries(this.options);
         }
 
         return {
