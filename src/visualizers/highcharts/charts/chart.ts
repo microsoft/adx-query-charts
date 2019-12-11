@@ -4,9 +4,10 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
+import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn } from '../../../common/chartModels';
+import { IColumn, IChartOptions, DraftColumnType, DateFormat } from '../../../common/chartModels';
 
 //#endregion Imports
 
@@ -138,6 +139,42 @@ export abstract class Chart {
             plotOptions: this.plotOptions()
         };
     }
+        
+    public getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
+        return function () {
+            const context = this;
+
+            // X axis
+            const xAxisColumn = chartOptions.columnsSelection.xAxis;
+            const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
+            let tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, xAxisColumn, this.x, xColumnTitle);
+
+            // Y axis
+            const yAxes = chartOptions.columnsSelection.yAxes;
+            let yColumn;
+            
+            if(yAxes.length === 1) {
+                yColumn = yAxes[0];
+            } else { // Multiple y-axes - find the current y column
+                const yColumnIndex = _.findIndex(yAxes, (col) => { 
+                    return col.name === this.series.name 
+                });
+
+                yColumn = yAxes[yColumnIndex];
+            }
+
+            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, this.y);
+            
+            // Split by
+            const splitBy = chartOptions.columnsSelection.splitBy;
+
+            if(splitBy && splitBy.length > 0) {
+                tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, splitBy[0], this.series.name);
+            }
+            
+            return '<table>' + tooltip + '</table>';
+        }
+    }
 
     //#region Abstract methods
 
@@ -148,7 +185,7 @@ export abstract class Chart {
     //#endregion Abstract methods
 
     //#region Private methods
-   
+
     private getSplitByCategoriesAndSeriesForDateXAxis(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
         const columnsSelection = options.chartOptions.columnsSelection;
         const yAxisColumn = columnsSelection.yAxes[0];

@@ -134,7 +134,11 @@ export class HighchartsVisualizer implements IVisualizer {
                 }
             },
             yAxis: this.getYAxis(chartOptions),
-            tooltip: this.getChartTooltip(chartOptions)
+            tooltip: {
+                formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
+                shared: false,
+                useHTML: true
+            }
         };
 
         const categoriesAndSeries = this.getCategoriesAndSeries();
@@ -167,59 +171,6 @@ export class HighchartsVisualizer implements IVisualizer {
         return {
             formatter: formatter
         };
-    }
-    
-    private getChartTooltip(chartOptions: IChartOptions): Highcharts.TooltipOptions {
-        return {
-            formatter: function () {
-                const context = this;
-
-                function getFormattedValue(originalValue: number, columnType: DraftColumnType) {
-                    if(chartOptions.numberFormatter && Utilities.isNumeric(columnType)) {
-                        return chartOptions.numberFormatter(originalValue);
-                    } else if(Utilities.isDate(columnType)) {
-                        var date = new Date(originalValue);
-
-                        return chartOptions.dateFormatter ? chartOptions.dateFormatter(date, DateFormat.FullDate) : date.toString();
-                    }
-
-                    return originalValue;
-                }
-
-                function getSingleTooltip(column: IColumn, originalValue: any, columnName?: string) {
-                    const formattedValue = getFormattedValue(originalValue, column.type);
-
-                    return `<tr><td style="color:${context.color}">${columnName || column.name}: </td><td><b>${formattedValue}</b></td></tr>`;
-                }
-
-                // X axis
-                const xAxisColumn = chartOptions.columnsSelection.xAxis;
-                const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
-                const xValue = this.x !== undefined ? this.x : this.key;
-                let tooltip = getSingleTooltip(xAxisColumn, xValue, xColumnTitle);
-
-                // Y axis
-                const yAxes = chartOptions.columnsSelection.yAxes;
-
-                // Find the current y column
-                const yColumnIndex = _.findIndex(yAxes, (col) => { 
-                    return col.name === this.series.name 
-                });
-
-                tooltip += getSingleTooltip( yAxes[yColumnIndex], this.y);
-                
-                // Split by
-                const splitBy = chartOptions.columnsSelection.splitBy;
-
-                if(splitBy && splitBy.length > 0) {
-                    tooltip += getSingleTooltip(splitBy[0], this.series.name);
-                }
-                
-                return '<table>' + tooltip + '</table>';
-            },
-            shared: false,
-            useHTML: true
-        }
     }
 
     private getYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {

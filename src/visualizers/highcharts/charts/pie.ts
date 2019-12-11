@@ -2,9 +2,10 @@
 
 import * as _ from 'lodash';
 import { Chart, ICategoriesAndSeries } from './chart';
+import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn } from '../../../common/chartModels';
+import { IColumn, IChartOptions, DraftColumnType, DateFormat } from '../../../common/chartModels';
 
 export class Pie extends Chart {
     //#region Methods override
@@ -52,14 +53,8 @@ export class Pie extends Chart {
     public getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
-        const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
-        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
-        const splitByIndexes = [xAxisColumnIndex];
+        const keyIndexes = this.getAllPieKeyIndexes(options);
         
-        options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {
-            splitByIndexes.push(Utilities.getColumnIndex(options.queryResultData, splitByColumn));
-        });
-
         // Build the data for the multi-level pie
         let pieData = {};
         let pieLevelData = pieData;
@@ -67,19 +62,19 @@ export class Pie extends Chart {
         options.queryResultData.rows.forEach((row) => {
             const yAxisValue = row[yAxisColumnIndex];
 
-            splitByIndexes.forEach((splitByIndex) => {  
-                const splitByValue: string = <string>row[splitByIndex];
-                let splitByMap = pieLevelData[splitByValue];
+            keyIndexes.forEach((keyIndex) => {  
+                const keyValue: string = <string>row[keyIndex];
+                let keysMap = pieLevelData[keyValue];
 
-                if(!splitByMap) {
-                    pieLevelData[splitByValue] = {
+                if(!keysMap) {
+                    pieLevelData[keyValue] = {
                         drillDown: {},
                         y: 0
                     };
                 }
 
-                pieLevelData[splitByValue].y += yAxisValue;
-                pieLevelData = pieLevelData[splitByValue].drillDown;
+                pieLevelData[keyValue].y += yAxisValue;
+                pieLevelData = pieLevelData[keyValue].drillDown;
             });
 
             pieLevelData = pieData;
@@ -89,6 +84,43 @@ export class Pie extends Chart {
 
         return {
             series: series
+        }
+    }
+  
+    public getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
+        return function () {
+            const context = this;
+            let tooltip: string;
+
+            // Key
+            const splitBy = chartOptions.columnsSelection.splitBy;
+            let keyColumn: IColumn;
+            let keyColumnName: string;
+
+            if(splitBy && splitBy.length > 0) {
+                // Find the current key column
+                const keyColumnIndex = _.findIndex(splitBy, (col) => { 
+                    return col.name === this.series.name 
+                });
+    
+                keyColumn = splitBy[keyColumnIndex];
+            }
+
+            // If the key column isn't one of the splitBy columns -> it's the y axis column
+            if(!keyColumn) {
+                keyColumn = chartOptions.columnsSelection.xAxis;
+                keyColumnName = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(keyColumn) : undefined;     
+            }
+
+            tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, keyColumn, this.key, keyColumnName);  
+
+            // Y axis
+            const yColumn = chartOptions.columnsSelection.yAxes[0]; // We allow only 1 y axis in pie chart
+            const yValueSuffix = Number(Math.round(<any>(context.percentage + 'e2')) + 'e-2'); // Round the percentage to up to 2 decimal points
+
+            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, this.y, /*columnName*/ undefined, ` (${yValueSuffix}%)`);
+
+            return '<table>' + tooltip + '</table>';
         }
     }
 
@@ -148,6 +180,22 @@ export class Pie extends Chart {
         }
 
         return series;
+    }
+
+    /**
+     * Returns an array that includes all the indexes of the columns that represent a pie slice key
+     * @param chartOptions 
+     */
+    private getAllPieKeyIndexes(options: IVisualizerOptions) {
+        const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
+        const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
+        const keyIndexes = [xAxisColumnIndex];
+        
+        options.chartOptions.columnsSelection.splitBy.forEach((splitByColumn) => {
+            keyIndexes.push(Utilities.getColumnIndex(options.queryResultData, splitByColumn));
+        });
+
+        return keyIndexes;
     }
 
     //#endregion Private methods
