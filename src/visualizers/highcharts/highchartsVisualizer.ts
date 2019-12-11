@@ -9,10 +9,11 @@ import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
-import { ChartTheme } from '../../common/chartModels';
+import { ChartTheme, DateFormat, IChartOptions, IColumn, DraftColumnType } from '../../common/chartModels';
 import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
+import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
 
 //#endregion Imports
 
@@ -126,12 +127,18 @@ export class HighchartsVisualizer implements IVisualizer {
             },
             xAxis: {
                 type: isDatetimeAxis ? 'datetime' : undefined,
+                labels: this.getLabelsFormatter(chartOptions, chartOptions.columnsSelection.xAxis),
                 title: {
-                    text: this.getXAxisTitle(),
+                    text: this.getXAxisTitle(chartOptions),
                     align: 'middle'
                 }
             },
-            yAxis: this.getYAxis()
+            yAxis: this.getYAxis(chartOptions),
+            tooltip: {
+                formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
+                shared: false,
+                useHTML: true
+            }
         };
 
         const categoriesAndSeries = this.getCategoriesAndSeries();
@@ -142,19 +149,49 @@ export class HighchartsVisualizer implements IVisualizer {
         return highchartsOptions;
     }
 
-    private getYAxis(): Highcharts.YAxisOptions {
+    
+    private getLabelsFormatter(chartOptions: IChartOptions, column: IColumn) {
+        let formatter;
+
+        if(chartOptions.numberFormatter && Utilities.isNumeric(column.type)) {
+            formatter = function() {
+                const dataPoint = this;
+
+                return chartOptions.numberFormatter(dataPoint.value);
+            }
+        } else if(chartOptions.dateFormatter && Utilities.isDate(column.type)) {
+            formatter = function() {
+                const dataPoint = this;
+                const dateFormat = HighchartsDateFormatToCommon[dataPoint.dateTimeLabelFormat] || DateFormat.FullDate;
+        
+                return chartOptions.dateFormatter(new Date(dataPoint.value), dateFormat);
+            }
+        }
+
+        return {
+            formatter: formatter
+        };
+    }
+
+    private getYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {
         const yAxis = this.options.chartOptions.columnsSelection.yAxes[0];
         const yAxisOptions = {
             title: {
                 text: yAxis.name
-            }
+            },
+            labels: this.getLabelsFormatter(chartOptions, yAxis)
         }
         
         return yAxisOptions;
     }
 
-    private getXAxisTitle(): string {
-        const xAxisColumn = this.options.chartOptions.columnsSelection.xAxis;
+    private getXAxisTitle(chartOptions: IChartOptions): string {
+        const xAxisColumn = chartOptions.columnsSelection.xAxis;
+        const xAxisTitleFormatter = chartOptions.xAxisTitleFormatter;
+
+        if(xAxisTitleFormatter) {
+            return xAxisTitleFormatter(xAxisColumn);
+        }
 
         return xAxisColumn.name;
     }
