@@ -106,7 +106,7 @@ export class Pie extends Chart {
                 keyColumn = splitBy[keyColumnIndex];
             }
 
-            // If the key column isn't one of the splitBy columns -> it's the y axis column
+            // If the key column isn't one of the splitBy columns -> it's the x axis column
             if(!keyColumn) {
                 keyColumn = chartOptions.columnsSelection.xAxis;
                 keyColumnName = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(keyColumn) : undefined;     
