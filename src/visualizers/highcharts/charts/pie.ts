@@ -5,7 +5,7 @@ import { Chart, ICategoriesAndSeries } from './chart';
 import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IChartOptions, DraftColumnType, DateFormat } from '../../../common/chartModels';
+import { IColumn, IChartOptions } from '../../../common/chartModels';
 
 export class Pie extends Chart {
     //#region Methods override

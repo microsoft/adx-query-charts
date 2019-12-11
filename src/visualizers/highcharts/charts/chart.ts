@@ -7,7 +7,7 @@ import * as Highcharts from 'highcharts';
 import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IChartOptions, DraftColumnType, DateFormat } from '../../../common/chartModels';
+import { IColumn, IChartOptions } from '../../../common/chartModels';
 
 //#endregion Imports
 
