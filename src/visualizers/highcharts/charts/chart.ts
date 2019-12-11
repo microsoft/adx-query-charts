@@ -130,6 +130,25 @@ export abstract class Chart {
         return categoriesAndSeries;
     }
 
+    public getChartTypeOptions(): Highcharts.Options {
+        return {
+            chart: {
+                type: this.getChartType()
+            },
+            plotOptions: this.plotOptions()
+        };
+    }
+
+    //#region Abstract methods
+
+    protected abstract getChartType(): string;
+
+    protected abstract plotOptions(): Highcharts.PlotOptions;
+
+    //#endregion Abstract methods
+
+    //#region Private methods
+   
     private getSplitByCategoriesAndSeriesForDateXAxis(options: IVisualizerOptions, xAxisColumnIndex: number): ICategoriesAndSeries {
         const columnsSelection = options.chartOptions.columnsSelection;
         const yAxisColumn = columnsSelection.yAxes[0];
@@ -168,20 +187,5 @@ export abstract class Chart {
         }
     }
 
-    public getChartTypeOptions(): Highcharts.Options {
-        return {
-            chart: {
-                type: this.getChartType()
-            },
-            plotOptions: this.plotOptions()
-        };
-    }
-
-    //#region Abstract methods
-
-    protected abstract getChartType(): string;
-
-    protected abstract plotOptions(): Highcharts.PlotOptions;
-
-    //#endregion Abstract methods
+    //#endregion Private methods
 }

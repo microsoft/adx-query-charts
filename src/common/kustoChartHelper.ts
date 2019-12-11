@@ -75,8 +75,7 @@ export class KustoChartHelper implements IChartHelper {
         // First initialization / query data change / columns selection change
         if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {        
             // Apply query data transformation
-            const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
-            const transformed = this.transformQueryResultData(resolvedAsSeriesData, chartOptions);
+            const transformed = this.transformQueryResultData(queryResultData, chartOptions);
     
             this.transformedQueryResultData = transformed.data;
         }
@@ -161,12 +160,16 @@ export class KustoChartHelper implements IChartHelper {
     * @returns transformed data if the transformation succeeded. Otherwise - returns null
     */
     public transformQueryResultData(queryResultData: IQueryResultData, chartOptions: IChartOptions): ITransformedQueryResultData {
+        // Try to resolve results as series
+        const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
+
         // Update the chart options with defaults for optional values that weren't provided
-        chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
+        chartOptions = this.updateDefaultChartOptions(resolvedAsSeriesData, chartOptions);
+
         const chartColumns: IColumn[] = [];
         const indexOfXAxisColumn: number[] = [];
 
-        if (!this.addColumnsIfExistInResult([chartOptions.columnsSelection.xAxis], queryResultData, indexOfXAxisColumn, chartColumns)) {
+        if (!this.addColumnsIfExistInResult([chartOptions.columnsSelection.xAxis], resolvedAsSeriesData, indexOfXAxisColumn, chartColumns)) {
             return null;
         }
 
@@ -174,20 +177,20 @@ export class KustoChartHelper implements IChartHelper {
         const splitByColumnsSelection = chartOptions.columnsSelection.splitBy;
         const indexesOfSplitByColumns: number[] = [];
 
-        if (splitByColumnsSelection && !this.addColumnsIfExistInResult(splitByColumnsSelection, queryResultData, indexesOfSplitByColumns, chartColumns)) {
+        if (splitByColumnsSelection && !this.addColumnsIfExistInResult(splitByColumnsSelection, resolvedAsSeriesData, indexesOfSplitByColumns, chartColumns)) {
             return null;
         }
 
         // Get all the indexes for all the y fields
         const indexesOfYAxes: number[] = [];
 
-        if (!this.addColumnsIfExistInResult(chartOptions.columnsSelection.yAxes, queryResultData, indexesOfYAxes, chartColumns)) {
+        if (!this.addColumnsIfExistInResult(chartOptions.columnsSelection.yAxes, resolvedAsSeriesData, indexesOfYAxes, chartColumns)) {
             return null;
         }
 
         // Create transformed rows for visualization
         const limitAndAggregateParams: ILimitAndAggregateParams = {
-            queryResultData: queryResultData,
+            queryResultData: resolvedAsSeriesData,
             axesIndexes: {
                 xAxis: indexOfXAxisColumn[0],
                 yAxes: indexesOfYAxes,
