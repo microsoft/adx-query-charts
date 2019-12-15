@@ -37,23 +37,7 @@ export class HighchartsVisualizer implements IVisualizer {
             this.themeOptions = Themes.getThemeOptions(chartOptions.chartTheme);
     
             if(chartOptions.onFinishDataTransformation) {
-                const series = this.basicHighchartsOptions.series;
-                let numberOfDataPoints = 0;
-    
-                series.forEach((currentSeries) => {
-                    numberOfDataPoints+= currentSeries['data'].length;
-                });
-    
-                const drawChartResolver = chartOptions.onFinishDataTransformation({ numberOfDataPoints: numberOfDataPoints });
-    
-                // Continue drawing the chart only after drawChartResolver is resolved
-                drawChartResolver.then((continueDraw: boolean) => {
-                    if(continueDraw) {
-                        this.draw(resolve);
-                    } else {
-                        resolve(); // Resolve without drawing the chart
-                    }
-                });
+                this.onFinishDataTransformation(chartOptions, resolve);
             } else {
                 // Draw the chart
                 this.draw(resolve);
@@ -179,8 +163,7 @@ export class HighchartsVisualizer implements IVisualizer {
 
         return highchartsOptions;
     }
-
-    
+  
     private getLabelsFormatter(chartOptions: IChartOptions, column: IColumn) {
         let formatter;
 
@@ -249,6 +232,28 @@ export class HighchartsVisualizer implements IVisualizer {
             },
             series: categoriesAndSeries.series
         }
+    }
+
+    private onFinishDataTransformation(chartOptions: IChartOptions, resolve: ResolveFn): void {
+        // Calculate the number of data points
+        let numberOfDataPoints = 0;
+
+        this.basicHighchartsOptions.series.forEach((currentSeries) => {
+            numberOfDataPoints+= currentSeries['data'].length;
+        });
+
+        const drawChartResolver = chartOptions.onFinishDataTransformation({ 
+            numberOfDataPoints: numberOfDataPoints 
+        });
+
+        // Continue drawing the chart only after drawChartResolver is resolved
+        drawChartResolver.then((continueDraw: boolean) => {
+            if(continueDraw) {
+                this.draw(resolve);
+            } else {
+                resolve(); // Resolve without drawing the chart
+            }
+        });
     }
 
     //#endregion Private methods

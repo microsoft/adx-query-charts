@@ -88,7 +88,7 @@ export interface IAxesInfo<T> {
 
 export interface IColumnsSelection extends IAxesInfo<IColumn> {}
 
-export interface IDataTransformation {
+export interface IDataTransformationInfo {
     numberOfDataPoints: number;
 }
 
@@ -194,7 +194,7 @@ export interface IChartOptions {
      *              When resolved with true - the chart will continue the drawing.
      *              When resolved with false - the chart drawing will be canceled.
      */
-    onFinishDataTransformation?: (dataTransformationInfo: IDataTransformation) => Promise<boolean>;
+    onFinishDataTransformation?: (dataTransformationInfo: IDataTransformationInfo) => Promise<boolean>;
     
     /**
      * Callback that is called when the chart drawing is finished.

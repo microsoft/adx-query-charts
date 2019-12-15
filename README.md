@@ -57,7 +57,7 @@ chartHelper.draw(queryResultData, chartOptions);
 | dateFormatter          | Function<br>(dateValue: Date, defaultFormat: DateFormat): string| Callback that is used to format the date values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset<br>&nbsp;&nbsp;&nbsp;&nbsp;[DateFormat](#DateFormat) - The default format of the label<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the dateValue| If not provided - the default formatting will apply |
 | numberFormatter        | Function<br>(numberValue: number): string | Callback that is used to format number values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;numberValue - The original number<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the numberValue |If not provided - the default formatting will apply |
 | xAxisTitleFormatter    | Function<br>(xAxisColumn: IColumn) : string | Callback that is used to get the xAxis title<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IColumn](#IColumn) - The x-axis column<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The desired x-axis title |If not provided -  the xAxis title will be the xAxis column name |
-| onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformation) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformation](#IDataTransformation) -  The information regarding the applied transformations<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
+| onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformationInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformationInfo](#IDataTransformationInfo) -  The information regarding the applied transformations<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
 | onFinishDrawing        | Function() : void       | Callback that is called when the chart drawing is finished       | | |
 
 ### ChartType
@@ -180,9 +180,9 @@ interface ISupportedColumnTypes {
 ```
 See [DraftColumnType](#DraftColumnType) 
 
-### IDataTransformation
+### IDataTransformationInfo
 ```typescript
-interface IDataTransformation {
+interface IDataTransformationInfo {
     numberOfDataPoints: number;
 }
 ```
