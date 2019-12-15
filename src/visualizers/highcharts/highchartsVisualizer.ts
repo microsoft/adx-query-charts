@@ -17,6 +17,8 @@ import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
 
 //#endregion Imports
 
+type ResolveFn = (value?: void | PromiseLike<void>) => void;
+
 export class HighchartsVisualizer implements IVisualizer {
     private options: IVisualizerOptions;
     private highchartsChart: Highcharts.Chart;
@@ -25,54 +27,78 @@ export class HighchartsVisualizer implements IVisualizer {
     private currentChart: Chart;
     private chartContainerResizeSensor: ResizeSensor;
 
-    public drawNewChart(options: IVisualizerOptions): void {
-        this.options = options;
-        this.currentChart = ChartFactory.create(options.chartOptions.chartType);
-        this.basicHighchartsOptions = this.getHighchartsOptions();
-        this.themeOptions = Themes.getThemeOptions(options.chartOptions.chartTheme);
-
-        // Draw the chart
-        this.draw();
+    public drawNewChart(options: IVisualizerOptions): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const chartOptions = options.chartOptions;
+    
+            this.options = options;
+            this.currentChart = ChartFactory.create(chartOptions.chartType);
+            this.basicHighchartsOptions = this.getHighchartsOptions();
+            this.themeOptions = Themes.getThemeOptions(chartOptions.chartTheme);
+    
+            if(chartOptions.onFinishDataTransformation) {
+                const series = this.basicHighchartsOptions.series;
+                let numberOfDataPoints = 0;
+    
+                series.forEach((currentSeries) => {
+                    numberOfDataPoints+= currentSeries['data'].length;
+                });
+    
+                const drawChartResolver = chartOptions.onFinishDataTransformation({ numberOfDataPoints: numberOfDataPoints });
+    
+                // Continue drawing the chart only after drawChartResolver is resolved
+                drawChartResolver.then((continueDraw: boolean) => {
+                    if(continueDraw) {
+                        this.draw(resolve);
+                    } else {
+                        resolve(); // Resolve without drawing the chart
+                    }
+                });
+            } else {
+                // Draw the chart
+                this.draw(resolve);
+            }
+        });
     }
            
-    public updateExistingChart(options: IVisualizerOptions, changes: Changes): void {
-        // Make sure that there is an existing chart
-        const chartContainer = document.querySelector('#' + this.options.elementId);
+    public updateExistingChart(options: IVisualizerOptions, changes: Changes): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            // Make sure that there is an existing chart
+            const chartContainer = document.querySelector('#' + this.options.elementId);
+            const isChartExist = chartContainer && chartContainer.children.length > 0;
+            const isChartTypeTheOnlyChange = changes.count === 1 && changes.isPendingChange(ChartChange.ChartType);
+
+            if(isChartExist && isChartTypeTheOnlyChange) {
+                const oldChart = this.currentChart;
+                const newChart = ChartFactory.create(options.chartOptions.chartType);
     
-        if(!chartContainer || chartContainer.children.length === 0) {
-            this.drawNewChart(options);
-
-            return;
-        }
-
-        // Only the chart type was changed
-        if(changes.count === 1 && changes.isPendingChange(ChartChange.ChartType)) {
-            const oldChart = this.currentChart;
-            const newChart = ChartFactory.create(options.chartOptions.chartType);
-
-            // If the new chart categories and series builder method is different from the previous chart's method - re-draw the chart
-            if(oldChart.getSplitByCategoriesAndSeries !== newChart.getSplitByCategoriesAndSeries || 
-                oldChart.getStandardCategoriesAndSeries !== newChart.getStandardCategoriesAndSeries) {
-                this.drawNewChart(options);
-
-                return;
+                // We update the existing chart options only if the new chart categories and series builder method is the same as the previous chart's method
+                if(oldChart.getSplitByCategoriesAndSeries === newChart.getSplitByCategoriesAndSeries && 
+                   oldChart.getStandardCategoriesAndSeries === newChart.getStandardCategoriesAndSeries) {
+                    this.currentChart = newChart;
+                    this.options = options;
+                    
+                    // Build the options that need to be updated
+                    let newOptions: Highcharts.Options = this.currentChart.getChartTypeOptions();
+        
+                    // Apply the changes
+                    this.highchartsChart.update(newOptions);
+        
+                    // Save the new options
+                    this.basicHighchartsOptions = _.merge({}, this.basicHighchartsOptions, newOptions);
+                    
+                    resolve();
+    
+                    return;
+                }
             }
 
-            this.currentChart = newChart;
-            this.options = options;
-            
-            // Build the options that need to be updated
-            let newOptions: Highcharts.Options = this.currentChart.getChartTypeOptions();
-
-            // Apply the changes
-            this.highchartsChart.update(newOptions);
-
-            // Save the new options
-            this.basicHighchartsOptions = _.merge({}, this.basicHighchartsOptions, newOptions);
-        } else { // Every other change - redraw the chart
-            // Redraw the chart
-            this.drawNewChart(options);
-        }
+            // Every other change - Redraw the chart
+            this.drawNewChart(options)
+                .then(() => {
+                    resolve();
+                });
+        });
     }
 
     public changeTheme(newTheme: ChartTheme): void {
@@ -86,13 +112,15 @@ export class HighchartsVisualizer implements IVisualizer {
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
             // Re-draw the a new chart with the new theme
-            this.draw();
+            new Promise<void>((resolve, reject) => {
+                this.draw(resolve);
+            });           
         }
     }
 
     //#region Private methods
 
-    private draw() {
+    private draw(finishDrawingResolveFn: ResolveFn): void {
         const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
 
         this.destroyExistingChart();
@@ -101,6 +129,9 @@ export class HighchartsVisualizer implements IVisualizer {
         this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
         
         this.handleResize();
+
+        // Mark that the chart drawing was finished
+        finishDrawingResolveFn();
     }
 
     // Highcharts handle resize only on window resize, we need to handle resize when the chart's container size changes
