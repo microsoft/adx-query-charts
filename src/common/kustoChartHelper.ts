@@ -61,44 +61,64 @@ export class KustoChartHelper implements IChartHelper {
 
     //#region Public methods
 
-    public draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void {
-        // Update the chart options with defaults for optional values that weren't provided
-        chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
-
-        // Detect the changes from the current chart
-        const changes = ChangeDetection.detectChanges(this.queryResultData, this.options, queryResultData, chartOptions);
-
-        // Update current options and data
-        this.options = chartOptions;
-        this.queryResultData = queryResultData;
-        
-        // First initialization / query data change / columns selection change
-        if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {        
-            // Apply query data transformation
-            const transformed = this.transformQueryResultData(queryResultData, chartOptions);
+    public draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            // Update the chart options with defaults for optional values that weren't provided
+            chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
     
-            this.transformedQueryResultData = transformed.data;
-        }
+            // Detect the changes from the current chart
+            const changes = ChangeDetection.detectChanges(this.queryResultData, this.options, queryResultData, chartOptions);
+    
+            // Update current options and data
+            this.options = chartOptions;
+            this.queryResultData = queryResultData;
+            
+            // First initialization / query data change / columns selection change
+            if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {            
+                // Apply query data transformation
+                const transformed = this.transformQueryResultData(queryResultData, chartOptions);
+                
+                this.transformedQueryResultData = transformed.data;
+            }
+    
+            const visualizerOptions = {
+                elementId: this.elementId,
+                queryResultData: this.transformedQueryResultData,
+                chartOptions: chartOptions
+            };
+    
+            let drawChartPromise: Promise<void>;
 
-        const visualizerOptions = {
-            elementId: this.elementId,
-            queryResultData: this.transformedQueryResultData,
-            chartOptions: chartOptions
-        };
+            // First initialization
+            if(!changes) {
+                drawChartPromise = this.visualizer.drawNewChart(visualizerOptions);
+            } else { // Change existing chart
+                drawChartPromise = this.visualizer.updateExistingChart(visualizerOptions, changes);
+            }
 
-        // First initialization
-        if(!changes) {
-            this.visualizer.drawNewChart(visualizerOptions);
-        } else { // Change existing chart
-            this.visualizer.updateExistingChart(visualizerOptions, changes);
-        }
+            drawChartPromise
+                .finally(() => {
+                    if(chartOptions.onFinishDrawing) {
+                        chartOptions.onFinishDrawing();
+                    }
+
+                    resolve();
+                });
+        });
     }
 
-    public changeTheme(newTheme: ChartTheme): void {
-        if(this.options && this.options.chartTheme !== newTheme) {
-            this.visualizer.changeTheme(newTheme);
-            this.options.chartTheme = newTheme;
-        }
+    public changeTheme(newTheme: ChartTheme): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if(this.options && this.options.chartTheme !== newTheme) {
+                this.visualizer.changeTheme(newTheme)
+                    .then(() => {
+                        this.options.chartTheme = newTheme;
+                        resolve();
+                    });
+            } else {
+                resolve();
+            }
+        });
     }
 
     public getSupportedColumnTypes(chartType: ChartType): ISupportedColumnTypes {

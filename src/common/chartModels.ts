@@ -88,6 +88,10 @@ export interface IAxesInfo<T> {
 
 export interface IColumnsSelection extends IAxesInfo<IColumn> {}
 
+export interface IDataTransformationInfo {
+    numberOfDataPoints: number;
+}
+
 /**
  * The information required to draw the chart
  */
@@ -179,21 +183,40 @@ export interface IChartOptions {
      *     @returns The desired x-axis title
      */
     xAxisTitleFormatter?: (xAxisColumn: IColumn) => string;
+
+    /**
+     * Callback that is called when all the data transformations required to draw the chart are finished.
+     * Callback inputs:
+     *     @param dataTransformationInfo - The information regarding the applied transformations
+     * Callback return value:
+     *     @returns The promise that is used to continue/stop drawing the chart. 
+     *              When provided, the drawing of the chart will be suspended until this promise will be resolved.
+     *              When resolved with true - the chart will continue the drawing.
+     *              When resolved with false - the chart drawing will be canceled.
+     */
+    onFinishDataTransformation?: (dataTransformationInfo: IDataTransformationInfo) => Promise<boolean>;
+    
+    /**
+     * Callback that is called when the chart drawing is finished.
+     */
+    onFinishDrawing?: () => void;
 }
 
 export interface IChartHelper {
     /**
-     * Draw the chart
+     * Draw the chart asynchronously
      * @param queryResultData - The original query result data
      * @param chartOptions - The information required to draw the chart
+     * @returns Promise that is resolved when the chart is finished drawing
      */
-    draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): void;
+    draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<void>;
 
     /**
      * Change the theme of an existing chart
      * @param newTheme - The theme to apply
+     * @returns Promise that is resolved when the theme is applied
      */
-    changeTheme(newTheme: ChartTheme): void;
+    changeTheme(newTheme: ChartTheme): Promise<void>;
 
     /**
      * Get the supported column types for the axes and the split-by for a specific chart type

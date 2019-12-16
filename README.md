@@ -35,11 +35,11 @@ chartHelper.draw(queryResultData, chartOptions);
 ## API
 
 ### KustoChartHelper
-| Method:                  | Description:              | Input:                                                                                                       | Return value:  |
-| -------------------    |--------------------     | ---------------------------------------------------------------------------- | ----------------|
-| draw                        | Draw the chart         | [IQueryResultData](#IQueryResultData) - The original query result data<br>[IChartOptions](#IChartOptions) - The information required to draw the chart  | void |
-| changeTheme         | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | void |
-| getSupportedColumnTypes | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
+| Method:                  | Description:              | Input:                                                                        | Return value:    |
+| ------------------------ |-------------------------- | ----------------------------------------------------------------------------- | ---------------- |
+| draw                     | Draw the chart            | [IQueryResultData](#IQueryResultData) - The original query result data<br>[IChartOptions](#IChartOptions) - The information required to draw the chart  | Promise&lt;void&gt; |
+| changeTheme              | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | Promise&lt;void&gt; |
+| getSupportedColumnTypes  | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
 | getSupportedColumnsInResult | Get the supported columns from the query result data for the axes and the split-by for a specific chart type | [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart | [ISupportedColumns](#ISupportedColumns) |
 | getDefaultSelection | Get the default columns selection from the query result data.<br>Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type. |  [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart<br>[ISupportedColumns](#ISupportedColumns) - (Optional) The list of the supported column types for the axes and the split-by | [IColumnsSelection](#IColumnsSelection) |
 
@@ -57,6 +57,8 @@ chartHelper.draw(queryResultData, chartOptions);
 | dateFormatter          | Function<br>(dateValue: Date, defaultFormat: DateFormat): string| Callback that is used to format the date values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset<br>&nbsp;&nbsp;&nbsp;&nbsp;[DateFormat](#DateFormat) - The default format of the label<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the dateValue| If not provided - the default formatting will apply |
 | numberFormatter        | Function<br>(numberValue: number): string | Callback that is used to format number values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;numberValue - The original number<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the numberValue |If not provided - the default formatting will apply |
 | xAxisTitleFormatter    | Function<br>(xAxisColumn: IColumn) : string | Callback that is used to get the xAxis title<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IColumn](#IColumn) - The x-axis column<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The desired x-axis title |If not provided -  the xAxis title will be the xAxis column name |
+| onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformationInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformationInfo](#IDataTransformationInfo) -  The information regarding the applied transformations<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
+| onFinishDrawing        | Function() : void       | Callback that is called when the chart drawing is finished       | | |
 
 ### ChartType
 ```typescript
@@ -168,7 +170,6 @@ enum DraftColumnType {
     TimeSpan
 }
 ```
-
 ### ISupportedColumnTypes
 ```typescript
 interface ISupportedColumnTypes {
@@ -178,6 +179,14 @@ interface ISupportedColumnTypes {
 }
 ```
 See [DraftColumnType](#DraftColumnType) 
+
+### IDataTransformationInfo
+```typescript
+interface IDataTransformationInfo {
+    numberOfDataPoints: number;
+}
+```
+
 ## Test
 Unit tests are written using [Jest](https://jestjs.io/).
 
