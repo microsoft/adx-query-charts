@@ -242,12 +242,12 @@ export class HighchartsVisualizer implements IVisualizer {
             numberOfDataPoints+= currentSeries['data'].length;
         });
 
-        const drawChartResolver = chartOptions.onFinishDataTransformation({ 
+        const drawChartPromise = chartOptions.onFinishDataTransformation({ 
             numberOfDataPoints: numberOfDataPoints 
         });
 
-        // Continue drawing the chart only after drawChartResolver is resolved
-        drawChartResolver.then((continueDraw: boolean) => {
+        // Continue drawing the chart only after drawChartPromise is resolved
+        drawChartPromise.then((continueDraw: boolean) => {
             if(continueDraw) {
                 this.draw(resolve);
             } else {

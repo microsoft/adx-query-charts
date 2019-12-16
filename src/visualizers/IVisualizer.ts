@@ -27,7 +27,7 @@ export interface IVisualizer {
     /**
      * Change the theme of an existing chart
      * @param newTheme - The theme to apply
-     * @returns - Promise that is resolved when the theme is applied
+     * @returns Promise that is resolved when the theme is applied
      */
     changeTheme(newTheme: ChartTheme): Promise<void>;
 }

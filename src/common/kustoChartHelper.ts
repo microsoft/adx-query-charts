@@ -98,11 +98,11 @@ export class KustoChartHelper implements IChartHelper {
 
             drawChartPromise
                 .finally(() => {
-                    resolve();
-
                     if(chartOptions.onFinishDrawing) {
                         chartOptions.onFinishDrawing();
                     }
+
+                    resolve();
                 });
         });
     }
