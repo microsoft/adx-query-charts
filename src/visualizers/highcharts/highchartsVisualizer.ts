@@ -246,7 +246,7 @@ export class HighchartsVisualizer implements IVisualizer {
             numberOfDataPoints: numberOfDataPoints 
         });
 
-        // Continue drawing the chart only after drawChartPromise is resolved
+        // Continue drawing the chart only after drawChartPromise is resolved with true
         drawChartPromise.then((continueDraw: boolean) => {
             if(continueDraw) {
                 this.draw(resolve);
