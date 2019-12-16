@@ -107,11 +107,18 @@ export class KustoChartHelper implements IChartHelper {
         });
     }
 
-    public changeTheme(newTheme: ChartTheme): void {
-        if(this.options && this.options.chartTheme !== newTheme) {
-            this.visualizer.changeTheme(newTheme);
-            this.options.chartTheme = newTheme;
-        }
+    public changeTheme(newTheme: ChartTheme): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if(this.options && this.options.chartTheme !== newTheme) {
+                this.visualizer.changeTheme(newTheme)
+                    .then(() => {
+                        this.options.chartTheme = newTheme;
+                        resolve();
+                    });
+            } else {
+                resolve();
+            }
+        });
     }
 
     public getSupportedColumnTypes(chartType: ChartType): ISupportedColumnTypes {

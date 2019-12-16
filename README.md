@@ -35,11 +35,11 @@ chartHelper.draw(queryResultData, chartOptions);
 ## API
 
 ### KustoChartHelper
-| Method:                  | Description:              | Input:                                                                                                       | Return value:  |
-| -------------------    |--------------------     | ---------------------------------------------------------------------------- | ----------------|
-| draw                        | Draw the chart         | [IQueryResultData](#IQueryResultData) - The original query result data<br>[IChartOptions](#IChartOptions) - The information required to draw the chart  | Promise&lt;void&gt; |
-| changeTheme         | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | void |
-| getSupportedColumnTypes | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
+| Method:                  | Description:              | Input:                                                                        | Return value:    |
+| ------------------------ |-------------------------- | ----------------------------------------------------------------------------- | ---------------- |
+| draw                     | Draw the chart            | [IQueryResultData](#IQueryResultData) - The original query result data<br>[IChartOptions](#IChartOptions) - The information required to draw the chart  | Promise&lt;void&gt; |
+| changeTheme              | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | Promise&lt;void&gt; |
+| getSupportedColumnTypes  | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
 | getSupportedColumnsInResult | Get the supported columns from the query result data for the axes and the split-by for a specific chart type | [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart | [ISupportedColumns](#ISupportedColumns) |
 | getDefaultSelection | Get the default columns selection from the query result data.<br>Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type. |  [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart<br>[ISupportedColumns](#ISupportedColumns) - (Optional) The list of the supported column types for the axes and the split-by | [IColumnsSelection](#IColumnsSelection) |
 

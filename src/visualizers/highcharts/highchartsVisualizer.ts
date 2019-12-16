@@ -85,21 +85,21 @@ export class HighchartsVisualizer implements IVisualizer {
         });
     }
 
-    public changeTheme(newTheme: ChartTheme): void {
-        // No existing chart - do nothing
-        if(!this.currentChart) {
-            return;
-        }
+    public changeTheme(newTheme: ChartTheme): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            // No existing chart / the theme wasn't changed - do nothing
+            if(!this.currentChart || this.options.chartOptions.chartTheme === newTheme) {
+                resolve();
 
-        if(this.options.chartOptions.chartTheme !== newTheme) {
+                return;
+            }
+
             // Update new theme options
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
-            // Re-draw the a new chart with the new theme
-            new Promise<void>((resolve, reject) => {
-                this.draw(resolve);
-            });           
-        }
+            // Re-draw the a new chart with the new theme           
+            this.draw(resolve);
+        });
     }
 
     //#region Private methods
