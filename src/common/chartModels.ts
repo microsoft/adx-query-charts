@@ -68,6 +68,12 @@ export enum ChartTheme {
     Light = 'Light'
 }
 
+export enum DrawChartStatus {
+    Success = 'Success',  // Successfully drawn the chart
+    Error = 'Error',      // There was an error while trying to draw the chart
+    Canceled = 'Canceled' // The chart draw was canceled
+}
+
 export interface ISupportedColumnTypes {
     xAxis: DraftColumnType[];
     yAxis: DraftColumnType[];
@@ -88,8 +94,30 @@ export interface IAxesInfo<T> {
 
 export interface IColumnsSelection extends IAxesInfo<IColumn> {}
 
-export interface IDataTransformationInfo {
+export interface IChartInfo {
+    /**
+     * The amount of the data points that will be drawn for the charts
+     * In case of a chart with a split-by, the amount of the data points will include TODO
+     */
     numberOfDataPoints: number;
+  
+     /**
+     * True if the original query results was limited to draw the chart
+     * The chart data will be limited when the maximum number of the unique X-axis values exceeds the 'maxUniqueXValues' in 'IChartOptions'
+     */
+    wasDataLimited: boolean;
+
+    /**
+     * The status of the chart's draw action
+     */
+    status: DrawChartStatus;
+
+    /**
+     * The aggregation that was applied on the original query results in order to draw the chart
+     * If no aggregation was applied, the value will be undefined
+     * See 'aggregationType' in 'IChartOptions' for more details
+     */
+    appliedAggregation?: AggregationType;
 }
 
 /**
@@ -187,19 +215,21 @@ export interface IChartOptions {
     /**
      * Callback that is called when all the data transformations required to draw the chart are finished.
      * Callback inputs:
-     *     @param dataTransformationInfo - The information regarding the applied transformations
+     *     @param IChartInfo - The information regarding the chart
      * Callback return value:
      *     @returns The promise that is used to continue/stop drawing the chart. 
      *              When provided, the drawing of the chart will be suspended until this promise will be resolved.
      *              When resolved with true - the chart will continue the drawing.
      *              When resolved with false - the chart drawing will be canceled.
      */
-    onFinishDataTransformation?: (dataTransformationInfo: IDataTransformationInfo) => Promise<boolean>;
+    onFinishDataTransformation?: (chartInfo: IChartInfo) => Promise<boolean>;
     
     /**
      * Callback that is called when the chart drawing is finished.
+     * Callback inputs:
+     *    @param chartInfo - The information regarding the chart
      */
-    onFinishDrawing?: () => void;
+    onFinishDrawing?: (chartInfo: IChartInfo) => void;
 }
 
 export interface IChartHelper {
@@ -209,7 +239,7 @@ export interface IChartHelper {
      * @param chartOptions - The information required to draw the chart
      * @returns Promise that is resolved when the chart is finished drawing
      */
-    draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<void>;
+    draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<IChartInfo>;
 
     /**
      * Change the theme of an existing chart

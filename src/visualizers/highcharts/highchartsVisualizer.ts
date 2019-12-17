@@ -9,7 +9,7 @@ import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
-import { ChartTheme, DateFormat, IChartOptions, IColumn, DraftColumnType } from '../../common/chartModels';
+import { ChartTheme, DateFormat, IChartOptions, IColumn, DraftColumnType, DrawChartStatus } from '../../common/chartModels';
 import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
@@ -36,12 +36,7 @@ export class HighchartsVisualizer implements IVisualizer {
             this.basicHighchartsOptions = this.getHighchartsOptions();
             this.themeOptions = Themes.getThemeOptions(chartOptions.chartTheme);
     
-            if(chartOptions.onFinishDataTransformation) {
-                this.onFinishDataTransformation(chartOptions, resolve);
-            } else {
-                // Draw the chart
-                this.draw(resolve);
-            }
+            this.onFinishDataTransformation(options, resolve);
         });
     }
            
@@ -105,6 +100,8 @@ export class HighchartsVisualizer implements IVisualizer {
     //#region Private methods
 
     private draw(finishDrawingResolveFn: ResolveFn): void {
+        console.log('draw method BEGIN');
+
         const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
 
         this.destroyExistingChart();
@@ -112,6 +109,8 @@ export class HighchartsVisualizer implements IVisualizer {
         // Draw the chart
         this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
         
+        console.log('draw method - the chart was drawn');
+
         this.handleResize();
 
         // Mark that the chart drawing was finished
@@ -234,26 +233,30 @@ export class HighchartsVisualizer implements IVisualizer {
         }
     }
 
-    private onFinishDataTransformation(chartOptions: IChartOptions, resolve: ResolveFn): void {
+    private onFinishDataTransformation(options: IVisualizerOptions, resolve: ResolveFn): void {
         // Calculate the number of data points
-        let numberOfDataPoints = 0;
+        options.chartInfo.numberOfDataPoints = 0;
 
         this.basicHighchartsOptions.series.forEach((currentSeries) => {
-            numberOfDataPoints+= currentSeries['data'].length;
+            options.chartInfo.numberOfDataPoints += currentSeries['data'].length;
         });
 
-        const drawChartPromise = chartOptions.onFinishDataTransformation({ 
-            numberOfDataPoints: numberOfDataPoints 
-        });
-
-        // Continue drawing the chart only after drawChartPromise is resolved with true
-        drawChartPromise.then((continueDraw: boolean) => {
-            if(continueDraw) {
-                this.draw(resolve);
-            } else {
-                resolve(); // Resolve without drawing the chart
-            }
-        });
+        if(options.chartOptions.onFinishDataTransformation) {
+            const drawChartPromise = options.chartOptions.onFinishDataTransformation(options.chartInfo);
+           
+            // Continue drawing the chart only after drawChartPromise is resolved with true
+            drawChartPromise.then((continueDraw: boolean) => {
+                if(continueDraw) {
+                    this.draw(resolve);
+                } else {
+                    options.chartInfo.status = DrawChartStatus.Canceled;
+                    resolve(); // Resolve without drawing the chart
+                }
+            });
+        } else {
+            // Draw the chart
+            this.draw(resolve);
+        }
     }
 
     //#endregion Private methods
