@@ -1,6 +1,5 @@
 'use strict';
 
-import * as moment from 'moment';
 import { IQueryResultData, IColumn, DraftColumnType, ChartType } from './chartModels';
 
 export class Utilities {
@@ -24,32 +23,36 @@ export class Utilities {
     } 
     
     /**
-    * Adds the desired offset (from UTC) to the date, and return a valid Date object
+    * Returns the value of the date after adding the desired offset (from UTC)
     * @param dateStr - The string value that represents the date to transform.
     * @param utcOffset - The offset in hours from UTC.
-    * @returns A valid Date object.
+    * @returns The value of the date + the desired UTC offset
     */
-    public static getValidDate(dateStr: string, utcOffset: number): Date {
+    public static getDateValue(dateStr: string, utcOffset: number): number {
         const date = new Date(dateStr);
         
         if (date.toDateString() === 'Invalid Date') {
             return null;
         }
         
-        const utcVal = date.toUTCString();
-        const utcMoment = moment.utc(utcVal, 'ddd, DD MMM YYYY HH:mm:ss Z');
-        
-        if (!utcMoment.isValid()) {
-            return null;
+        let localDateValue = date.valueOf();
+        let timezoneOffsetInMinutes = date.getTimezoneOffset();
+        let utcDateValue = localDateValue + (timezoneOffsetInMinutes * 60 * 1000);
+       
+        if(utcOffset === 0) {
+            return utcDateValue;
         }
-        
-        const dateWithOffset = utcMoment.utcOffset(utcOffset);
-        let isoDateStr = dateWithOffset.format('YYYY-MM-DDTHH:mm:ss');
 
-        // Since moment.utc doesn't update milliseconds add the milliseconds to the isoDateStr
-        isoDateStr += '.' + (date.getMilliseconds() || 0);
+        // Add UTC offset to the date
+        const utcOffsetInMilliseconds = utcOffset * 60 * 60 * 1000;
 
-        return new Date(isoDateStr);
+        return utcDateValue + utcOffsetInMilliseconds;
+    }
+
+    public static isValidDate(str: string): boolean {
+        const date = new Date(str);
+
+        return date && date.toString() !== 'Invalid Date';
     }
 
     public static isNumeric(columnType: DraftColumnType): boolean {

@@ -3,8 +3,8 @@
 //#region Imports
 
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { DraftColumnType, IQueryResultData, AggregationType, IRow, IRowValue, IAxesInfo } from '../common/chartModels';
+import { Utilities } from '../common/utilities';
 import { ChartAggregation, IAggregationMethod } from './chartAggregation';
 
 //#endregion Imports
@@ -53,7 +53,7 @@ export class _LimitVisResults {
 
     public escapeStr(value: IRowValue): IRowValue {
         // Don't escape non-string or timestamp values
-        if (typeof (value) !== 'string' || moment(value).isValid()) {
+        if (typeof (value) !== 'string' || Utilities.isValidDate(value)) {
             return value;
         }
 
@@ -78,7 +78,7 @@ export class _LimitVisResults {
         if (params.xColumnType === DraftColumnType.DateTime) {
             // Remove empty date values since they can't be placed on the x-axis timeline, then sort by the date
             limitedResults.rows = _.sortBy(limitedResults.rows.filter(row => row[0] != null), (row) => {
-                return moment(row[0]).valueOf();
+                return new Date(row[0]).valueOf();
             });
         }
 

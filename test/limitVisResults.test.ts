@@ -1,11 +1,8 @@
 'use strict';
 
-import * as moment from 'moment';
 import { DraftColumnType, AggregationType } from '../src/common/chartModels';
 import { LimitVisResultsSingleton, ILimitAndAggregateParams, LimitedResults } from '../src/transformers/limitVisResults';
 import { ChartAggregation } from '../src/transformers/chartAggregation';
-
-moment['suppressDeprecationWarnings'] = true;
 
 describe('Unit tests for LimitVisResults', () => {
      //#region Private members

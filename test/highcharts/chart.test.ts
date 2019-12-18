@@ -4,23 +4,21 @@ import * as _ from 'lodash';
 import { DraftColumnType, IColumn, ChartType } from '../../src/common/chartModels';
 import { ChartFactory } from '../../src/visualizers/highcharts/charts/chartFactory';
 import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/chart';
+import { Utilities } from '../../src/common/utilities';
 
 describe('Unit tests for Chart methods', () => {
     //#region beforeEach
 
     beforeEach(() => {
-        // Add mock to date.valueOf -> return the full year
+        // Add mock to Utilities.getDateValue -> return the full year
         jest
-        .spyOn(Date.prototype, 'valueOf')
-        .mockImplementation(function() {
-            const date = this;
-            
-            return date.getFullYear();
+        .spyOn(Utilities, 'getDateValue')
+        .mockImplementation(function(dateStr, offset) {
+            return new Date(dateStr).getFullYear();
         });
     })
 
     //#endregion beforeEach
-
 
     //#region Tests
 

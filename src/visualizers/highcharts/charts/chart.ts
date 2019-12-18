@@ -38,9 +38,7 @@ export abstract class Chart {
     
             // If the x-axis is a date, convert its value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
-                const dateValue = Utilities.getValidDate(xAxisValue, chartOptions.utcOffset);
-
-                xAxisValue = dateValue.valueOf();
+                xAxisValue = Utilities.getDateValue(xAxisValue, chartOptions.utcOffset);
             } else {
                 categoriesAndSeries.categories.push(xAxisValue);
             }
@@ -201,9 +199,7 @@ export abstract class Chart {
             let xValue = row[xAxisColumnIndex];
 
             // For date the a-axis, convert its value to ms as this is what expected by Highcharts
-            const dateValue = Utilities.getValidDate(<string>xValue, options.chartOptions.utcOffset);
-
-            xValue = dateValue.valueOf();
+            xValue = Utilities.getDateValue(<string>xValue, options.chartOptions.utcOffset);
 
             if(!splitByMap[splitByValue]) {
                 splitByMap[splitByValue] = [];
