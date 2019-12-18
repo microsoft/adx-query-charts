@@ -3,8 +3,8 @@
 //#region Imports
 
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { IQueryResultData, DraftColumnType, IColumn } from '../common/chartModels';
+import { Utilities } from '../common/utilities';
 
 //#endregion Imports
 
@@ -143,12 +143,6 @@ export class SeriesVisualize {
 
     //#region Private methods
 
-    private isDateTime(str: string): boolean {
-        const date = new Date(str);
-
-        return date && moment(date).isValid();
-    }
-
     /* Gets the type of the item.
     * if it's a number - return 'Real'
     * if it's a string - check if it represents datetime.
@@ -162,7 +156,7 @@ export class SeriesVisualize {
                 return DraftColumnType.Real;
             }
             case 'string': {
-                if (this.isDateTime(value)) {
+                if (Utilities.isValidDate(value)) {
                     return DraftColumnType.DateTime;
                 } else {
                     return DraftColumnType.String;
