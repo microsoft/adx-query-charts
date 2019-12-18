@@ -94,7 +94,6 @@ export interface IAxesInfo<T> {
 
 export interface IColumnsSelection extends IAxesInfo<IColumn> {}
 
-
 export interface IDataTransformationInfo {
     /**
      * The amount of the data points that will be drawn for the chart
