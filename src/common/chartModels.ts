@@ -94,7 +94,8 @@ export interface IAxesInfo<T> {
 
 export interface IColumnsSelection extends IAxesInfo<IColumn> {}
 
-export interface IChartInfo {
+
+export interface IDataTransformationInfo {
     /**
      * The amount of the data points that will be drawn for the chart
      */
@@ -111,6 +112,13 @@ export interface IChartInfo {
      * See 'aggregationType' in 'IChartOptions' for more details
      */
     isAggregationApplied: boolean;
+}
+
+export interface IChartInfo {
+    /**
+     * The information regarding the applied transformations on the original query results
+     */
+    dataTransformationInfo: IDataTransformationInfo;
 
     /**
      * The status of the draw action
@@ -213,14 +221,14 @@ export interface IChartOptions {
     /**
      * Callback that is called when all the data transformations required to draw the chart are finished.
      * Callback inputs:
-     *     @param IChartInfo - The information regarding the chart
+     *     @param IChartInfo - The information regarding the applied transformations on the original query results
      * Callback return value:
      *     @returns The promise that is used to continue/stop drawing the chart. 
      *              When provided, the drawing of the chart will be suspended until this promise will be resolved.
      *              When resolved with true - the chart will continue the drawing.
      *              When resolved with false - the chart drawing will be canceled.
      */
-    onFinishDataTransformation?: (chartInfo: IChartInfo) => Promise<boolean>;
+    onFinishDataTransformation?: (dataTransformationInfo: IDataTransformationInfo) => Promise<boolean>;
     
     /**
      * Callback that is called when the chart drawing is finished.

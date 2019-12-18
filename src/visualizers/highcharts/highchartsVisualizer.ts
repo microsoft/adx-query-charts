@@ -231,14 +231,16 @@ export class HighchartsVisualizer implements IVisualizer {
 
     private onFinishDataTransformation(options: IVisualizerOptions, resolve: ResolveFn): void {
         // Calculate the number of data points
-        options.chartInfo.numberOfDataPoints = 0;
+        const dataTransformationInfo = options.chartInfo.dataTransformationInfo;
+
+        dataTransformationInfo.numberOfDataPoints = 0;
 
         this.basicHighchartsOptions.series.forEach((currentSeries) => {
-            options.chartInfo.numberOfDataPoints += currentSeries['data'].length;
+            dataTransformationInfo.numberOfDataPoints += currentSeries['data'].length;
         });
 
         if(options.chartOptions.onFinishDataTransformation) {
-            const drawChartPromise = options.chartOptions.onFinishDataTransformation(options.chartInfo);
+            const drawChartPromise = options.chartOptions.onFinishDataTransformation(dataTransformationInfo);
            
             // Continue drawing the chart only after drawChartPromise is resolved with true
             drawChartPromise.then((continueDraw: boolean) => {

@@ -84,8 +84,8 @@ export class KustoChartHelper implements IChartHelper {
                 const transformed = this.transformQueryResultData(queryResultData, chartOptions);
                 
                 this.transformedQueryResultData = transformed.data;
-                this.chartInfo.isAggregationApplied = transformed.limitedResults.isAggregationApplied;
-                this.chartInfo.isPartialData = transformed.limitedResults.isPartialData;
+                this.chartInfo.dataTransformationInfo.isAggregationApplied = transformed.limitedResults.isAggregationApplied;
+                this.chartInfo.dataTransformationInfo.isPartialData = transformed.limitedResults.isPartialData;
             }
     
             const visualizerOptions: IVisualizerOptions = {
