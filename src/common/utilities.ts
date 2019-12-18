@@ -37,7 +37,7 @@ export class Utilities {
         
         let localDateValue = date.valueOf();
         let timezoneOffsetInMinutes = date.getTimezoneOffset();
-        let utcDateValue = localDateValue +(timezoneOffsetInMinutes * 60 * 1000);
+        let utcDateValue = localDateValue + (timezoneOffsetInMinutes * 60 * 1000);
        
         if(utcOffset === 0) {
             return utcDateValue;
