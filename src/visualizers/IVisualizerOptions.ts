@@ -1,9 +1,10 @@
 'use strict';
 
-import { IQueryResultData, IChartOptions } from "../common/chartModels";
+import { IQueryResultData, IChartOptions, IChartInfo } from "../common/chartModels";
 
 export interface IVisualizerOptions {
     elementId: string;
     queryResultData: IQueryResultData;
-    chartOptions: IChartOptions
+    chartOptions: IChartOptions;
+    chartInfo: IChartInfo;
 }

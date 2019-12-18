@@ -2,13 +2,15 @@
 
 //#region Imports
 
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType, ChartTheme } from './chartModels';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType, ChartTheme, IChartInfo } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
 import { Utilities } from './utilities';
 import { ChartChange } from './chartChange';
 import { ChangeDetection } from './changeDetection';
+import { ChartInfo } from './chartInfo';
+import { IVisualizerOptions } from '../visualizers/IVisualizerOptions';
 
 //#endregion Imports
 
@@ -46,6 +48,7 @@ export class KustoChartHelper implements IChartHelper {
 
     private queryResultData: IQueryResultData; // The original query result data
     private options: IChartOptions;
+    private chartInfo: IChartInfo;
 
     //#endregion Private members
 
@@ -61,8 +64,8 @@ export class KustoChartHelper implements IChartHelper {
 
     //#region Public methods
 
-    public draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<IChartInfo> {
+        return new Promise((resolve, reject) => {
             // Update the chart options with defaults for optional values that weren't provided
             chartOptions = this.updateDefaultChartOptions(queryResultData, chartOptions);
     
@@ -74,17 +77,22 @@ export class KustoChartHelper implements IChartHelper {
             this.queryResultData = queryResultData;
             
             // First initialization / query data change / columns selection change
-            if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {            
+            if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {    
+                this.chartInfo = new ChartInfo();
+
                 // Apply query data transformation
                 const transformed = this.transformQueryResultData(queryResultData, chartOptions);
                 
                 this.transformedQueryResultData = transformed.data;
+                this.chartInfo.dataTransformationInfo.isAggregationApplied = transformed.limitedResults.isAggregationApplied;
+                this.chartInfo.dataTransformationInfo.isPartialData = transformed.limitedResults.isPartialData;
             }
     
-            const visualizerOptions = {
+            const visualizerOptions: IVisualizerOptions = {
                 elementId: this.elementId,
                 queryResultData: this.transformedQueryResultData,
-                chartOptions: chartOptions
+                chartOptions: chartOptions,
+                chartInfo: this.chartInfo
             };
     
             let drawChartPromise: Promise<void>;
@@ -99,16 +107,16 @@ export class KustoChartHelper implements IChartHelper {
             drawChartPromise
                 .finally(() => {
                     if(chartOptions.onFinishDrawing) {
-                        chartOptions.onFinishDrawing();
+                        chartOptions.onFinishDrawing(this.chartInfo);
                     }
 
-                    resolve();
+                    resolve(this.chartInfo);
                 });
         });
     }
 
     public changeTheme(newTheme: ChartTheme): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if(this.options && this.options.chartTheme !== newTheme) {
                 this.visualizer.changeTheme(newTheme)
                     .then(() => {

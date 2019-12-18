@@ -37,7 +37,7 @@ chartHelper.draw(queryResultData, chartOptions);
 ### KustoChartHelper
 | Method:                  | Description:              | Input:                                                                        | Return value:    |
 | ------------------------ |-------------------------- | ----------------------------------------------------------------------------- | ---------------- |
-| draw                     | Draw the chart            | [IQueryResultData](#IQueryResultData) - The original query result data<br>[IChartOptions](#IChartOptions) - The information required to draw the chart  | Promise&lt;void&gt; |
+| draw                     | Draw the chart            | [IQueryResultData](#IQueryResultData) - The original query result data<br>[IChartOptions](#IChartOptions) - The information required to draw the chart  | Promise&lt;[IChartInfo](#IChartInfo)&gt; |
 | changeTheme              | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | Promise&lt;void&gt; |
 | getSupportedColumnTypes  | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
 | getSupportedColumnsInResult | Get the supported columns from the query result data for the axes and the split-by for a specific chart type | [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart | [ISupportedColumns](#ISupportedColumns) |
@@ -52,13 +52,26 @@ chartHelper.draw(queryResultData, chartOptions);
 | exceedMaxDataPointLabel| string                  | The label of the data point that contains the aggregated value of all the X-axis values that exceed the 'maxUniqueXValues'| 'OTHER' |
 | aggregationType        | [AggregationType](#AggregationType)         | Multiple rows with the same values for the X-axis and the split-by will be aggregated using a function of this type.<br>For example, assume we get the following query result data:<br>['2016-08-02T10:00:00Z', 'Chrome 51.0', 15], <br>['2016-08-02T10:00:00Z', 'Internet Explorer 9.0', 4]<br>When drawing a chart with columnsSelection = { xAxis: timestamp, yAxes: count_ }, and aggregationType = AggregationType.Sum we need to aggregate the values of the same timestamp value and return one row with ["2016-08-02T10:00:00Z", 19] | AggregationType.Sum |
 | title                  | string                  | The title of the chart                                           |                 |
-| utcOffset              | number                  | The desired offset from UTC in hours for date values. Used to handle timezone.<br>The offset will be added to the original date from the query results data.<br>For example:<br>For 'Africa/Harare'timezone provide utcOffset = 2 and the displayed date will be be:<br>'11/25/2019, 2:00 AM' instead of '11/25/2019, 12:00 AM' <br>See time zone [info](https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11)| 0 |
+| utcOffset              | number                  | The desired offset from UTC in hours for date values. Used to handle timezone.<br>The offset will be added to the original date from the query results data.<br>For example:<br>For 'Africa/Harare' timezone provide utcOffset = 2 and the displayed date will be be:<br>'11/25/2019, 2:00 AM' instead of '11/25/2019, 12:00 AM'<br>See time zone [info](https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11)| 0 |
 | chartTheme             | [ChartTheme](#ChartTheme)| The theme of the chart                                          | ChartTheme.Light |
 | dateFormatter          | Function<br>(dateValue: Date, defaultFormat: DateFormat): string| Callback that is used to format the date values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset<br>&nbsp;&nbsp;&nbsp;&nbsp;[DateFormat](#DateFormat) - The default format of the label<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the dateValue| If not provided - the default formatting will apply |
 | numberFormatter        | Function<br>(numberValue: number): string | Callback that is used to format number values both in the axis and the tooltip<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;numberValue - The original number<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The string represents the display value of the numberValue |If not provided - the default formatting will apply |
 | xAxisTitleFormatter    | Function<br>(xAxisColumn: IColumn) : string | Callback that is used to get the xAxis title<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IColumn](#IColumn) - The x-axis column<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The desired x-axis title |If not provided -  the xAxis title will be the xAxis column name |
-| onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformationInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformationInfo](#IDataTransformationInfo) -  The information regarding the applied transformations<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
-| onFinishDrawing        | Function() : void       | Callback that is called when the chart drawing is finished       | | |
+| onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformationInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformationInfo](#IDataTransformationInfo) - The information regarding the applied transformations on the original query results<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
+| onFinishDrawing        | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart drawing is finished <br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart | | |
+
+### IDataTransformationInfo
+| Option name:                 | Type:                                | Details:                                                                                           |
+| --------------------------   |------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| numberOfDataPoints           | number                               | The amount of the data points that will be drawn for the chart                                     |
+| isPartialData                | boolean                              | True if the chart presents partial data from the original query results<br>The chart data will be partial when the maximum number of the unique X-axis values exceed the<br> 'maxUniqueXValues' in [IChartOptions](#IChartOptions) |
+| isAggregationApplied         | boolean                              | True if aggregation was applied on the original query results in order to draw the chart<br>See 'aggregationType' in [IChartOptions](#IChartOptions) for more details |
+
+### IChartInfo
+| Option name:                 | Type:                                                | Details:                                                                                           |
+| --------------------------   |----------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| dataTransformationInfo       | [IDataTransformationInfo](#IDataTransformationInfo)  | The information regarding the applied transformations on the original query results                |
+| status                       | [DrawChartStatus](#DrawChartStatus)                  | The status of the draw action                                                                      |
 
 ### ChartType
 ```typescript
@@ -112,15 +125,25 @@ enum ChartTheme {
 ```typescript
 
 export enum DateFormat {
-    FullDate                // The full date and time. For example: 12/7/2019, 2:30:00.600
-    Time                     // The full time, without the milliseconds. For example: 2:30:00
-    FullTime               // The full time, including the milliseconds. For example: 2:30:00.600
+    FullDate       // The full date and time. For example: 12/7/2019, 2:30:00.600
+    Time           // The full time, without the milliseconds. For example: 2:30:00
+    FullTime       // The full time, including the milliseconds. For example: 2:30:00.600
     HourAndMinute  // The hours and minutes. For example: 2:30
     MonthAndDay    // The month and day. For example: July 12th
     MonthAndYear   // The month and day. For example: July 2019
-    Year                    // The year. For example: 2019
+    Year           // The year. For example: 2019
 }
 ```
+### DrawChartStatus
+```typescript
+
+export enum DrawChartStatus {
+    Success = 'Success',   // Successfully drawn the chart
+    Failed = 'Failed',     // There was an error while trying to draw the chart
+    Canceled = 'Canceled'  // The chart drawing was canceled
+}
+```
+ See 'onFinishDataTransformation' return value in [IChartOptions](#IChartOptions) for more information regarding drawing cancellation
 
 ### IColumn
 ```typescript
@@ -179,13 +202,6 @@ interface ISupportedColumnTypes {
 }
 ```
 See [DraftColumnType](#DraftColumnType) 
-
-### IDataTransformationInfo
-```typescript
-interface IDataTransformationInfo {
-    numberOfDataPoints: number;
-}
-```
 
 ## Test
 Unit tests are written using [Jest](https://jestjs.io/).
