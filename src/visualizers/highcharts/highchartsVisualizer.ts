@@ -28,7 +28,7 @@ export class HighchartsVisualizer implements IVisualizer {
     private chartContainerResizeSensor: ResizeSensor;
 
     public drawNewChart(options: IVisualizerOptions): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const chartOptions = options.chartOptions;
     
             this.options = options;
@@ -41,7 +41,7 @@ export class HighchartsVisualizer implements IVisualizer {
     }
            
     public updateExistingChart(options: IVisualizerOptions, changes: Changes): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             // Make sure that there is an existing chart
             const chartContainer = document.querySelector('#' + this.options.elementId);
             const isChartExist = chartContainer && chartContainer.children.length > 0;
@@ -100,8 +100,6 @@ export class HighchartsVisualizer implements IVisualizer {
     //#region Private methods
 
     private draw(finishDrawingResolveFn: ResolveFn): void {
-        console.log('draw method BEGIN');
-
         const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
 
         this.destroyExistingChart();
@@ -109,8 +107,6 @@ export class HighchartsVisualizer implements IVisualizer {
         // Draw the chart
         this.highchartsChart = Highcharts.chart(this.options.elementId, highchartsOptions);
         
-        console.log('draw method - the chart was drawn');
-
         this.handleResize();
 
         // Mark that the chart drawing was finished

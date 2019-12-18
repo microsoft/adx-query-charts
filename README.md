@@ -60,14 +60,13 @@ chartHelper.draw(queryResultData, chartOptions);
 | onFinishDataTransformation | Function(chartInfo: IChartInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
 | onFinishDrawing        | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart drawing is finished <br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart | | |
 
-
 ### IChartInfo
-| Option name:                 | Type:                               | Details:                                                                                           |
-| -------------------------- |--------------------------- | ---------------------------------------------------------------------- |
-| numberOfDataPoints     | number                           | The amount of the data points that will be drawn for the chart  |
-| wasDataLimited             | boolean                           | True if the original query results was limited to draw the chart<br>The chart data will be limited when the maximum number of the unique X-axis values exceeds the<br> 'maxUniqueXValues' in [IChartOptions](#IChartOptions) |
-| status                             | [DrawChartStatus](#DrawChartStatus)  | The amount of the data points that will be drawn for the chart  |
-| appliedAggregation    | AggregationType OR undefined| The aggregation that was applied on the original query results in order to draw the chart<br>If no aggregation was applied, the value will be undefined<br>See 'aggregationType' in [IChartOptions](#IChartOptions) for more details|
+| Option name:                 | Type:                                | Details:                                                                                           |
+| --------------------------   |------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| numberOfDataPoints           | number                               | The amount of the data points that will be drawn for the chart                                     |
+| isPartialData                | boolean                              | True if the chart presents partial data from the original query result<br>The chart data will be partial when the maximum number of the unique X-axis values exceeds the<br> 'maxUniqueXValues' in [IChartOptions](#IChartOptions) |
+| isAggregationApplied         | boolean                              | True if aggregation was applied on the original query results in order to draw the chart<br>See 'aggregationType' in [IChartOptions](#IChartOptions) for more details |
+| status                       | [DrawChartStatus](#DrawChartStatus)  | The status of the draw action                                                                      |
 
 ### ChartType
 ```typescript
@@ -121,13 +120,13 @@ enum ChartTheme {
 ```typescript
 
 export enum DateFormat {
-    FullDate                // The full date and time. For example: 12/7/2019, 2:30:00.600
-    Time                     // The full time, without the milliseconds. For example: 2:30:00
-    FullTime               // The full time, including the milliseconds. For example: 2:30:00.600
+    FullDate       // The full date and time. For example: 12/7/2019, 2:30:00.600
+    Time           // The full time, without the milliseconds. For example: 2:30:00
+    FullTime       // The full time, including the milliseconds. For example: 2:30:00.600
     HourAndMinute  // The hours and minutes. For example: 2:30
     MonthAndDay    // The month and day. For example: July 12th
     MonthAndYear   // The month and day. For example: July 2019
-    Year                    // The year. For example: 2019
+    Year           // The year. For example: 2019
 }
 ```
 ### DrawChartStatus
@@ -135,8 +134,8 @@ export enum DateFormat {
 
 export enum DrawChartStatus {
     Success = 'Success',     // Successfully drawn the chart
-    Error = 'Error',              // There was an error while trying to draw the chart
-    Canceled = 'Canceled' // The chart draw was canceled
+    Error = 'Error',         // There was an error while trying to draw the chart
+    Canceled = 'Canceled'    // The chart drawing was canceled
 }
 ```
 

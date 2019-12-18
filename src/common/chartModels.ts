@@ -71,7 +71,7 @@ export enum ChartTheme {
 export enum DrawChartStatus {
     Success = 'Success',  // Successfully drawn the chart
     Error = 'Error',      // There was an error while trying to draw the chart
-    Canceled = 'Canceled' // The chart draw was canceled
+    Canceled = 'Canceled' // The chart drawing was canceled
 }
 
 export interface ISupportedColumnTypes {
@@ -96,28 +96,26 @@ export interface IColumnsSelection extends IAxesInfo<IColumn> {}
 
 export interface IChartInfo {
     /**
-     * The amount of the data points that will be drawn for the charts
-     * In case of a chart with a split-by, the amount of the data points will include TODO
+     * The amount of the data points that will be drawn for the chart
      */
     numberOfDataPoints: number;
   
      /**
-     * True if the original query results was limited to draw the chart
-     * The chart data will be limited when the maximum number of the unique X-axis values exceeds the 'maxUniqueXValues' in 'IChartOptions'
+     * True if the chart presents partial data from the original query result
+     * The chart data will be partial when the maximum number of the unique X-axis values exceeds the 'maxUniqueXValues' in 'IChartOptions'
      */
-    wasDataLimited: boolean;
-
+    isPartialData: boolean;
+  
     /**
-     * The status of the chart's draw action
-     */
-    status: DrawChartStatus;
-
-    /**
-     * The aggregation that was applied on the original query results in order to draw the chart
-     * If no aggregation was applied, the value will be undefined
+     * True if aggregation was applied on the original query results in order to draw the chart
      * See 'aggregationType' in 'IChartOptions' for more details
      */
-    appliedAggregation?: AggregationType;
+    isAggregationApplied: boolean;
+
+    /**
+     * The status of the draw action
+     */
+    status: DrawChartStatus;
 }
 
 /**
