@@ -70,8 +70,8 @@ export enum ChartTheme {
 
 export enum DrawChartStatus {
     Success = 'Success',  // Successfully drawn the chart
-    Error = 'Error',      // There was an error while trying to draw the chart
-    Canceled = 'Canceled' // The chart drawing was canceled
+    Failed = 'Failed',    // There was an error while trying to draw the chart
+    Canceled = 'Canceled' // The chart drawing was canceled. See onFinishDataTransformation return value for more information regarding drawing cancellation
 }
 
 export interface ISupportedColumnTypes {
@@ -101,8 +101,8 @@ export interface IChartInfo {
     numberOfDataPoints: number;
   
      /**
-     * True if the chart presents partial data from the original query result
-     * The chart data will be partial when the maximum number of the unique X-axis values exceeds the 'maxUniqueXValues' in 'IChartOptions'
+     * True if the chart presents partial data from the original query results
+     * The chart data will be partial when the maximum number of the unique X-axis values exceed the 'maxUniqueXValues' in 'IChartOptions'
      */
     isPartialData: boolean;
   
@@ -235,7 +235,7 @@ export interface IChartHelper {
      * Draw the chart asynchronously
      * @param queryResultData - The original query result data
      * @param chartOptions - The information required to draw the chart
-     * @returns Promise that is resolved when the chart is finished drawing
+     * @returns Promise that is resolved when the chart is finished drawing. The promise will be resolved with information regarding the draw action
      */
     draw(queryResultData: IQueryResultData, chartOptions: IChartOptions): Promise<IChartInfo>;
 

@@ -64,7 +64,7 @@ chartHelper.draw(queryResultData, chartOptions);
 | Option name:                 | Type:                                | Details:                                                                                           |
 | --------------------------   |------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | numberOfDataPoints           | number                               | The amount of the data points that will be drawn for the chart                                     |
-| isPartialData                | boolean                              | True if the chart presents partial data from the original query result<br>The chart data will be partial when the maximum number of the unique X-axis values exceeds the<br> 'maxUniqueXValues' in [IChartOptions](#IChartOptions) |
+| isPartialData                | boolean                              | True if the chart presents partial data from the original query results<br>The chart data will be partial when the maximum number of the unique X-axis values exceed the<br> 'maxUniqueXValues' in [IChartOptions](#IChartOptions) |
 | isAggregationApplied         | boolean                              | True if aggregation was applied on the original query results in order to draw the chart<br>See 'aggregationType' in [IChartOptions](#IChartOptions) for more details |
 | status                       | [DrawChartStatus](#DrawChartStatus)  | The status of the draw action                                                                      |
 
@@ -133,11 +133,12 @@ export enum DateFormat {
 ```typescript
 
 export enum DrawChartStatus {
-    Success = 'Success',     // Successfully drawn the chart
-    Error = 'Error',         // There was an error while trying to draw the chart
-    Canceled = 'Canceled'    // The chart drawing was canceled
+    Success = 'Success',   // Successfully drawn the chart
+    Failed = 'Failed',     // There was an error while trying to draw the chart
+    Canceled = 'Canceled'  // The chart drawing was canceled
 }
 ```
+ See 'onFinishDataTransformation' return value in [IChartOptions](#IChartOptions) for more information regarding drawing cancellation
 
 ### IColumn
 ```typescript
