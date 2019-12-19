@@ -399,7 +399,7 @@ export class SeriesVisualize {
     }
 
     /**
-     * Add a new column to the results - this column will seperate the different series.
+     * Add a new column to the results - this column will separate the different series.
      * Each series will have different value for this column.
      * This column should be added only if there is no other column that can be used for split.
      * @param rows - query result rows
