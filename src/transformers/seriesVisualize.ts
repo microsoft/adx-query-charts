@@ -11,7 +11,7 @@ import { Utilities } from '../common/utilities';
 interface ISeriesColumnInfo {
     isSeries: boolean;
     dateTimeIndices?: number[];
-    numberIndecies?: number[];
+    numberIndices?: number[];
 }
 
 interface ISeriesColumn extends IColumn {
@@ -92,20 +92,20 @@ export class SeriesVisualize {
             return null;
         }
 
-        const dateTimeIndecies = seriesColumnsInformation.dateTimeIndices;
-        const numbersIndecies = seriesColumnsInformation.numberIndecies;
+        const dateTimeIndices = seriesColumnsInformation.dateTimeIndices;
+        const numbersIndices = seriesColumnsInformation.numberIndices;
 
         // Validates and updates the columns that suspected as series
-        // Updates newColumns, dateTimeIndecies and numbersIndecies
-        this.validateAndUpdateSeriesColumns(newColumns, newRows, dateTimeIndecies, numbersIndecies);
+        // Updates newColumns, dateTimeIndices and numbersIndices
+        this.validateAndUpdateSeriesColumns(newColumns, newRows, dateTimeIndices, numbersIndices);
 
         // Mark all validated fields
         let validatedColumnsCount = 0;
-        const arrayLength = newColumns[dateTimeIndecies[0]].arrayItemsLength;
-        const seriesColumnsIndecies = dateTimeIndecies.concat(numbersIndecies);
+        const arrayLength = newColumns[dateTimeIndices[0]].arrayItemsLength;
+        const seriesColumnsIndices = dateTimeIndices.concat(numbersIndices);
 
-        for (let i = 0; i < seriesColumnsIndecies.length; i++) {
-            const columnIndex = seriesColumnsIndecies[i];
+        for (let i = 0; i < seriesColumnsIndices.length; i++) {
+            const columnIndex = seriesColumnsIndices[i];
             const column = newColumns[columnIndex];
 
             if (column.arrayItemsLength === arrayLength) {
@@ -174,19 +174,19 @@ export class SeriesVisualize {
      *      2. All arrays are with the same size.
      *      3. All items in all array are of the same type.
      * If all fulfilled - add type and length information to the column.
-     * Filters from dateTimeIndecies and numbersIndecies any columns indices that are not valid series.
+     * Filters from dateTimeIndices and numbersIndices any columns Indices that are not valid series.
      *
      * @param newColumns - query result columns
      * @param newRows - query result rows
-     * @param dateTimeIndecies - The indecies of the columns that are suspected as dateTimes series.
-     * @param numbersIndecies - The indecies of the columns that are suspected as numbers series.
+     * @param dateTimeIndices - The indices of the columns that are suspected as dateTimes series.
+     * @param numbersIndices - The indices of the columns that are suspected as numbers series.
      */
-    private validateAndUpdateSeriesColumns(newColumns: ISeriesColumn[], newRows: any[], dateTimeIndecies: number[], numbersIndecies: number[]): void {
-        dateTimeIndecies = dateTimeIndecies.filter((index: number) => {
+    private validateAndUpdateSeriesColumns(newColumns: ISeriesColumn[], newRows: any[], dateTimeIndices: number[], numbersIndices: number[]): void {
+        dateTimeIndices = dateTimeIndices.filter((index: number) => {
             return this.validateAndUpdateSeriesColumn(newColumns, newRows, index);
         });
 
-        numbersIndecies = numbersIndecies.filter((index: number) => {
+        numbersIndices = numbersIndices.filter((index: number) => {
             return this.validateAndUpdateSeriesColumn(newColumns, newRows, index);
         });
     }
@@ -210,7 +210,7 @@ export class SeriesVisualize {
             return false;
         }
 
-        // The column is defined as dymanic by kusto and has type string
+        // The column is defined as dynamic by kusto and has type string
         // Try parse this column for all rows and check if all the rows are valid arrays of a specific type
         // If such type was found - add the type and the array sizes to the column info
         let columnType;
@@ -281,7 +281,7 @@ export class SeriesVisualize {
      *           "2016-11-10T07:00:00.0000000Z"        20          Seg1
      */
     private expandRowForSeries(row: any, columns: ISeriesColumn[], arraySizes: number): any[] {
-        // Create an array of the new rows - each rows is initiazlized as an empty array
+        // Create an array of the new rows - each rows is initialized as an empty array
         const newRows = _.times(arraySizes, _.constant(0)).map(() => { return []; });
 
         for (let i = 0; i < columns.length; i++) {
@@ -394,7 +394,7 @@ export class SeriesVisualize {
         return {
             isSeries: dateTimeArraysIndices.length > 0 && numberArraysIndices.length > 0,
             dateTimeIndices: dateTimeArraysIndices,
-            numberIndecies: numberArraysIndices
+            numberIndices: numberArraysIndices
         }
     }
 
