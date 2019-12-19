@@ -123,6 +123,11 @@ export interface IChartInfo {
      * The status of the draw action
      */
     status: DrawChartStatus;
+   
+    /**
+     * The error information in case that the draw action failed
+     */
+    error?: Error;
 }
 
 /**

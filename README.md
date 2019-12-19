@@ -71,6 +71,7 @@ chartHelper.draw(queryResultData, chartOptions);
 | --------------------------   |----------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | dataTransformationInfo       | [IDataTransformationInfo](#IDataTransformationInfo)  | The information regarding the applied transformations on the original query results                |
 | status                       | [DrawChartStatus](#DrawChartStatus)                  | The status of the draw action                                                                      |
+| error                        | Error                                                | [Optional] The error information in case that the draw action failed                               |
 
 ### ChartType
 ```typescript

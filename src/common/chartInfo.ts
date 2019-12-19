@@ -10,4 +10,5 @@ export class ChartInfo implements IChartInfo {
     };
 
     public status: DrawChartStatus = DrawChartStatus.Success;
+    public error?: Error;
 }

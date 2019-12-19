@@ -6,6 +6,7 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
+import { InvalidInputError } from '../../../common/errors';
 
 export class Pie extends Chart {
     //#region Methods override
@@ -121,6 +122,14 @@ export class Pie extends Chart {
             tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, this.y, /*columnName*/ undefined, ` (${yValueSuffix}%)`);
 
             return '<table>' + tooltip + '</table>';
+        }
+    }
+  
+    public verifyInput(options: IVisualizerOptions): void {    
+        const columnSelection = options.chartOptions.columnsSelection;
+
+        if(columnSelection.yAxes.length > 1) {
+            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`);
         }
     }
 
