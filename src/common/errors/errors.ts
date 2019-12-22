@@ -2,7 +2,7 @@
 
 import { ErrorCode } from './errorCode';
 
-class CustomError extends Error {
+export class ChartError extends Error {
     public errorCode: ErrorCode;
 
     public constructor(message: string, errorCode: ErrorCode) {
@@ -13,10 +13,10 @@ class CustomError extends Error {
     }
 }
 
-export class InvalidInputError extends CustomError {
+export class InvalidInputError extends ChartError {
     public name = 'Invalid Input';
 }
 
-export class VisualizerError extends CustomError {
+export class VisualizerError extends ChartError {
     public name = 'Failed to create the visualization';
 }
