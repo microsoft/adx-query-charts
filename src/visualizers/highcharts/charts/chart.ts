@@ -8,6 +8,8 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
+import { InvalidInputError } from '../../../common/errors/errors';
+import { ErrorCode } from '../../../common/errors/errorCode';
 
 //#endregion Imports
 
@@ -39,6 +41,10 @@ export abstract class Chart {
             // If the x-axis is a date, convert its value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
                 xAxisValue = Utilities.getDateValue(xAxisValue, chartOptions.utcOffset);
+
+                if(!xAxisValue) {
+                    throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
+                }
             } else {
                 categoriesAndSeries.categories.push(xAxisValue);
             }
@@ -174,6 +180,14 @@ export abstract class Chart {
         }
     }
 
+    public verifyInput(options: IVisualizerOptions): void {    
+        const columnSelection = options.chartOptions.columnsSelection;
+
+        if(columnSelection.splitBy && columnSelection.splitBy.length > 1) {
+            throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
+        }
+    }
+
     //#region Abstract methods
 
     protected abstract getChartType(): string;
@@ -200,6 +214,10 @@ export abstract class Chart {
 
             // For date the a-axis, convert its value to ms as this is what expected by Highcharts
             xValue = Utilities.getDateValue(<string>xValue, options.chartOptions.utcOffset);
+         
+            if(!xValue) {
+                throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
+            }
 
             if(!splitByMap[splitByValue]) {
                 splitByMap[splitByValue] = [];

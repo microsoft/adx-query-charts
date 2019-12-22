@@ -71,6 +71,7 @@ chartHelper.draw(queryResultData, chartOptions);
 | --------------------------   |----------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | dataTransformationInfo       | [IDataTransformationInfo](#IDataTransformationInfo)  | The information regarding the applied transformations on the original query results                |
 | status                       | [DrawChartStatus](#DrawChartStatus)                  | The status of the draw action                                                                      |
+| error                        | [ChartError] (#ChartError)                           | [Optional] The error information in case that the draw action failed                               |
 
 ### ChartType
 ```typescript
@@ -119,6 +120,26 @@ enum ChartTheme {
     Light
 }
 ```
+
+### ErrorCode
+```typescript
+enum ErrorCode {
+    InvalidQueryResultData,
+    InvalidColumnsSelection,
+    UnsupportedTypeInColumnsSelection,
+    InvalidChartContainerElementId,
+    InvalidDate,
+    FailedToCreateVisualization
+}
+```
+
+### CustomError
+```typescript
+class ChartError extends Error {
+    public errorCode: ErrorCode;
+}
+```
+See [ErrorCode](#ErrorCode) 
 
 ### DateFormat
 ```typescript
