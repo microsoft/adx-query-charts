@@ -14,11 +14,13 @@ import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
 import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
-import { InvalidInputError, VisualizerError } from '../../common/errors';
+import { InvalidInputError, VisualizerError } from '../../common/errors/errors';
+import { ErrorCode } from '../../common/errors/errorCode';
 
 //#endregion Imports
 
 type ResolveFn = (value?: void | PromiseLike<void>) => void;
+type RejectFn = (ex: any) => void;
 
 export class HighchartsVisualizer implements IVisualizer {
     private options: IVisualizerOptions;
@@ -39,9 +41,9 @@ export class HighchartsVisualizer implements IVisualizer {
                 this.currentChart.verifyInput(options);
                 this.basicHighchartsOptions = this.getHighchartsOptions(options);
                 this.themeOptions = Themes.getThemeOptions(chartOptions.chartTheme);
-                this.onFinishDataTransformation(options, resolve);
+                this.onFinishDataTransformation(options, resolve, reject);
             } catch (ex) {
-                this.onError(resolve, options, ex)
+                reject(ex);
             }
         });
     }
@@ -87,10 +89,10 @@ export class HighchartsVisualizer implements IVisualizer {
                         resolve();
                     })
                     .catch((ex) => {
-                        this.onError(resolve, options, ex)
+                        reject(ex);
                     });
             } catch (ex) {
-                this.onError(resolve, options, ex)
+                reject(ex);
             }
         });
     }
@@ -108,13 +110,13 @@ export class HighchartsVisualizer implements IVisualizer {
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
             // Re-draw the a new chart with the new theme           
-            this.draw(resolve);
+            this.draw(resolve, reject);
         });
     }
 
     //#region Private methods
 
-    private draw(finishDrawingResolveFn: ResolveFn): void {
+    private draw(resolve: ResolveFn, reject: RejectFn): void {
         try {
             const elementId = this.options.elementId;
             const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
@@ -127,9 +129,9 @@ export class HighchartsVisualizer implements IVisualizer {
             this.handleResize();
     
             // Mark that the chart drawing was finished
-            finishDrawingResolveFn();
+            resolve();
         } catch(ex) {
-            this.onError(finishDrawingResolveFn, this.options, new VisualizerError(ex.message));
+            reject(new VisualizerError(ex.message, ErrorCode.FailedToCreateVisualization));
         }
     }
 
@@ -252,7 +254,7 @@ export class HighchartsVisualizer implements IVisualizer {
         }
     }
 
-    private onFinishDataTransformation(options: IVisualizerOptions, resolve: ResolveFn): void {
+    private onFinishDataTransformation(options: IVisualizerOptions, resolve: ResolveFn, reject: RejectFn): void {
         // Calculate the number of data points
         const dataTransformationInfo = options.chartInfo.dataTransformationInfo;
 
@@ -269,7 +271,7 @@ export class HighchartsVisualizer implements IVisualizer {
             drawChartPromise
                 .then((continueDraw: boolean) => {
                     if(continueDraw) {
-                        this.draw(resolve);
+                        this.draw(resolve, reject);
                     } else {
                         options.chartInfo.status = DrawChartStatus.Canceled;
                         resolve(); // Resolve without drawing the chart
@@ -277,7 +279,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 });
         } else {
             // Draw the chart
-            this.draw(resolve);
+            this.draw(resolve, reject);
         }
     }
 
@@ -285,29 +287,20 @@ export class HighchartsVisualizer implements IVisualizer {
         const elementId = options.elementId;
 
         if(!elementId) {
-            throw new InvalidInputError("The elementId option can't be empty");
+            throw new InvalidInputError("The elementId option can't be empty", ErrorCode.InvalidChartContainerElementId);
         }
 
         
         // Make sure that there is an existing chart container element before drawing the chart
         if(!document.querySelector(`#${elementId}`)) {
-            throw new InvalidInputError(`Element with the id '${elementId}' doesn't exist on the DOM`);
+            throw new InvalidInputError(`Element with the id '${elementId}' doesn't exist on the DOM`, ErrorCode.InvalidChartContainerElementId);
         }
         
         const columnSelection = options.chartOptions.columnsSelection;
 
         if(columnSelection.yAxes.length > 1 && columnSelection.splitBy && columnSelection.splitBy.length > 0) {
-            throw new InvalidInputError("When there are multiple y-axis columns, split-by column isn't allowed");
+            throw new InvalidInputError("When there are multiple y-axis columns, split-by column isn't allowed", ErrorCode.InvalidColumnsSelection);
         }
-    }
-   
-    private onError(resolve: ResolveFn, options: IVisualizerOptions, error: Error): void {
-        const chartInfo = options.chartInfo;
-
-        chartInfo.status = DrawChartStatus.Failed;
-        chartInfo.error = error;
-        
-        resolve();
     }
 
     //#endregion Private methods

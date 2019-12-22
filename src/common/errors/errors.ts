@@ -1,10 +1,15 @@
 'use strict';
 
+import { ErrorCode } from './errorCode';
+
 class CustomError extends Error {
-    public constructor(message: string) {
+    public errorCode: ErrorCode;
+
+    public constructor(message: string, errorCode: ErrorCode) {
         super(message);
 
         this.name = name;
+        this.errorCode = errorCode;
     }
 }
 

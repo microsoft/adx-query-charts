@@ -6,7 +6,8 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
-import { InvalidInputError } from '../../../common/errors';
+import { InvalidInputError } from '../../../common/errors/errors';
+import { ErrorCode } from '../../../common/errors/errorCode';
 
 export class Pie extends Chart {
     //#region Methods override
@@ -129,7 +130,7 @@ export class Pie extends Chart {
         const columnSelection = options.chartOptions.columnsSelection;
 
         if(columnSelection.yAxes.length > 1) {
-            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`);
+            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
         }
     }
 

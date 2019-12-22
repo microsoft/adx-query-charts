@@ -11,7 +11,8 @@ import { ChartChange } from './chartChange';
 import { ChangeDetection } from './changeDetection';
 import { ChartInfo } from './chartInfo';
 import { IVisualizerOptions } from '../visualizers/IVisualizerOptions';
-import { InvalidInputError } from '../common/errors';
+import { InvalidInputError } from './errors/errors';
+import { ErrorCode } from './errors/errorCode';
 
 //#endregion Imports
 
@@ -112,11 +113,7 @@ export class KustoChartHelper implements IChartHelper {
     
                 drawChartPromise
                     .then(() => {
-                        if(this.chartInfo.status === DrawChartStatus.Failed) {
-                            this.onError(resolve, chartOptions, this.chartInfo.error);                   
-                        } else {
-                            this.finishDrawing(resolve, chartOptions);
-                        }
+                        this.finishDrawing(resolve, chartOptions);
                     })
                     .catch((ex) => {
                         this.onError(resolve, chartOptions, ex);               
@@ -211,7 +208,7 @@ export class KustoChartHelper implements IChartHelper {
         const xAxisColum = chartOptions.columnsSelection.xAxis;
 
         if (!this.addColumnsIfExistInResult([xAxisColum], resolvedAsSeriesData, indexOfXAxisColumn, chartColumns)) {
-            throw new InvalidInputError(`The selected x-axis column '${xAxisColum.name}' doesn't exist in the query result data`);
+            throw new InvalidInputError(`The selected x-axis column '${xAxisColum.name}' doesn't exist in the query result data`, ErrorCode.InvalidColumnsSelection);
         }
 
         // Get all the indexes for all the splitBy columns
@@ -219,14 +216,14 @@ export class KustoChartHelper implements IChartHelper {
         const indexesOfSplitByColumns: number[] = [];
 
         if (splitByColumnsSelection && !this.addColumnsIfExistInResult(splitByColumnsSelection, resolvedAsSeriesData, indexesOfSplitByColumns, chartColumns)) {
-            throw new InvalidInputError("One or more of the selected split-by columns don't exist in the query result data");
+            throw new InvalidInputError("One or more of the selected split-by columns don't exist in the query result data", ErrorCode.InvalidColumnsSelection);
         }
 
         // Get all the indexes for all the y fields
         const indexesOfYAxes: number[] = [];
 
         if (!this.addColumnsIfExistInResult(chartOptions.columnsSelection.yAxes, resolvedAsSeriesData, indexesOfYAxes, chartColumns)) {
-            throw new InvalidInputError("One or more of the selected y-axes columns don't exist in the query result data");
+            throw new InvalidInputError("One or more of the selected y-axes columns don't exist in the query result data", ErrorCode.InvalidColumnsSelection);
         }
 
         // Create transformed rows for visualization
@@ -373,7 +370,9 @@ export class KustoChartHelper implements IChartHelper {
             updatedChartOptions.columnsSelection = this.getDefaultSelection(queryResultData, updatedChartOptions.chartType);
 
             if (!updatedChartOptions.columnsSelection.xAxis || !updatedChartOptions.columnsSelection.yAxes || updatedChartOptions.columnsSelection.yAxes.length === 0) {
-                throw new InvalidInputError("Wasn't able to create default columns selection. Probably there are not enough columns to create the chart. Try using the 'getSupportedColumnsInResult' method");
+                throw new InvalidInputError(
+                    "Wasn't able to create default columns selection. Probably there are not enough columns to create the chart. Try using the 'getSupportedColumnsInResult' method",
+                    ErrorCode.InvalidQueryResultData);
             }
         }
 
@@ -384,34 +383,36 @@ export class KustoChartHelper implements IChartHelper {
         const columnsSelection = chartOptions.columnsSelection;
 
         if(!queryResultData) {
-           throw new InvalidInputError("The queryResultData can't be empty");
+           throw new InvalidInputError("The queryResultData can't be empty", ErrorCode.InvalidQueryResultData);
         } else if (!queryResultData.rows || !queryResultData.columns) {
-            throw new InvalidInputError("The queryResultData must contain rows and columns");
+            throw new InvalidInputError("The queryResultData must contain rows and columns", ErrorCode.InvalidQueryResultData);
         } else if (columnsSelection && (!columnsSelection.xAxis || !columnsSelection.yAxes || columnsSelection.yAxes.length === 0)) {
-            throw new InvalidInputError("Invalid columnsSelection. The columnsSelection must contain at least 1 x-axis and y-axis column");
+            throw new InvalidInputError("Invalid columnsSelection. The columnsSelection must contain at least 1 x-axis and y-axis column", ErrorCode.InvalidColumnsSelection);
         }
 
         // Make sure the columns selection is supported
         const supportedColumnTypes = this.getSupportedColumnTypes(chartOptions.chartType);
 
-        this.verifyColumnTypeIsSupported(supportedColumnTypes.xAxis, columnsSelection.xAxis, chartOptions);
+        this.verifyColumnTypeIsSupported(supportedColumnTypes.xAxis, columnsSelection.xAxis, chartOptions, 'x-axis');
 
         columnsSelection.yAxes.forEach((yAxis) => {
-            this.verifyColumnTypeIsSupported(supportedColumnTypes.yAxis, yAxis, chartOptions);
+            this.verifyColumnTypeIsSupported(supportedColumnTypes.yAxis, yAxis, chartOptions, 'y-axes');
         });
 
         if(columnsSelection.splitBy) {        
             columnsSelection.splitBy.forEach((splitBy) => {
-                this.verifyColumnTypeIsSupported(supportedColumnTypes.splitBy, splitBy, chartOptions);
+                this.verifyColumnTypeIsSupported(supportedColumnTypes.splitBy, splitBy, chartOptions, 'split-by');
             });
         }
     }
 
-    private verifyColumnTypeIsSupported(supportedTypes: DraftColumnType[], column: IColumn, chartOptions: IChartOptions): void {
+    private verifyColumnTypeIsSupported(supportedTypes: DraftColumnType[], column: IColumn, chartOptions: IChartOptions, axisStr: string): void {
         if(supportedTypes.indexOf(column.type) < 0) {
             const supportedStr = supportedTypes.join(', ');
 
-            throw new InvalidInputError(`Invalid columnsSelection. The type '${column.type}' isn't supported for x-axis of ${chartOptions.chartType}. The supported columns are: ${supportedStr}`);
+            throw new InvalidInputError(
+                `Invalid columnsSelection. The type '${column.type}' isn't supported for ${axisStr} of ${chartOptions.chartType}. The supported column types are: ${supportedStr}`,
+                ErrorCode.UnsupportedTypeInColumnsSelection);
         }
     }
 

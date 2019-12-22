@@ -8,7 +8,8 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
-import { InvalidInputError } from '../../../common/errors';
+import { InvalidInputError } from '../../../common/errors/errors';
+import { ErrorCode } from '../../../common/errors/errorCode';
 
 //#endregion Imports
 
@@ -42,7 +43,7 @@ export abstract class Chart {
                 xAxisValue = Utilities.getDateValue(xAxisValue, chartOptions.utcOffset);
 
                 if(!xAxisValue) {
-                    throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`);
+                    throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
                 }
             } else {
                 categoriesAndSeries.categories.push(xAxisValue);
@@ -183,7 +184,7 @@ export abstract class Chart {
         const columnSelection = options.chartOptions.columnsSelection;
 
         if(columnSelection.splitBy && columnSelection.splitBy.length > 1) {
-            throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`);
+            throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
         }
     }
 
@@ -215,7 +216,7 @@ export abstract class Chart {
             xValue = Utilities.getDateValue(<string>xValue, options.chartOptions.utcOffset);
          
             if(!xValue) {
-                throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`);
+                throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
             }
 
             if(!splitByMap[splitByValue]) {
