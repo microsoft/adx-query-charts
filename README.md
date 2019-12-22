@@ -71,7 +71,7 @@ chartHelper.draw(queryResultData, chartOptions);
 | --------------------------   |----------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | dataTransformationInfo       | [IDataTransformationInfo](#IDataTransformationInfo)  | The information regarding the applied transformations on the original query results                |
 | status                       | [DrawChartStatus](#DrawChartStatus)                  | The status of the draw action                                                                      |
-| error                        | [CustomError] (#CustomError)                         | [Optional] The error information in case that the draw action failed                               |
+| error                        | [ChartError] (#ChartError)                           | [Optional] The error information in case that the draw action failed                               |
 
 ### ChartType
 ```typescript
@@ -135,7 +135,7 @@ enum ErrorCode {
 
 ### CustomError
 ```typescript
-class CustomError extends Error {
+class ChartError extends Error {
     public errorCode: ErrorCode;
 }
 ```
