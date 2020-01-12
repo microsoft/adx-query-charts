@@ -30,4 +30,10 @@ export interface IVisualizer {
      * @returns Promise that is resolved when the theme is applied
      */
     changeTheme(newTheme: ChartTheme): Promise<void>;
+		
+    /**
+     * Download the chart as JPG image
+     * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+     */
+    downloadChartJPGImage(onError?: (error: Error) => void): void;
 }

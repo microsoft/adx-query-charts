@@ -186,6 +186,10 @@ export class KustoChartHelper implements IChartHelper {
         }
     }
 
+    public downloadChartJPGImage() {
+        this.visualizer.downloadChartJPGImage();
+    }
+
     //#endregion Public methods
 
     //#region Private methods
