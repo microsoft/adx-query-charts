@@ -279,4 +279,10 @@ export interface IChartHelper {
      * @param supportedColumnsForChart - [Optional] The list of the supported column types for the axes and the split-by
      */
     getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection;
+
+    /**
+     * Download the chart as JPG image
+     * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+     */
+    downloadChartJPGImage(onError?: (error: Error) => void): void;
 }

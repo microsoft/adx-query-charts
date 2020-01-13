@@ -3,6 +3,8 @@
 //#region Imports
 
 import * as Highcharts from 'highcharts';
+import HC_exporting from 'highcharts/modules/exporting';
+import HC_offlineExporting from 'highcharts/modules/offline-exporting';
 import * as _ from 'lodash';
 import { ResizeSensor } from 'css-element-queries';
 import { Chart } from './charts/chart';
@@ -29,6 +31,12 @@ export class HighchartsVisualizer implements IVisualizer {
     private themeOptions: Highcharts.Options;       
     private currentChart: Chart;
     private chartContainerResizeSensor: ResizeSensor;
+
+    public constructor() {
+        // init Highcharts exporting modules
+        HC_exporting(Highcharts);
+        HC_offlineExporting(Highcharts);
+    }
 
     public drawNewChart(options: IVisualizerOptions): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -114,6 +122,23 @@ export class HighchartsVisualizer implements IVisualizer {
         });
     }
 
+    public downloadChartJPGImage(onError?: (error: Error) => void): void {
+        if(!this.highchartsChart) {
+            return; // No existing chart - do nothing
+        }
+
+        const exportingOptions: Highcharts.ExportingOptions = {
+            type: 'image/jpeg',
+            error: (options: Highcharts.ExportingOptions, err: Error) => {
+                if(onError) {
+                    onError(err);
+                }
+            }
+        };
+
+        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+    }
+
     //#region Private methods
 
     private draw(resolve: ResolveFn, reject: RejectFn): void {
@@ -173,6 +198,14 @@ export class HighchartsVisualizer implements IVisualizer {
                 formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
                 shared: false,
                 useHTML: true
+            },
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        enabled: false
+                    }
+                },
+                fallbackToExportServer: false
             }
         };
 

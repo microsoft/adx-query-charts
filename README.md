@@ -12,7 +12,8 @@ npm install adx-query-charts
 Make sure to install the following packages before using the adx-query-charts library:
 1. [lodash](https://www.npmjs.com/package/lodash): `npm i lodash`
 2. [css-element-queries](https://www.npmjs.com/package/css-element-queries): `npm i css-element-queries`
-3. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts` - Please notice that highcharts requires a commercial license purchase.
+3. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts` 
+<b>Please note</b>: Highcharts is open source and is free to use for non-commercial purpose. In order to use Highcharts for commercial purposes, you must obtain a license: <br>follow the link − [License and Pricing](https://shop.highsoft.com/highcharts).
 
 ## Usage
 ```typescript
@@ -40,7 +41,8 @@ chartHelper.draw(queryResultData, chartOptions);
 | changeTheme              | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | Promise&lt;void&gt; |
 | getSupportedColumnTypes  | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
 | getSupportedColumnsInResult | Get the supported columns from the query result data for the axes and the split-by for a specific chart type | [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart | [ISupportedColumns](#ISupportedColumns) |
-| getDefaultSelection | Get the default columns selection from the query result data.<br>Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type. |  [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart<br>[ISupportedColumns](#ISupportedColumns) - (Optional) The list of the supported column types for the axes and the split-by | [IColumnsSelection](#IColumnsSelection) |
+| getDefaultSelection      | Get the default columns selection from the query result data.<br>Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type. |  [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart<br>[ISupportedColumns](#ISupportedColumns) - (Optional) The list of the supported column types for the axes and the split-by | [IColumnsSelection](#IColumnsSelection) |
+| downloadChartJPGImage    | Download the chart as JPG image |  (error: Error) => void - [Optional] A callback that will be called if the module failed to export the chart image  |  void |
 
 ### IChartOptions
 | Option name:           | Type:                   | Details:                                                         | Default value:  |
