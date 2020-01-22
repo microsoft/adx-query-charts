@@ -163,7 +163,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 if(finishChartAnimationCallback) {
                     setTimeout(() => {
                         finishChartAnimationCallback(options.chartInfo);
-                    }, ANIMATION_DURATION_MS);
+                    }, ANIMATION_DURATION_MS + 200);
                 }
             });   
         } catch(ex) {
