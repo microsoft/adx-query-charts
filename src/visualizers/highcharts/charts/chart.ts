@@ -10,6 +10,7 @@ import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
 import { InvalidInputError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
+import { ANIMATION_DURATION_MS } from '../common/constants';
 
 //#endregion Imports
 
@@ -19,6 +20,14 @@ export interface ICategoriesAndSeries {
 }
 
 export abstract class Chart {
+    private static defaultPlotOptions: Highcharts.PlotOptions = {
+        series: {
+            animation: {
+                duration: ANIMATION_DURATION_MS
+            }
+        }
+    };
+    
     public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const chartOptions = options.chartOptions;
         const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
@@ -140,7 +149,7 @@ export abstract class Chart {
             chart: {
                 type: this.getChartType()
             },
-            plotOptions: this.plotOptions()
+            plotOptions: { ...Chart.defaultPlotOptions, ...this.plotOptions() }
         };
     }
         
