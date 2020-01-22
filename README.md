@@ -12,8 +12,8 @@ npm install adx-query-charts
 Make sure to install the following packages before using the adx-query-charts library:
 1. [lodash](https://www.npmjs.com/package/lodash): `npm i lodash`
 2. [css-element-queries](https://www.npmjs.com/package/css-element-queries): `npm i css-element-queries`
-3. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts` 
-<b>Please note</b>: Highcharts is open source and is free to use for non-commercial purpose. In order to use Highcharts for commercial purposes, you must obtain a license: <br>follow the link − [License and Pricing](https://shop.highsoft.com/highcharts).
+3. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts`
+<b>Please note</b>: Highcharts/Highstock libraries are free to use with Log Analytics/adx-query-charts. <br>If you plan to use Highcharts separately, in your own project, you must obtain a license: <br>follow the link − [License and Pricing](https://shop.highsoft.com/highcharts).
 
 ## Usage
 ```typescript
@@ -60,6 +60,7 @@ chartHelper.draw(queryResultData, chartOptions);
 | xAxisTitleFormatter    | Function<br>(xAxisColumn: IColumn) : string | Callback that is used to get the xAxis title<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IColumn](#IColumn) - The x-axis column<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The desired x-axis title |If not provided -  the xAxis title will be the xAxis column name |
 | onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformationInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformationInfo](#IDataTransformationInfo) - The information regarding the applied transformations on the original query results<br>Callback return value:<br>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
 | onFinishDrawing        | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart drawing is finished <br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart | | |
+| onFinishChartAnimation | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart animation is finished <br>Callback inputs:<br>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart | | |
 
 ### IDataTransformationInfo
 | Option name:                 | Type:                                | Details:                                                                                           |

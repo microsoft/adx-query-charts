@@ -18,6 +18,7 @@ import { Themes } from './themes/themes';
 import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
 import { InvalidInputError, VisualizerError } from '../../common/errors/errors';
 import { ErrorCode } from '../../common/errors/errorCode';
+import { ANIMATION_DURATION_MS } from './common/constants';
 
 //#endregion Imports
 
@@ -106,9 +107,11 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     public changeTheme(newTheme: ChartTheme): Promise<void> {
+        const options = this.options;
+
         return new Promise<void>((resolve, reject) => {
             // No existing chart / the theme wasn't changed - do nothing
-            if(!this.currentChart || this.options.chartOptions.chartTheme === newTheme) {
+            if(!this.currentChart || options.chartOptions.chartTheme === newTheme) {
                 resolve();
 
                 return;
@@ -118,7 +121,7 @@ export class HighchartsVisualizer implements IVisualizer {
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
             // Re-draw the a new chart with the new theme           
-            this.draw(resolve, reject);
+            this.draw(options, resolve, reject);
         });
     }
 
@@ -141,20 +144,28 @@ export class HighchartsVisualizer implements IVisualizer {
 
     //#region Private methods
 
-    private draw(resolve: ResolveFn, reject: RejectFn): void {
+    private draw(options: IVisualizerOptions, resolve: ResolveFn, reject: RejectFn): void {
         try {
-            const elementId = this.options.elementId;
+            const elementId = options.elementId;
             const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
     
             this.destroyExistingChart();
     
             // Draw the chart
-            this.highchartsChart = Highcharts.chart(elementId, highchartsOptions);
-            
-            this.handleResize();
+            this.highchartsChart = Highcharts.chart(elementId, highchartsOptions, () => {
+                this.handleResize();
     
-            // Mark that the chart drawing was finished
-            resolve();
+                // Mark that the chart drawing was finished
+                resolve();
+
+                const finishChartAnimationCallback = options.chartOptions.onFinishChartAnimation;
+
+                if(finishChartAnimationCallback) {
+                    setTimeout(() => {
+                        finishChartAnimationCallback(options.chartInfo);
+                    }, ANIMATION_DURATION_MS);
+                }
+            });   
         } catch(ex) {
             reject(new VisualizerError(ex.message, ErrorCode.FailedToCreateVisualization));
         }
@@ -304,7 +315,7 @@ export class HighchartsVisualizer implements IVisualizer {
             drawChartPromise
                 .then((continueDraw: boolean) => {
                     if(continueDraw) {
-                        this.draw(resolve, reject);
+                        this.draw(options, resolve, reject);
                     } else {
                         options.chartInfo.status = DrawChartStatus.Canceled;
                         resolve(); // Resolve without drawing the chart
@@ -312,7 +323,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 });
         } else {
             // Draw the chart
-            this.draw(resolve, reject);
+            this.draw(options, resolve, reject);
         }
     }
 

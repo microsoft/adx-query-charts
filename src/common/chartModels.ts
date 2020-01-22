@@ -240,6 +240,13 @@ export interface IChartOptions {
      *    @param chartInfo - The information regarding the chart
      */
     onFinishDrawing?: (chartInfo: IChartInfo) => void;
+     
+    /**
+     * Callback that is called when the chart animation is finished.
+     * Callback inputs:
+     *    @param chartInfo - The information regarding the chart
+     */
+    onFinishChartAnimation?: (chartInfo: IChartInfo) => void;
 }
 
 export interface IChartHelper {
