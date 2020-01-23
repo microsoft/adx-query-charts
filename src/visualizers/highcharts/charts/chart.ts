@@ -7,7 +7,7 @@ import * as Highcharts from 'highcharts';
 import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IChartOptions } from '../../../common/chartModels';
+import { IColumn, IChartOptions, IRowValue } from '../../../common/chartModels';
 import { InvalidInputError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
 import { ANIMATION_DURATION_MS } from '../common/constants';
@@ -15,7 +15,7 @@ import { ANIMATION_DURATION_MS } from '../common/constants';
 //#endregion Imports
 
 export interface ICategoriesAndSeries {
-    categories?: string[];
+    categories?: IRowValue[];
     series: any[];
 }
 
@@ -100,7 +100,7 @@ export abstract class Chart {
         const uniqueSplitByValues = {};            
         const categoriesAndSeries: ICategoriesAndSeries = {
             series: [],
-            categories: undefined
+            categories: []
         };
 
         options.queryResultData.rows.forEach((row) => {
@@ -109,7 +109,10 @@ export abstract class Chart {
         	const splitByValue = row[splitByColumnIndex];
         
         	if(!uniqueXValues[xValue]) {
-        		uniqueXValues[xValue] = true;
+                uniqueXValues[xValue] = true;
+                
+                // Populate X-Axis
+                categoriesAndSeries.categories.push(xValue);
         	}
         
         	if(!uniqueSplitByValues[splitByValue]) {
@@ -119,9 +122,6 @@ export abstract class Chart {
         	uniqueSplitByValues[splitByValue][xValue] = yValue;
         });
         
-        // Populate X-Axis
-        categoriesAndSeries.categories = _.keys(uniqueXValues);
-
         // Populate Split by
         for (let splitByValue in uniqueSplitByValues) {
         	const currentSeries = {
