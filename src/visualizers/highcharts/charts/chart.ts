@@ -133,8 +133,12 @@ export abstract class Chart {
         	
         	// Set a split-by value for each unique x value
         	categoriesAndSeries.categories.forEach((xValue) => {
-        		const yValue = xValueToYValueMap[xValue] || null;
+        		let yValue = xValueToYValueMap[xValue];
         
+                if(yValue === undefined) {
+                    yValue = null;
+                }
+                
         		currentSeries.data.push(yValue);
         	});
         
