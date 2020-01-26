@@ -210,6 +210,9 @@ export class HighchartsVisualizer implements IVisualizer {
                 shared: false,
                 useHTML: true
             },
+            legend:{
+                maxHeight: this.getLegendMaxHeight()
+            },
             exporting: {
                 buttons: {
                     contextButton: {
@@ -345,6 +348,17 @@ export class HighchartsVisualizer implements IVisualizer {
         if(columnSelection.yAxes.length > 1 && columnSelection.splitBy && columnSelection.splitBy.length > 0) {
             throw new InvalidInputError("When there are multiple y-axis columns, split-by column isn't allowed", ErrorCode.InvalidColumnsSelection);
         }
+    }
+
+    private getLegendMaxHeight(): number {
+        let legendMaxHeight = 150; // Default
+        const chartContainer = document.querySelector('#' + this.options.elementId);
+
+        if(chartContainer && chartContainer.clientHeight) {
+            legendMaxHeight = chartContainer.clientHeight / 5;
+        }
+
+        return legendMaxHeight;
     }
 
     //#endregion Private methods
