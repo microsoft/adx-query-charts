@@ -6,7 +6,7 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
-import { InvalidInputError } from '../../../common/errors/errors';
+import { InvalidInputError, ChartError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
 
 export class Pie extends Chart {
@@ -46,6 +46,23 @@ export class Pie extends Chart {
                 y: yAxisValue 
             })
         });
+
+        // Make sure that is data to create the chart
+        let allZeroPie: boolean = true;
+
+        for(let i = 0; i < pieSeries.data.length; i++) {
+            const currentData = pieSeries.data[i];
+
+            if(currentData.y) {
+                allZeroPie = false;
+
+                break;
+            }
+        }
+
+        if(allZeroPie) {
+            throw new ChartError("The pie chart can't be drawn since it contains only zero values", ErrorCode.PieContainsOnlyZeros);
+        }
 
         return {
             series: [pieSeries]

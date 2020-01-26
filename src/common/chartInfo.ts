@@ -1,6 +1,7 @@
 'use strict';
 
 import { IChartInfo, IDataTransformationInfo, DrawChartStatus } from "./chartModels";
+import { ChartError } from "./errors/errors";
 
 export class ChartInfo implements IChartInfo {
     public dataTransformationInfo: IDataTransformationInfo = {
@@ -10,5 +11,5 @@ export class ChartInfo implements IChartInfo {
     };
 
     public status: DrawChartStatus = DrawChartStatus.Success;
-    public error?: Error;
+    public error?: ChartError;
 }
