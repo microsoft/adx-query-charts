@@ -6,8 +6,18 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
-import { InvalidInputError, ChartError } from '../../../common/errors/errors';
+import { InvalidInputError, EmptyPieError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
+
+interface IPieSeriesData {
+    name: string;
+    y: number; 
+}
+
+interface IPieSeries {
+    name: string;
+    data: IPieSeriesData[];
+}
 
 export class Pie extends Chart {
     //#region Methods override
@@ -32,14 +42,14 @@ export class Pie extends Chart {
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
 
         // Build the data for the pie
-        const pieSeries = {
+        const pieSeries: IPieSeries = {
             name: yAxisColumn.name,
             data: []
         }
 
         options.queryResultData.rows.forEach((row) => {
-            const xAxisValue = row[xAxisColumnIndex];
-            const yAxisValue = row[yAxisColumnIndex];
+            const xAxisValue = <string>row[xAxisColumnIndex];
+            const yAxisValue = <number>row[yAxisColumnIndex];
 
             pieSeries.data.push({
                 name: xAxisValue,
@@ -47,22 +57,7 @@ export class Pie extends Chart {
             })
         });
 
-        // Make sure that is data to create the chart
-        let allZeroPie: boolean = true;
-
-        for(let i = 0; i < pieSeries.data.length; i++) {
-            const currentData = pieSeries.data[i];
-
-            if(currentData.y) {
-                allZeroPie = false;
-
-                break;
-            }
-        }
-
-        if(allZeroPie) {
-            throw new ChartError("The pie chart can't be drawn since it contains only zero values", ErrorCode.PieContainsOnlyZeros);
-        }
+        this.validateNonEmptyPie(pieSeries);
 
         return {
             series: [pieSeries]
@@ -100,6 +95,10 @@ export class Pie extends Chart {
         });
 
         const series = this.spreadMultiLevelSeries(options, pieData);
+
+        series.forEach((pieSeries) => {
+            this.validateNonEmptyPie(pieSeries);       
+        });
 
         return {
             series: series
@@ -159,7 +158,7 @@ export class Pie extends Chart {
 
     //#region Private methods
 
-    private spreadMultiLevelSeries(options: IVisualizerOptions, pieData: any, level: number = 0, series: any[] = []): any[] {
+    private spreadMultiLevelSeries(options: IVisualizerOptions, pieData: any, level: number = 0, series: any[] = []): IPieSeries[] {
         const chartOptions = options.chartOptions;
         const levelsCount = chartOptions.columnsSelection.splitBy.length + 1;
         const firstLevelSize =  Math.round(100 / levelsCount);
@@ -223,6 +222,25 @@ export class Pie extends Chart {
         });
 
         return keyIndexes;
+    }
+
+    private validateNonEmptyPie(pieSeries: IPieSeries): void {    
+        // Make sure that is data to create the chart
+        let allZeroPie: boolean = true;
+
+        for(let i = 0; i < pieSeries.data.length; i++) {
+            const currentData = pieSeries.data[i];
+
+            if(currentData.y) {
+                allZeroPie = false;
+
+                break;
+            }
+        }
+
+        if(allZeroPie) {
+            throw new EmptyPieError();
+        }
     }
 
     //#endregion Private methods
