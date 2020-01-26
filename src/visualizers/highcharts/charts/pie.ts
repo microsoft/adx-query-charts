@@ -96,10 +96,6 @@ export class Pie extends Chart {
 
         const series = this.spreadMultiLevelSeries(options, pieData);
 
-        series.forEach((pieSeries) => {
-            this.validateNonEmptyPie(pieSeries);       
-        });
-
         return {
             series: series
         }
@@ -198,6 +194,8 @@ export class Pie extends Chart {
                 y: pieLevelValue.y
             });
 
+            this.validateNonEmptyPie(currentSeries);       
+
             let drillDown = pieLevelValue.drillDown;
 
             if(!_.isEmpty(drillDown)) {
@@ -225,11 +223,12 @@ export class Pie extends Chart {
     }
 
     private validateNonEmptyPie(pieSeries: IPieSeries): void {    
-        // Make sure that is data to create the chart
+        // Make sure that the pie data contains non-zero values, otherwise the pie can't be drawn
         let allZeroPie: boolean = true;
+        const data: IPieSeriesData[] = pieSeries.data;
 
-        for(let i = 0; i < pieSeries.data.length; i++) {
-            const currentData = pieSeries.data[i];
+        for(let i = 0; i < data.length; i++) {
+            const currentData = data[i];
 
             if(currentData.y) {
                 allZeroPie = false;
