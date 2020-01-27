@@ -224,7 +224,7 @@ export class Pie extends Chart {
 
     private validateNonEmptyPie(pieSeries: IPieSeries): void {    
         // Make sure that the pie data contains non-empty values (not only zero / null / undefined), otherwise the pie can't be drawn
-        let allZeroPie: boolean = _.every(pieSeries.data, (currentData) => !currentData.y);
+        const allZeroPie: boolean = _.every(pieSeries.data, (currentData) => !currentData.y);
 
         if(allZeroPie) {
             throw new EmptyPieError();
