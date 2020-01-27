@@ -2,10 +2,11 @@
 
 //#region Imports
 
+import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_offlineExporting from 'highcharts/modules/offline-exporting';
-import * as _ from 'lodash';
+import HC_Accessibility from 'highcharts/modules/accessibility';
 import { ResizeSensor } from 'css-element-queries';
 import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
@@ -37,6 +38,9 @@ export class HighchartsVisualizer implements IVisualizer {
         // init Highcharts exporting modules
         HC_exporting(Highcharts);
         HC_offlineExporting(Highcharts);
+
+        // init Highcharts accessibility module
+        HC_Accessibility(Highcharts);
     }
 
     public drawNewChart(options: IVisualizerOptions): Promise<void> {
@@ -211,7 +215,13 @@ export class HighchartsVisualizer implements IVisualizer {
                 useHTML: true
             },
             legend:{
-                maxHeight: this.getLegendMaxHeight()
+                maxHeight: this.getLegendMaxHeight(),
+                accessibility: {
+                    enabled: true,
+                    keyboardNavigation: {
+                    	enabled: true
+                    }
+                }
             },
             exporting: {
                 buttons: {
