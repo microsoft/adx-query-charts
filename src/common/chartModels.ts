@@ -1,5 +1,7 @@
 'use strict';
 
+import { ChartError } from "./errors/errors";
+
 //#region Draft contracts
 
 // See: https://kusto.azurewebsites.net/docs/query/scalar-data-types/index.html
@@ -127,7 +129,7 @@ export interface IChartInfo {
     /**
      * The error information in case that the draw action failed
      */
-    error?: Error;
+    error?: ChartError;
 }
 
 /**
@@ -291,5 +293,5 @@ export interface IChartHelper {
      * Download the chart as JPG image
      * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
      */
-    downloadChartJPGImage(onError?: (error: Error) => void): void;
+    downloadChartJPGImage(onError?: (error: ChartError) => void): void;
 }

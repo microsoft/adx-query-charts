@@ -11,7 +11,7 @@ import { ChartChange } from './chartChange';
 import { ChangeDetection } from './changeDetection';
 import { ChartInfo } from './chartInfo';
 import { IVisualizerOptions } from '../visualizers/IVisualizerOptions';
-import { InvalidInputError } from './errors/errors';
+import { InvalidInputError, ChartError } from './errors/errors';
 import { ErrorCode } from './errors/errorCode';
 
 //#endregion Imports
@@ -428,7 +428,7 @@ export class KustoChartHelper implements IChartHelper {
         resolve(this.chartInfo);
     }
 
-    private onError(resolve: ResolveFn, chartOptions: IChartOptions, error: Error): void {
+    private onError(resolve: ResolveFn, chartOptions: IChartOptions, error: ChartError): void {
         this.chartInfo = new ChartInfo();
         this.chartInfo.status = DrawChartStatus.Failed;
         this.chartInfo.error = error;

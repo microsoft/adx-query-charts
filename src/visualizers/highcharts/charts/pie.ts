@@ -6,8 +6,18 @@ import { TooltipHelper } from '../tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
-import { InvalidInputError } from '../../../common/errors/errors';
+import { InvalidInputError, EmptyPieError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
+
+interface IPieSeriesData {
+    name: string;
+    y: number; 
+}
+
+interface IPieSeries {
+    name: string;
+    data: IPieSeriesData[];
+}
 
 export class Pie extends Chart {
     //#region Methods override
@@ -32,20 +42,22 @@ export class Pie extends Chart {
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
 
         // Build the data for the pie
-        const pieSeries = {
+        const pieSeries: IPieSeries = {
             name: yAxisColumn.name,
             data: []
         }
 
         options.queryResultData.rows.forEach((row) => {
-            const xAxisValue = row[xAxisColumnIndex];
-            const yAxisValue = row[yAxisColumnIndex];
+            const xAxisValue = <string>row[xAxisColumnIndex];
+            const yAxisValue = <number>row[yAxisColumnIndex];
 
             pieSeries.data.push({
                 name: xAxisValue,
                 y: yAxisValue 
             })
         });
+
+        this.validateNonEmptyPie(pieSeries);
 
         return {
             series: [pieSeries]
@@ -142,7 +154,7 @@ export class Pie extends Chart {
 
     //#region Private methods
 
-    private spreadMultiLevelSeries(options: IVisualizerOptions, pieData: any, level: number = 0, series: any[] = []): any[] {
+    private spreadMultiLevelSeries(options: IVisualizerOptions, pieData: any, level: number = 0, series: any[] = []): IPieSeries[] {
         const chartOptions = options.chartOptions;
         const levelsCount = chartOptions.columnsSelection.splitBy.length + 1;
         const firstLevelSize =  Math.round(100 / levelsCount);
@@ -182,6 +194,8 @@ export class Pie extends Chart {
                 y: pieLevelValue.y
             });
 
+            this.validateNonEmptyPie(currentSeries);       
+
             let drillDown = pieLevelValue.drillDown;
 
             if(!_.isEmpty(drillDown)) {
@@ -206,6 +220,15 @@ export class Pie extends Chart {
         });
 
         return keyIndexes;
+    }
+
+    private validateNonEmptyPie(pieSeries: IPieSeries): void {    
+        // Make sure that the pie data contains non-empty values (not only zero / null / undefined), otherwise the pie can't be drawn
+        const allZeroPie: boolean = _.every(pieSeries.data, (currentData) => !currentData.y);
+
+        if(allZeroPie) {
+            throw new EmptyPieError();
+        }
     }
 
     //#endregion Private methods
