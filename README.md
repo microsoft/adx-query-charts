@@ -132,7 +132,8 @@ enum ErrorCode {
     UnsupportedTypeInColumnsSelection,
     InvalidChartContainerElementId,
     InvalidDate,
-    FailedToCreateVisualization
+    FailedToCreateVisualization,
+    EmptyPie
 }
 ```
 

@@ -6,5 +6,6 @@ export enum ErrorCode {
     UnsupportedTypeInColumnsSelection = 'UnsupportedTypeInColumnsSelection',
     InvalidChartContainerElementId = 'InvalidChartContainerElementId',
     InvalidDate = 'InvalidDate',
-    FailedToCreateVisualization = 'FailedToCreateVisualization'
+    FailedToCreateVisualization = 'FailedToCreateVisualization',
+    EmptyPie = 'EmptyPie'
 }
