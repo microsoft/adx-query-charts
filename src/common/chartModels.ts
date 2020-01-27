@@ -94,7 +94,11 @@ export interface IAxesInfo<T> {
     splitBy?: T[];
 }
 
-export interface IColumnsSelection extends IAxesInfo<IColumn> {}
+export class ColumnsSelection implements IAxesInfo<IColumn> {
+    public xAxis: IColumn;
+    public yAxes: IColumn[];
+    public splitBy?: IColumn[];
+}
 
 export interface IDataTransformationInfo {
     /**
@@ -145,7 +149,7 @@ export interface IChartOptions {
      * The columns selection for the Axes and the split-by of the chart
      * If not provided, default columns will be selected. See: getDefaultSelection method
      */
-    columnsSelection?: IColumnsSelection;
+    columnsSelection?: ColumnsSelection;
 
     /**
      * The maximum number of the unique X-axis values.
@@ -287,7 +291,7 @@ export interface IChartHelper {
      * @param chartType - The type of the chart
      * @param supportedColumnsForChart - [Optional] The list of the supported column types for the axes and the split-by
      */
-    getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection;
+    getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): ColumnsSelection;
 
     /**
      * Download the chart as JPG image

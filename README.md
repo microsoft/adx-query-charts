@@ -41,14 +41,14 @@ chartHelper.draw(queryResultData, chartOptions);
 | changeTheme              | Change the theme of an existing chart | [ChartTheme](#ChartTheme) - The theme to apply   | Promise&lt;void&gt; |
 | getSupportedColumnTypes  | Get the supported column types for the axes and the split-by<br>for a specific chart type | [ChartType](#ChartType) - The type of the chart  | [ISupportedColumnTypes](#ISupportedColumnTypes) |
 | getSupportedColumnsInResult | Get the supported columns from the query result data for the axes and the split-by for a specific chart type | [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart | [ISupportedColumns](#ISupportedColumns) |
-| getDefaultSelection      | Get the default columns selection from the query result data.<br>Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type. |  [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart<br>[ISupportedColumns](#ISupportedColumns) - (Optional) The list of the supported column types for the axes and the split-by | [IColumnsSelection](#IColumnsSelection) |
+| getDefaultSelection      | Get the default columns selection from the query result data.<br>Select the default columns for the axes and the split-by for drawing a default chart of a specific chart type. |  [IQueryResultData](#IQueryResultData) - The original query result data<br> [ChartType](#ChartType) - The type of the chart<br>[ISupportedColumns](#ISupportedColumns) - (Optional) The list of the supported column types for the axes and the split-by | [ColumnsSelection](#ColumnsSelection) |
 | downloadChartJPGImage    | Download the chart as JPG image |  (error: Error) => void - [Optional] A callback that will be called if the module failed to export the chart image  |  void |
 
 ### IChartOptions
 | Option name:           | Type:                   | Details:                                                         | Default value:  |
 | -------------------    |--------------------     | ---------------------------------------------                    | ----------------|
 | chartType              | [ChartType](#ChartType) | Mandatory. <br>The type of the chart to draw                     |                 |
-| columnsSelection       | [IColumnsSelection](#IColumnsSelection)| The columns selection for the Axes and the split-by of the chart | If not provided, default columns will be selected. <br>See: getDefaultSelection method|
+| columnsSelection       | [ColumnsSelection](#ColumnsSelection)| The columns selection for the Axes and the split-by of the chart | If not provided, default columns will be selected. <br>See: getDefaultSelection method|
 | maxUniqueXValues       | number                  | The maximum number of the unique X-axis values.<br>The chart will show the biggest values, and the rest will be aggregated to a separate data point.| 100 |
 | exceedMaxDataPointLabel| string                  | The label of the data point that contains the aggregated value of all the X-axis values that exceed the 'maxUniqueXValues'| 'OTHER' |
 | aggregationType        | [AggregationType](#AggregationType)         | Multiple rows with the same values for the X-axis and the split-by will be aggregated using a function of this type.<br>For example, assume we get the following query result data:<br>['2016-08-02T10:00:00Z', 'Chrome 51.0', 15], <br>['2016-08-02T10:00:00Z', 'Internet Explorer 9.0', 4]<br>When drawing a chart with columnsSelection = { xAxis: timestamp, yAxes: count_ }, and aggregationType = AggregationType.Sum we need to aggregate the values of the same timestamp value and return one row with ["2016-08-02T10:00:00Z", 19] | AggregationType.Sum |
@@ -92,17 +92,17 @@ enum ChartType {
 }
 ```
 
-### IColumnsSelection
+### ColumnsSelection
 ```typescript
 interface IColumn {
     name: string;
     type: DraftColumnType;
 }
 
-interface IColumnsSelection {
-    xAxis: IColumn;
-    yAxes: IColumn[];
-    splitBy?: IColumn[];
+class ColumnsSelection {
+    public xAxis: IColumn;
+    public yAxes: IColumn[];
+    public splitBy?: IColumn[];
 }
 ```
 
