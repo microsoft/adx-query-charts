@@ -23,6 +23,6 @@ export class VisualizerError extends ChartError {
 
 export class EmptyPieError extends ChartError {
     public constructor() {
-        super("The pie chart can't be drawn since it contains only zero values", ErrorCode.PieContainsOnlyZeros);
+        super("The pie chart can't be drawn since it contains only empty data (zeros / null / undefined)", ErrorCode.EmptyPie);
     }
 }

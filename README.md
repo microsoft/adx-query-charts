@@ -133,7 +133,7 @@ enum ErrorCode {
     InvalidChartContainerElementId,
     InvalidDate,
     FailedToCreateVisualization,
-    PieContainsOnlyZeros
+    EmptyPie
 }
 ```
 

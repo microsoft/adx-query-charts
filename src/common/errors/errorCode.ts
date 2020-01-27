@@ -7,5 +7,5 @@ export enum ErrorCode {
     InvalidChartContainerElementId = 'InvalidChartContainerElementId',
     InvalidDate = 'InvalidDate',
     FailedToCreateVisualization = 'FailedToCreateVisualization',
-    PieContainsOnlyZeros = 'PieContainsOnlyZeros'
+    EmptyPie = 'EmptyPie'
 }
