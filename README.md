@@ -100,9 +100,9 @@ interface IColumn {
 }
 
 class ColumnsSelection {
-    public xAxis: IColumn;
-    public yAxes: IColumn[];
-    public splitBy?: IColumn[];
+    xAxis: IColumn;
+    yAxes: IColumn[];
+    splitBy?: IColumn[];
 }
 ```
 
@@ -140,7 +140,7 @@ enum ErrorCode {
 ### CustomError
 ```typescript
 class ChartError extends Error {
-    public errorCode: ErrorCode;
+    errorCode: ErrorCode;
 }
 ```
 See [ErrorCode](#ErrorCode) 
