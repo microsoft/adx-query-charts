@@ -79,7 +79,7 @@ describe('Unit tests for KustoChartHelper', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        it("When there are multiple columns for y and no split-by column - there is multi y-axes selection", () => {
+        it("When there are multiple columns for y and no split-by column - there is multi y-axis selection", () => {
             const supportedColumnsForChart: ISupportedColumns = {
                 xAxis: [countDecimalColumn, dateTimeColumn, secondCountIntColumn, thirdCountIntColumn],
                 yAxis: [secondCountIntColumn, countDecimalColumn, thirdCountIntColumn],
@@ -174,6 +174,26 @@ describe('Unit tests for KustoChartHelper', () => {
 
             // Act
             const result = kustoChartHelper.getDefaultSelection(queryResultData, ChartType.StackedColumn, supportedColumnsForChart);
+
+            // Assert
+            expect(result).toEqual(expectedResult);
+        });
+                                        
+        it("When the chart type is pie / donut, there is single y selection, and no split-by selection", () => {
+            const supportedColumnsForChart: ISupportedColumns = {
+                xAxis: [countryStrColumn, cityStrColumn],
+                yAxis: [secondCountIntColumn, countDecimalColumn, thirdCountIntColumn],
+                splitBy: [countryStrColumn, cityStrColumn]
+            };
+
+            const expectedResult: ColumnsSelection = {
+                xAxis: countryStrColumn,
+                yAxes: [secondCountIntColumn],
+                splitBy: null
+            }
+
+            // Act
+            const result = kustoChartHelper.getDefaultSelection(queryResultData, ChartType.Donut, supportedColumnsForChart);
 
             // Assert
             expect(result).toEqual(expectedResult);

@@ -15,15 +15,13 @@ export class VisualizerMock implements IVisualizer {
             resolve();
         });
     }
-
-     
+   
     public updateExistingChart(options: IVisualizerOptions, changes: Changes): Promise<void> {
         return new Promise((resolve, reject) => {
             resolve();
         });
     }
-
-       
+    
     public changeTheme(newTheme: ChartTheme): Promise<void> {
         return new Promise((resolve, reject) => {
             resolve();

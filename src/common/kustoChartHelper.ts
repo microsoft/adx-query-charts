@@ -197,7 +197,7 @@ export class KustoChartHelper implements IChartHelper {
 
         columnsSelection.splitBy = defaultSplitBy ? [defaultSplitBy] : null;
         if (!columnsSelection.yAxes) {
-            columnsSelection.yAxes = this.selectDefaultYAxes(supportedColumnsForChart.yAxis, columnsSelection, chartType);
+            columnsSelection.yAxes = this.selectDefaultYAxes(supportedYAxisColumns, columnsSelection, chartType);
         }
         
         return columnsSelection;
@@ -322,7 +322,7 @@ export class KustoChartHelper implements IChartHelper {
         let numberOfDefaultYAxes: number = 1;
 
         // The y-axis is a single select when there is split-by, or for Pie / Donut charts
-        if (chartType !== ChartType.Pie && chartType !== ChartType.Donut && !currentSelection.splitBy) {
+        if (!Utilities.isPieOrDonut(chartType) && !currentSelection.splitBy) {
             numberOfDefaultYAxes = KustoChartHelper.maxDefaultYAxesSelection;
         }
 
@@ -347,6 +347,12 @@ export class KustoChartHelper implements IChartHelper {
         return null;
     }
 
+    /**
+     * Removes the columns that are already selected from the supportedColumns array in order to prevent the selection of the same column in different axes
+     * @param supportedColumns - The list of the supported columns for current axis
+     * @param currentSelection - The list of the columns that are already selected
+     * @returns - The supportedColumns after the removal of the selected columns
+     */
     private removeSelectedColumns(supportedColumns: IColumn[], currentSelection: ColumnsSelection): IColumn[] {
         const selectedColumns: IColumn[] = _.concat(currentSelection.xAxis || [], currentSelection.yAxes || [], currentSelection.splitBy || []);
         
