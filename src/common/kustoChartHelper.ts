@@ -2,7 +2,8 @@
 
 //#region Imports
 
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, IColumnsSelection, IChartOptions, AggregationType, ChartTheme, IChartInfo, DrawChartStatus } from './chartModels';
+import * as _ from 'lodash';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, ColumnsSelection, IChartOptions, AggregationType, ChartTheme, IChartInfo, DrawChartStatus } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
@@ -84,7 +85,7 @@ export class KustoChartHelper implements IChartHelper {
                 this.queryResultData = queryResultData;
                 
                 // First initialization / query data change / columns selection change
-                if(!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {    
+                if (!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {    
                     this.chartInfo = new ChartInfo();
     
                     // Apply query data transformation
@@ -105,7 +106,7 @@ export class KustoChartHelper implements IChartHelper {
                 let drawChartPromise: Promise<void>;
     
                 // First initialization
-                if(!changes) {
+                if (!changes) {
                     drawChartPromise = this.visualizer.drawNewChart(visualizerOptions);
                 } else { // Change existing chart
                     drawChartPromise = this.visualizer.updateExistingChart(visualizerOptions, changes);
@@ -126,7 +127,7 @@ export class KustoChartHelper implements IChartHelper {
 
     public changeTheme(newTheme: ChartTheme): Promise<void> {
         return new Promise((resolve, reject) => {
-            if(this.options && this.options.chartTheme !== newTheme) {
+            if (this.options && this.options.chartTheme !== newTheme) {
                 this.visualizer.changeTheme(newTheme)
                     .then(() => {
                         this.options.chartTheme = newTheme;
@@ -170,20 +171,36 @@ export class KustoChartHelper implements IChartHelper {
         }
     }
 
-    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): IColumnsSelection {
+    public getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): ColumnsSelection {
         if (!supportedColumnsForChart) {
             supportedColumnsForChart = this.getSupportedColumnsInResult(queryResultData, chartType);
         }
 
-        const defaultXAxis: IColumn = this.selectDefaultXAxis(supportedColumnsForChart.xAxis);
-        const defaultSplitBy: IColumn = this.selectDefaultSplitByColumn(supportedColumnsForChart.splitBy, defaultXAxis, chartType);
-        const defaultYAxes: IColumn[] = this.selectDefaultYAxes(supportedColumnsForChart.yAxis, defaultXAxis, defaultSplitBy, chartType);
+        const columnsSelection = new ColumnsSelection();
+        const supportedXAxisColumns = supportedColumnsForChart.xAxis;
+        const supportedYAxisColumns = supportedColumnsForChart.yAxis;
 
-        return {
-            xAxis: defaultXAxis,
-            yAxes: defaultYAxes,
-            splitBy: defaultSplitBy ? [defaultSplitBy] : null
+        if (!supportedXAxisColumns || supportedXAxisColumns.length === 0 || !supportedYAxisColumns || supportedYAxisColumns.length === 0) {
+            return columnsSelection; // Not enough supported columns - return empty selection
         }
+        
+        if (supportedYAxisColumns.length === 1) {            
+            columnsSelection.yAxes = supportedYAxisColumns; // If only 1 column is supported as y-axis column - select it
+        }
+
+        columnsSelection.xAxis = this.selectDefaultXAxis(supportedXAxisColumns, columnsSelection);
+        if (!columnsSelection.xAxis) {
+            return columnsSelection;
+        }
+
+        const defaultSplitBy = this.selectDefaultSplitByColumn(supportedColumnsForChart.splitBy, columnsSelection, chartType);
+
+        columnsSelection.splitBy = defaultSplitBy ? [defaultSplitBy] : null;
+        if (!columnsSelection.yAxes) {
+            columnsSelection.yAxes = this.selectDefaultYAxes(supportedYAxisColumns, columnsSelection, chartType);
+        }
+        
+        return columnsSelection;
     }
 
     public downloadChartJPGImage() {
@@ -269,14 +286,16 @@ export class KustoChartHelper implements IChartHelper {
         return supportedColumns;
     }
 
-    private selectDefaultXAxis(supportedColumns: IColumn[]): IColumn {
-        if (!supportedColumns || supportedColumns.length === 0) {
+    private selectDefaultXAxis(supportedColumns: IColumn[], currentSelection: ColumnsSelection): IColumn {
+        const updatedSupportedColumns = this.removeSelectedColumns(supportedColumns, currentSelection);
+
+        if (updatedSupportedColumns.length === 0) {
             return null;
         }
 
         // Select the first DateTime column if exists
-        for (let i = 0; i < supportedColumns.length; i++) {
-            const column: IColumn = supportedColumns[i];
+        for (let i = 0; i < updatedSupportedColumns.length; i++) {
+            const column: IColumn = updatedSupportedColumns[i];
 
             if (column.type === DraftColumnType.DateTime) {
                 return column;
@@ -284,21 +303,17 @@ export class KustoChartHelper implements IChartHelper {
         }
 
         // If DateTime column doesn't exist - select the first supported column
-        return supportedColumns[0];
+        return updatedSupportedColumns[0];
     }
 
-    private selectDefaultYAxes(supportedColumns: IColumn[], selectedXAxis: IColumn, selectedSplitBy: IColumn, chartType: ChartType): IColumn[] {
-        if (!supportedColumns || supportedColumns.length === 0 || !selectedXAxis) {
+    private selectDefaultYAxes(supportedColumns: IColumn[], currentSelection: ColumnsSelection, chartType: ChartType): IColumn[] {
+        if (!supportedColumns || supportedColumns.length === 0) {
             return null;
         }
 
-        // Remove the selected XAxis and SplitBy columns from the supported columns
-        const updatedSupportedColumns = supportedColumns.filter((column: IColumn) => {
-            const isSelectedXAxis = column.name === selectedXAxis.name && column.type === selectedXAxis.type;
-            const isSelectedSplitBy = selectedSplitBy && column.name === selectedSplitBy.name && column.type === selectedSplitBy.type;
-
-            return !isSelectedXAxis && !isSelectedSplitBy;
-        });
+        
+        // Remove the selected columns from the supported columns
+        const updatedSupportedColumns = this.removeSelectedColumns(supportedColumns, currentSelection);
 
         if (updatedSupportedColumns.length === 0) {
             return null;
@@ -307,7 +322,7 @@ export class KustoChartHelper implements IChartHelper {
         let numberOfDefaultYAxes: number = 1;
 
         // The y-axis is a single select when there is split-by, or for Pie / Donut charts
-        if (chartType !== ChartType.Pie && chartType !== ChartType.Donut && !selectedSplitBy) {
+        if (!Utilities.isPieOrDonut(chartType) && !currentSelection.splitBy) {
             numberOfDefaultYAxes = KustoChartHelper.maxDefaultYAxesSelection;
         }
 
@@ -316,22 +331,40 @@ export class KustoChartHelper implements IChartHelper {
         return selectedYAxes;
     }
 
-    private selectDefaultSplitByColumn(supportedColumns: IColumn[], selectedXAxis: IColumn, chartType: ChartType): IColumn {
+    private selectDefaultSplitByColumn(supportedColumns: IColumn[], currentSelection: ColumnsSelection, chartType: ChartType): IColumn {
         // Pie / Donut chart default is without a splitBy column
-        if (!supportedColumns || supportedColumns.length === 0 || !selectedXAxis || Utilities.isPieOrDonut(chartType)) {
+        if (!supportedColumns || supportedColumns.length === 0 || Utilities.isPieOrDonut(chartType)) {
             return null;
         }
 
-        // Remove the selected XAxis column from the supported columns
-        const updatedSupportedColumns = supportedColumns.filter((column: IColumn) => {
-            return column.name !== selectedXAxis.name || column.type !== selectedXAxis.type;
-        });
+        // Remove the selected columns from the supported columns
+        const updatedSupportedColumns = this.removeSelectedColumns(supportedColumns, currentSelection);
 
         if (updatedSupportedColumns.length > 0) {
             return updatedSupportedColumns[0];
         }
 
         return null;
+    }
+
+    /**
+     * Removes the columns that are already selected from the supportedColumns array in order to prevent the selection of the same column in different axes
+     * @param supportedColumns - The list of the supported columns for current axis
+     * @param currentSelection - The list of the columns that are already selected
+     * @returns - The supportedColumns after the removal of the selected columns
+     */
+    private removeSelectedColumns(supportedColumns: IColumn[], currentSelection: ColumnsSelection): IColumn[] {
+        const selectedColumns: IColumn[] = _.concat(currentSelection.xAxis || [], currentSelection.yAxes || [], currentSelection.splitBy || []);
+        
+        // No columns are selected - do nothing
+        if (selectedColumns.length === 0) {
+            return supportedColumns;
+        }
+
+        // Remove the selected columns from the supported columns
+        const updatedSupportedColumns = supportedColumns.filter(supported => _.findIndex(selectedColumns, (selected) => selected.name === supported.name) === -1);
+
+        return updatedSupportedColumns;
     }
 
     /**
@@ -370,7 +403,7 @@ export class KustoChartHelper implements IChartHelper {
         const updatedChartOptions: IChartOptions = { ...KustoChartHelper.defaultChartOptions, ...chartOptions };
 
         // Apply default columns selection if columns selection wasn't provided
-        if(!updatedChartOptions.columnsSelection) {
+        if (!updatedChartOptions.columnsSelection) {
             updatedChartOptions.columnsSelection = this.getDefaultSelection(queryResultData, updatedChartOptions.chartType);
 
             if (!updatedChartOptions.columnsSelection.xAxis || !updatedChartOptions.columnsSelection.yAxes || updatedChartOptions.columnsSelection.yAxes.length === 0) {
@@ -386,7 +419,7 @@ export class KustoChartHelper implements IChartHelper {
     private verifyInput(queryResultData: IQueryResultData, chartOptions: IChartOptions): void {
         const columnsSelection = chartOptions.columnsSelection;
 
-        if(!queryResultData) {
+        if (!queryResultData) {
            throw new InvalidInputError("The queryResultData can't be empty", ErrorCode.InvalidQueryResultData);
         } else if (!queryResultData.rows || !queryResultData.columns) {
             throw new InvalidInputError("The queryResultData must contain rows and columns", ErrorCode.InvalidQueryResultData);
@@ -403,7 +436,7 @@ export class KustoChartHelper implements IChartHelper {
             this.verifyColumnTypeIsSupported(supportedColumnTypes.yAxis, yAxis, chartOptions, 'y-axes');
         });
 
-        if(columnsSelection.splitBy) {        
+        if (columnsSelection.splitBy) {        
             columnsSelection.splitBy.forEach((splitBy) => {
                 this.verifyColumnTypeIsSupported(supportedColumnTypes.splitBy, splitBy, chartOptions, 'split-by');
             });
@@ -411,7 +444,7 @@ export class KustoChartHelper implements IChartHelper {
     }
 
     private verifyColumnTypeIsSupported(supportedTypes: DraftColumnType[], column: IColumn, chartOptions: IChartOptions, axisStr: string): void {
-        if(supportedTypes.indexOf(column.type) < 0) {
+        if (supportedTypes.indexOf(column.type) < 0) {
             const supportedStr = supportedTypes.join(', ');
 
             throw new InvalidInputError(
@@ -421,7 +454,7 @@ export class KustoChartHelper implements IChartHelper {
     }
 
     private finishDrawing(resolve: ResolveFn, chartOptions: IChartOptions): void {
-        if(chartOptions.onFinishDrawing) {
+        if (chartOptions.onFinishDrawing) {
             chartOptions.onFinishDrawing(this.chartInfo);
         }
 
