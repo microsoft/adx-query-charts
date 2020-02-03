@@ -1,8 +1,9 @@
 'use strict';
 
 import * as _ from 'lodash';
+import { Utilities as HC_Utilities } from '../common/utilities';
 import { Chart, ICategoriesAndSeries } from './chart';
-import { TooltipHelper } from '../tooltipHelper';
+import { TooltipHelper } from '../common/tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
@@ -49,11 +50,11 @@ export class Pie extends Chart {
 
         options.queryResultData.rows.forEach((row) => {
             const xAxisValue = <string>row[xAxisColumnIndex];
-            const yAxisValue = <number>row[yAxisColumnIndex];
+            const yAxisValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
 
             pieSeries.data.push({
                 name: xAxisValue,
-                y: yAxisValue 
+                y: yAxisValue
             })
         });
 
@@ -74,7 +75,7 @@ export class Pie extends Chart {
         let pieLevelData = pieData;
 
         options.queryResultData.rows.forEach((row) => {
-            const yAxisValue = row[yAxisColumnIndex];
+            const yAxisValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
 
             keyIndexes.forEach((keyIndex) => {  
                 const keyValue: string = <string>row[keyIndex];

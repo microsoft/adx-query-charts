@@ -4,7 +4,8 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
-import { TooltipHelper } from '../tooltipHelper';
+import { TooltipHelper } from '../common/tooltipHelper';
+import { Utilities as HC_Utilities } from '../common/utilities';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions, IRowValue } from '../../../common/chartModels';
@@ -60,7 +61,7 @@ export abstract class Chart {
 
             _.forEach(yAxesIndexes, (yAxisIndex, i) => {
                 const yAxisColumnName = chartOptions.columnsSelection.yAxes[i].name;
-                const yAxisValue = row[yAxisIndex];
+                const yAxisValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisIndex);
                 
                 if(!seriesMap[yAxisColumnName]) {
                     seriesMap[yAxisColumnName] = [];
@@ -105,7 +106,7 @@ export abstract class Chart {
 
         options.queryResultData.rows.forEach((row) => {
         	const xValue = row[xAxisColumnIndex];
-        	const yValue = row[yAxisColumnIndex];
+        	const yValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
         	const splitByValue = row[splitByColumnIndex];
         
         	if(!uniqueXValues[xValue]) {
@@ -164,7 +165,7 @@ export abstract class Chart {
             // X axis
             const xAxisColumn = chartOptions.columnsSelection.xAxis;
             const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
-            let tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, xAxisColumn, this.x, xColumnTitle);
+            let tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, xAxisColumn, context.x, xColumnTitle);
 
             // Y axis
             const yAxes = chartOptions.columnsSelection.yAxes;
@@ -180,13 +181,13 @@ export abstract class Chart {
                 yColumn = yAxes[yColumnIndex];
             }
 
-            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, this.y);
+            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, context.y);
             
             // Split by
             const splitBy = chartOptions.columnsSelection.splitBy;
 
             if(splitBy && splitBy.length > 0) {
-                tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, splitBy[0], this.series.name);
+                tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, splitBy[0], context.series.name);
             }
             
             return '<table>' + tooltip + '</table>';
@@ -222,7 +223,7 @@ export abstract class Chart {
 
         options.queryResultData.rows.forEach((row) => {
             const splitByValue: string = <string>row[splitByColumnIndex];
-            const yValue = row[yAxisColumnIndex];
+            const yValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
             let xValue = row[xAxisColumnIndex];
 
             // For date the a-axis, convert its value to ms as this is what expected by Highcharts

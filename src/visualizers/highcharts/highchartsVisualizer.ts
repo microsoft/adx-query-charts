@@ -247,8 +247,13 @@ export class HighchartsVisualizer implements IVisualizer {
         if(chartOptions.numberFormatter && Utilities.isNumeric(column.type)) {
             formatter = function() {
                 const dataPoint = this;
+                const value = dataPoint.value;
 
-                return chartOptions.numberFormatter(dataPoint.value);
+                if (typeof value === 'number') {
+                    return chartOptions.numberFormatter(value);
+                } else {
+                    return value;
+                }         
             }
         } else if(chartOptions.dateFormatter && Utilities.isDate(column.type)) {
             formatter = function() {

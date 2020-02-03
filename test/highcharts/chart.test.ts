@@ -116,15 +116,15 @@ describe('Unit tests for Chart methods', () => {
 
         it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and multiple y-axis', () => {
             const rows = [
-                ['Israel', 'Herzliya', 30, 300],
-                ['United States', 'New York', 100, 150],
-                ['Japan', 'Tokyo', 20, 200],
+                ['Israel', 'Herzliya', "30", 300],
+                ['United States', 'New York', "100", 150],
+                ['Japan', 'Tokyo', "20.58305", 200],
             ];
 
             const columns: IColumn[] = [
                 { name: 'country', type: DraftColumnType.String },
                 { name: 'city', type: DraftColumnType.String },
-                { name: 'request_count', type: DraftColumnType.Int },
+                { name: 'request_count', type: DraftColumnType.Decimal },
                 { name: 'second_count', type: DraftColumnType.Int },
             ];
 
@@ -150,7 +150,7 @@ describe('Unit tests for Chart methods', () => {
             const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
-                    data: [30, 100, 20]
+                    data: [30, 100, 20.58305]
                 },
                 {
                     name: 'second_count',
@@ -205,6 +205,96 @@ describe('Unit tests for Chart methods', () => {
                 {
                     name: 'second_count',
                     data: [[2019,  300], [2019, 150], [2000, 200]]
+                }],
+                categories: undefined
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+
+        it('Validate getStandardCategoriesAndSeries for Line chart with decimal y-axis', () => {
+            const rows = [
+                ['Israel', "252.3640552995391705069124423963134"],
+                ['United States', "100"],
+                ['Japan', "0.274074"],
+                ['China', "-5.274074"],
+                ['Ukraine', "976.5"],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'count', type: DraftColumnType.Decimal },
+            ];
+
+            // Input
+            const options: any = {
+                chartOptions: {
+                    columnsSelection: {
+                        xAxis: columns[0],  // country
+                        yAxes: [columns[1]] // count
+                    },
+                    utcOffset: 0
+                },
+                queryResultData: {
+                    rows: rows,
+                    columns: columns
+                }
+            }
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'count',
+                    data: [252.3640552995391705069124423963134, 100, 0.274074, -5.274074, 976.5]
+                }],
+                categories: ['Israel', 'United States', 'Japan', 'China', 'Ukraine']
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+     
+        it('Validate getStandardCategoriesAndSeries for Line chart: date x-axis and decimal y-axis', () => {
+            const rows = [
+                ['Israel', '2019-05-25T00:00:00Z', 'Herzliya', "252.36"],
+                ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', "-5.5"],
+                ['United States', '2000-06-26T00:00:00Z', 'New York', "250"],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'timestamp', type: DraftColumnType.DateTime },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Decimal },
+            ];
+
+            // Input
+            const options: any = {
+                chartOptions: {
+                    columnsSelection: {
+                        xAxis: columns[1],  // timestamp
+                        yAxes: [columns[3]] // request_count
+                    },
+                    utcOffset: 0
+                },
+                queryResultData: {
+                    rows: rows,
+                    columns: columns
+                }
+            }
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'request_count',
+                    data: [[2019,  252.36], [2019, -5.5], [2000, 250]]
                 }],
                 categories: undefined
             };
@@ -374,6 +464,55 @@ describe('Unit tests for Chart methods', () => {
             expect(result).toEqual(expected);
         });
 
+        
+        it('Validate getSplitByCategoriesAndSeries for Line chart: non-date x-axis with splitB and decimal y-axis', () => {
+            const rows = [
+                ['United States', 'Atlanta', "300.474"],
+                ['United States', 'Redmond', "20.2"]
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Decimal },
+            ];
+
+            // Input
+            const options: any = {
+                chartOptions: {
+                    columnsSelection: {
+                        xAxis: columns[0],    // country
+                        yAxes: [columns[2]],  // request_count
+                        splitBy: [columns[1]] // city
+                    },
+                    utcOffset: 0
+                },
+                queryResultData: {
+                    rows: rows,
+                    columns: columns
+                }
+            }
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'Atlanta',
+                    data: [300.474]
+                },
+                {
+                    name: 'Redmond',
+                    data: [20.2]
+                }],
+                categories: ['United States']
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+
         //#endregion Line chart getSplitByCategoriesAndSeries
         
         //#region Pie chart getStandardCategoriesAndSeries
@@ -425,6 +564,55 @@ describe('Unit tests for Chart methods', () => {
                         { name: 'Herzliya', y: 30 },
                         { name: 'Jaffa', y: 50 },
                         { name: 'Boston', y: 1 }
+                    ]
+                }],
+                categories: undefined
+            };
+        
+            // Assert
+            expect(result.series).toEqual(expected.series);
+            expect(result.categories).toEqual(expected.categories);
+        });
+                
+        it('Validate getStandardCategoriesAndSeries for Pie chart with decimal y-axis', () => {
+            const rows = [
+                ['Israel', 'Tel Aviv', "0.003310"],
+                ['United States', 'Redmond', "0286"],
+                ['United States', 'New York', "3.144"]
+            ];
+        
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Decimal },
+            ];
+        
+            // Input
+            const options: any = {
+                chartOptions: {
+                    columnsSelection: {
+                        xAxis: columns[1],    // city
+                        yAxes: [columns[2]],  // request_count
+                    },
+                    utcOffset: 0
+                },
+                queryResultData: {
+                    rows: rows,
+                    columns: columns
+                }
+            }
+        
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'request_count',
+                    data: [
+                        { name: 'Tel Aviv', y: 0.003310 },
+                        { name: 'Redmond', y: 286 },
+                        { name: 'New York', y: 3.144 }
                     ]
                 }],
                 categories: undefined
