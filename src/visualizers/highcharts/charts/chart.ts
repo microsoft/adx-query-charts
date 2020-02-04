@@ -5,7 +5,7 @@
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
 import { TooltipHelper } from '../common/tooltipHelper';
-import { Utilities as HC_Utilities } from '../common/utilities';
+import { HC_Utilities } from '../common/utilities';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions, IRowValue } from '../../../common/chartModels';

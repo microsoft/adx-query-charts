@@ -1,8 +1,8 @@
 'use strict';
 
-import { IQueryResultData, DraftColumnType, IColumn, IRow } from "../../../common/chartModels";
+import { DraftColumnType, IColumn, IRow } from "../../../common/chartModels";
 
-export class Utilities {
+export class HC_Utilities {
     public static getYValue(columns: IColumn[], row: IRow, yAxisIndex: number): number {
         const originalValue = row[yAxisIndex];
         const column = columns[yAxisIndex];

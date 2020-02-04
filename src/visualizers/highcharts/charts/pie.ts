@@ -1,7 +1,7 @@
 'use strict';
 
 import * as _ from 'lodash';
-import { Utilities as HC_Utilities } from '../common/utilities';
+import { HC_Utilities } from '../common/utilities';
 import { Chart, ICategoriesAndSeries } from './chart';
 import { TooltipHelper } from '../common/tooltipHelper';
 import { IVisualizerOptions } from '../../IVisualizerOptions';

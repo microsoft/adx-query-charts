@@ -463,9 +463,8 @@ describe('Unit tests for Chart methods', () => {
             // Assert
             expect(result).toEqual(expected);
         });
-
-        
-        it('Validate getSplitByCategoriesAndSeries for Line chart: non-date x-axis with splitB and decimal y-axis', () => {
+     
+        it('Validate getSplitByCategoriesAndSeries for Line chart: non-date x-axis with splitBy and decimal y-axis', () => {
             const rows = [
                 ['United States', 'Atlanta', "300.474"],
                 ['United States', 'Redmond', "20.2"]
