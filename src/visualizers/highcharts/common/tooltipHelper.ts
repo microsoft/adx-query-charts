@@ -1,7 +1,7 @@
 'use strict';
 
-import { DraftColumnType, DateFormat, IColumn, IChartOptions } from "../../common/chartModels";
-import { Utilities } from "../../common/utilities";
+import { DraftColumnType, DateFormat, IColumn, IChartOptions } from "../../../common/chartModels";
+import { Utilities } from "../../../common/utilities";
 
 export class TooltipHelper {
     public static getSingleTooltip(chartOptions: IChartOptions, context: Highcharts.TooltipFormatterContextObject, column: IColumn, originalValue: any, columnName?: string, valueSuffix: string = ''): string {
