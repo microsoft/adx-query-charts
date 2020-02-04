@@ -194,6 +194,9 @@ export class HighchartsVisualizer implements IVisualizer {
         const isDatetimeAxis = Utilities.isDate(chartOptions.columnsSelection.xAxis.type);
 
         let highchartsOptions: Highcharts.Options = {
+            credits: {
+                enabled: false // Hide the Highcharts watermark on the right corner of the chart
+            },
             chart: {
                 displayErrors: false
             },
@@ -217,9 +220,9 @@ export class HighchartsVisualizer implements IVisualizer {
             legend:{
                 maxHeight: this.getLegendMaxHeight(),
                 accessibility: {
-                    enabled: true,
+                    enabled: <any>true,
                     keyboardNavigation: {
-                    	enabled: true
+                    	enabled: <any>true
                     }
                 }
             },
