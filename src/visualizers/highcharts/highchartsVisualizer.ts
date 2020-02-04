@@ -249,6 +249,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 const dataPoint = this;
                 const value = dataPoint.value;
 
+                // Ignore cases where the values is undefined / null / NaN etc.
                 if (typeof value === 'number') {
                     return chartOptions.numberFormatter(value);
                 } else {

@@ -7,10 +7,17 @@ export class HC_Utilities {
         const originalValue = row[yAxisIndex];
         const column = columns[yAxisIndex];
 
-        if(column.type === DraftColumnType.Decimal && typeof originalValue === 'string') {
-            return parseFloat(originalValue); // Highcharts support only numeric y-axis data
-        }
+        // Highcharts support only numeric y-axis data - if the y-axis isn't a number (can be a string that represents a number "0.005" for example) - convert it to number
+        if(typeof originalValue === 'string') {
+            if(column.type === DraftColumnType.Decimal) {
+                return parseFloat(originalValue);
+            } else if (column.type === DraftColumnType.Int) {
+                return parseInt(originalValue);
+            }
 
-        return <any>originalValue;
+            return Number(originalValue);
+        }
+        
+        return originalValue;  
     }
 }
