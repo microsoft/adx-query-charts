@@ -1,6 +1,6 @@
 {
   "name": "adx-query-charts",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "description": "Draw charts from Azure Data Explorer queries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,10 +32,13 @@
     "typescript": "^3.7.2",
     "@types/jest": "^24.0.22",
     "jest": "^24.9.0",
-    "@types/lodash": "^4.14.135",
-    "lodash": "^4.17.15",
-    "@types/highcharts": "7.0.0",
-    "css-element-queries": "^1.2.2"
+    "@types/lodash": "^4.14.135",  
+    "@types/highcharts": "^7.0.0"
+  },
+  "dependencies": {
+    "css-element-queries": "^1.2.3",
+    "highcharts": "^8.0.0",
+    "lodash": "^4.17.15"
   },
   "jest": {
     "testMatch": [

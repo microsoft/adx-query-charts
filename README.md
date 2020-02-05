@@ -1,5 +1,3 @@
-# This package is a work in process. Please DO NOT USE it yet
-
 # adx-query-charts
 [![Build Status](https://travis-ci.org/microsoft/adx-query-charts.svg?branch=master)](https://travis-ci.org/microsoft/adx-query-charts)&nbsp;&nbsp;&nbsp;&nbsp;[![npm version](https://badge.fury.io/js/adx-query-charts.svg)](https://badge.fury.io/js/adx-query-charts)
 
@@ -9,7 +7,6 @@ Draw charts from Azure Data Explorer queries
 npm install adx-query-charts
 
 ## Dependencies 
-Make sure to install the following packages before using the adx-query-charts library:
 1. [lodash](https://www.npmjs.com/package/lodash): `npm i lodash`
 2. [css-element-queries](https://www.npmjs.com/package/css-element-queries): `npm i css-element-queries`
 3. [highcharts](https://www.npmjs.com/package/highcharts): `npm i highcharts`
