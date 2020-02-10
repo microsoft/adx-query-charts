@@ -23,7 +23,7 @@ export class Utilities {
     } 
     
     /**
-    * Returns the value of the date after adding the desired offset (from UTC)
+    * Returns the value of the local date after adding the desired offset (from UTC)
     * @param dateStr - The string value that represents the date to transform.
     * @param utcOffset - The offset in hours from UTC.
     * @returns The value of the date + the desired UTC offset
@@ -35,18 +35,11 @@ export class Utilities {
             return null;
         }
         
-        let localDateValue = date.valueOf();
-        let timezoneOffsetInMinutes = date.getTimezoneOffset();
-        let utcDateValue = localDateValue + (timezoneOffsetInMinutes * 60 * 1000);
-       
-        if(utcOffset === 0) {
-            return utcDateValue;
-        }
-
         // Add UTC offset to the date
         const utcOffsetInMilliseconds = utcOffset * 60 * 60 * 1000;
-
-        return utcDateValue + utcOffsetInMilliseconds;
+        const localDateValue = date.valueOf();
+       
+        return localDateValue + utcOffsetInMilliseconds;
     }
 
     public static isValidDate(str: string): boolean {

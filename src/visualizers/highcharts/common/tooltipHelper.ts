@@ -18,9 +18,10 @@ export class TooltipHelper {
         if(chartOptions.numberFormatter && Utilities.isNumeric(columnType)) {
             return chartOptions.numberFormatter(originalValue);
         } else if(Utilities.isDate(columnType)) {
-            var date = new Date(originalValue);
+            const localDate = new Date(originalValue); // HC gets the local date + utc offset addition
+            const utcDateValue = localDate.valueOf() + (localDate.getTimezoneOffset() * 60 * 1000);
 
-            return chartOptions.dateFormatter ? chartOptions.dateFormatter(date, DateFormat.FullDate) : date.toString();
+            return chartOptions.dateFormatter ? chartOptions.dateFormatter(new Date(utcDateValue), DateFormat.FullDate) : utcDateValue.toString();
         }
 
         return originalValue.toString();
