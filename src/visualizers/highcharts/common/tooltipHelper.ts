@@ -18,10 +18,11 @@ export class TooltipHelper {
         if(chartOptions.numberFormatter && Utilities.isNumeric(columnType)) {
             return chartOptions.numberFormatter(originalValue);
         } else if(Utilities.isDate(columnType)) {
-            const localDate = new Date(originalValue); // HC gets the local date + utc offset addition
-            const utcDateValue = localDate.valueOf() + (localDate.getTimezoneOffset() * 60 * 1000);
+            const localWithOffset = new Date(originalValue); // HC gets the local date + utc offset addition
+            const utcWithOffsetDateValue = localWithOffset.valueOf() + (localWithOffset.getTimezoneOffset() * 60 * 1000); // Add the local offset. This way the utc offset addition is added to the UTC, and not to the local
+            const utcWithOffset = new Date(utcWithOffsetDateValue);
 
-            return chartOptions.dateFormatter ? chartOptions.dateFormatter(new Date(utcDateValue), DateFormat.FullDate) : utcDateValue.toString();
+            return chartOptions.dateFormatter ? chartOptions.dateFormatter(utcWithOffset, DateFormat.FullDate) : utcWithOffset.toString();
         }
 
         return originalValue.toString();
