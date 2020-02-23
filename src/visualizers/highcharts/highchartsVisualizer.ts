@@ -14,6 +14,7 @@ import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
 import { ChartTheme, DateFormat, IChartOptions, IColumn, DrawChartStatus } from '../../common/chartModels';
 import { Changes, ChartChange } from '../../common/chartChange';
+import { HC_Utilities } from './common/utilities';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
 import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
@@ -263,8 +264,9 @@ export class HighchartsVisualizer implements IVisualizer {
             formatter = function() {
                 const dataPoint = this;
                 const dateFormat = HighchartsDateFormatToCommon[dataPoint.dateTimeLabelFormat] || DateFormat.FullDate;
+                const utcWithOffsetDate = HC_Utilities.getUtcWithOffsetDate(dataPoint.value);
         
-                return chartOptions.dateFormatter(new Date(dataPoint.value), dateFormat);
+                return chartOptions.dateFormatter(utcWithOffsetDate, dateFormat);
             }
         }
 
