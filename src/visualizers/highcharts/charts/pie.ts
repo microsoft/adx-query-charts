@@ -9,7 +9,6 @@ import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
 import { InvalidInputError, EmptyPieError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
-import { DataLabelsFormatterContextObject, TooltipFormatterContextObject } from 'highcharts';
 
 interface IPieSeriesData {
     name: string;
