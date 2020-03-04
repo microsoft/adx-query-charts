@@ -9,6 +9,7 @@ import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
 import { InvalidInputError, EmptyPieError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
+import { DataLabelsFormatterContextObject, TooltipFormatterContextObject } from 'highcharts';
 
 interface IPieSeriesData {
     name: string;
@@ -28,10 +29,17 @@ export class Pie extends Chart {
     };
 
     protected plotOptions(): Highcharts.PlotOptions {
+        const self = this;
+
         return {
             pie: {
                 innerSize: this.getInnerSize(),
-                showInLegend: true
+                showInLegend: true,
+                dataLabels: {
+                    formatter: function() {
+                        return `${this.point.name}${self.getPercentageSuffix(this)}`;
+                    }
+                }
             }
         }
     }
@@ -103,6 +111,8 @@ export class Pie extends Chart {
     }
   
     public getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
+        const self = this;
+
         return function () {
             const context = this;
             let tooltip: string;
@@ -115,7 +125,7 @@ export class Pie extends Chart {
             if(splitBy && splitBy.length > 0) {
                 // Find the current key column
                 const keyColumnIndex = _.findIndex(splitBy, (col) => { 
-                    return col.name === this.series.name 
+                    return col.name === context.series.name 
                 });
     
                 keyColumn = splitBy[keyColumnIndex];
@@ -127,13 +137,12 @@ export class Pie extends Chart {
                 keyColumnName = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(keyColumn) : undefined;     
             }
 
-            tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, keyColumn, this.key, keyColumnName);  
+            tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, keyColumn, context.key, keyColumnName);  
 
             // Y axis
             const yColumn = chartOptions.columnsSelection.yAxes[0]; // We allow only 1 y axis in pie chart
-            const yValueSuffix = Number(Math.round(<any>(context.percentage + 'e2')) + 'e-2'); // Round the percentage to up to 2 decimal points
 
-            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, this.y, /*columnName*/ undefined, ` (${yValueSuffix}%)`);
+            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, context.y, /*columnName*/ undefined, self.getPercentageSuffix(context));
 
             return '<table>' + tooltip + '</table>';
         }
@@ -230,6 +239,12 @@ export class Pie extends Chart {
         if(allZeroPie) {
             throw new EmptyPieError();
         }
+    }
+
+    private getPercentageSuffix(context: { percentage?: number }): string {
+        const percentageRoundValue = Number(Math.round(<any>(context.percentage + 'e2')) + 'e-2'); // Round the percentage to up to 2 decimal points
+
+        return ` (${percentageRoundValue}%)`;
     }
 
     //#endregion Private methods
