@@ -28,6 +28,10 @@ export class ChangeDetection {
             changes.addChange(ChartChange.ChartType);
         }
 
+        if(oldChartOptions.aggregationType !== newChartOptions.aggregationType) {
+            changes.addChange(ChartChange.AggregationType);
+        }
+
         return changes;
     }
 

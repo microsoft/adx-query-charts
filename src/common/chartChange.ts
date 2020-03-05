@@ -3,7 +3,8 @@
 export enum ChartChange {
     QueryData = 'QueryData',
     ColumnsSelection = 'ColumnsSelection',
-    ChartType = 'ChartType'
+    ChartType = 'ChartType',
+    AggregationType = 'AggregationType'
 }
 
 export type ChangesMap = { [key in ChartChange]+?: boolean};
