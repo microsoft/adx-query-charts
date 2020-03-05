@@ -84,8 +84,8 @@ export class KustoChartHelper implements IChartHelper {
                 this.options = chartOptions;
                 this.queryResultData = queryResultData;
                 
-                // First initialization / query data change / columns selection change
-                if (!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection)) {    
+                // First initialization / query data change / columns selection change / aggregation type change
+                if (!changes || changes.isPendingChange(ChartChange.QueryData) || changes.isPendingChange(ChartChange.ColumnsSelection) || changes.isPendingChange(ChartChange.AggregationType)) {    
                     this.chartInfo = new ChartInfo();
     
                     // Apply query data transformation
