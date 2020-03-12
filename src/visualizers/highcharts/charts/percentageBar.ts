@@ -2,11 +2,12 @@
 
 import { Bar } from './bar';
 import { PERCENTAGE } from '../chartTypeOptions';
+import { OptionsStackingValue } from 'highcharts';
 
 export class PercentageBar extends Bar {
     //#region Methods override
 
-    protected getStackingOption(): any {
+    protected getStackingOption(): OptionsStackingValue {
         return  PERCENTAGE;
     }
 

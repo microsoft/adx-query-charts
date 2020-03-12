@@ -1,6 +1,7 @@
 'use strict';
 
 import { Chart } from './chart';
+import { OptionsStackingValue } from 'highcharts';
 
 export abstract class Column extends Chart {
     //#region Methods override
@@ -19,5 +20,5 @@ export abstract class Column extends Chart {
 
     //#endregion Methods override
 
-    protected abstract getStackingOption(): any;
+    protected abstract getStackingOption(): OptionsStackingValue;
 }
