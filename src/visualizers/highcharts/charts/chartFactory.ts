@@ -3,7 +3,6 @@
 //#region Imports
 
 import { ChartType } from '../../../common/chartModels';
-import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Chart } from './chart';
 import { Line } from './line';
 import { Scatter } from './scatter';
@@ -13,6 +12,9 @@ import { PercentageArea } from './percentageArea';
 import { UnstackedColumn } from './unstackedColumn';
 import { StackedColumn } from './stackedColumn';
 import { PercentageColumn } from './percentageColumn';
+import { UnstackedBar } from './unstackedBar';
+import { StackedBar } from './stackedBar';
+import { PercentageBar } from './percentageBar';
 import { Pie } from './pie';
 import { Donut } from './donut';
 
@@ -44,6 +46,15 @@ export class ChartFactory {
             }
             case ChartType.PercentageColumn: {
                 return new PercentageColumn();
+            }
+            case ChartType.UnstackedBar: {
+                return new UnstackedBar();
+            }
+            case ChartType.StackedBar: {
+                return new StackedBar();
+            }
+            case ChartType.PercentageBar: {
+                return new PercentageBar();
             }
             case ChartType.Pie: {
                 return new Pie();

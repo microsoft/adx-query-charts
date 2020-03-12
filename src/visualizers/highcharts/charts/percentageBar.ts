@@ -1,10 +1,10 @@
 'use strict';
 
-import { Column } from './column';
+import { Bar } from './bar';
 import { PERCENTAGE } from '../chartTypeOptions';
 import { OptionsStackingValue } from 'highcharts';
 
-export class PercentageColumn extends Column {
+export class PercentageBar extends Bar {
     //#region Methods override
 
     protected getStackingOption(): OptionsStackingValue {

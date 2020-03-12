@@ -3,16 +3,16 @@
 import { Chart } from './chart';
 import { OptionsStackingValue } from 'highcharts';
 
-export abstract class Column extends Chart {
+export abstract class Bar extends Chart {
     //#region Methods override
 
     protected getChartType(): string {
-        return 'column';
+        return 'bar';
     };
 
     protected plotOptions(): Highcharts.PlotOptions {
         return {
-            column: {
+            bar: {
               stacking: this.getStackingOption()
             }
         }

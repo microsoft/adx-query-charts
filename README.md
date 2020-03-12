@@ -84,6 +84,9 @@ enum ChartType {
     UnstackedColumn,
     StackedColumn,
     PercentageColumn,
+    UnstackedBar,
+    StackedBar,
+    PercentageBar,
     Pie,
     Donut,
 }
@@ -92,7 +95,7 @@ enum ChartType {
 ### Columns selection per chart type
 | Chart type:                                                                                                                | X-axis:            | Y-axis:          | Split-by:          |
 | ------------------------------------------------------------------------------------------------------------------------   | ------------------ | ---------------  | ------------------ |
-| Line / Scatter / UnstackedArea </br> StackedArea / PercentageArea / UnstackedColumn </br> StackedColumn / PercentageColumn | [Single selection]<br/>DateTime / Int / Long </br> Decimal / Real / String | [If split-by column is selected: y-axis restricted to single selection] <br/> [If split-by column is not selected: y-axis can be single/multi selection] <br/> Int / Long / Decimal / Real | [Single selection] <br/> String |
+| Line / Scatter </br> UnstackedArea / StackedArea / PercentageArea </br> UnstackedColumn / StackedColumn / PercentageColumn </br> UnstackedBar / StackedBar / PercentageBar | [Single selection]<br/>DateTime / Int / Long </br> Decimal / Real / String | [If split-by column is selected: y-axis restricted to single selection] <br/> [If split-by column is not selected: y-axis can be single/multi selection] <br/> Int / Long / Decimal / Real | [Single selection] <br/> String |
 | Pie /  Donut                                                                                                               | [Single selection]<br/> String | [Single selection]<br/> Int / Long / Decimal / Real | [Single / Multi selection] <br/> String / DateTime / Bool |
 
 

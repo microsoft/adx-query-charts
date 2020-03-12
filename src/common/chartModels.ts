@@ -44,6 +44,9 @@ export enum ChartType {
     UnstackedColumn = 'UnstackedColumn',
     StackedColumn = 'StackedColumn',
     PercentageColumn = 'PercentageColumn',
+    UnstackedBar = 'UnstackedBar',
+    StackedBar = 'StackedBar',
+    PercentageBar = 'PercentageBar',
     Pie = 'Pie',
     Donut = 'Donut',
 }

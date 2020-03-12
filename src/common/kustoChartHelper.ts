@@ -17,7 +17,7 @@ import { ErrorCode } from './errors/errorCode';
 
 //#endregion Imports
 
-export interface ITransformedQueryResultData {
+interface ITransformedQueryResultData {
     data: IQueryResultData;
     limitedResults: LimitedResults;
 }
@@ -217,7 +217,7 @@ export class KustoChartHelper implements IChartHelper {
     * @param chartOptions
     * @returns transformed data if the transformation succeeded. Otherwise - returns null
     */
-   public transformQueryResultData(queryResultData: IQueryResultData, chartOptions: IChartOptions): ITransformedQueryResultData {
+   private transformQueryResultData(queryResultData: IQueryResultData, chartOptions: IChartOptions): ITransformedQueryResultData {
         // Try to resolve results as series
         const resolvedAsSeriesData: IQueryResultData = this.tryResolveResultsAsSeries(queryResultData);
 
