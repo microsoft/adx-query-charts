@@ -286,7 +286,7 @@ export interface IChartOptions {
 
 export interface ILegendOptions {
     /**
-     * Set to false if you want to hide the legend
+     * When set to false the legend is hidden, otherwise the legend is visible 
      * [Default value: true (show legend)]
      */
     isEnabled?: boolean;
