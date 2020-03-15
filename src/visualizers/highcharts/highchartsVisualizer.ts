@@ -386,9 +386,9 @@ export class HighchartsVisualizer implements IVisualizer {
             enabled: chartOptions.legendOptions.isEnabled,
             maxHeight: this.getLegendMaxHeight(),
             accessibility: {
-                enabled: true,
+                enabled: <any>true,
                 keyboardNavigation: {
-                    enabled: true
+                    enabled: <any>true
                 }
             }
         }
