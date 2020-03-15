@@ -204,6 +204,23 @@ export interface IChartOptions {
     utcOffset?: number;
     
     /**
+     * The legend configuration options
+     */
+    legendOptions?: ILegendOptions;
+
+    /**
+     * The minimum value to be displayed on the y-axis
+     * If not provided, the minimum value is automatically calculated
+     */
+    yMinimumValue?: number;
+
+    /**
+     * The maximum value to be displayed on y-axis
+     * If not provided, the maximum value is automatically calculated
+     */
+    yMaximumValue?: number;
+
+    /**
      * Callback that is used to format the date values both in the axis and the tooltip. If not provided - the default formatting will apply
      * Callback inputs:
      *     @param dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset.
@@ -232,6 +249,15 @@ export interface IChartOptions {
     xAxisTitleFormatter?: (xAxisColumn: IColumn) => string;
 
     /**
+     * Callback that is used to get the yAxis title. If isn't provided - the yAxis title will be the first yAxis column name.
+     * Callback inputs:
+     *     @param yAxisColumns - The y-axis columns
+     * Callback return value:
+     *     @returns The desired y-axis title
+     */
+    yAxisTitleFormatter?: (yAxisColumns: IColumn[]) => string;
+
+    /**
      * Callback that is called when all the data transformations required to draw the chart are finished.
      * Callback inputs:
      *     @param IChartInfo - The information regarding the applied transformations on the original query results
@@ -256,6 +282,14 @@ export interface IChartOptions {
      *    @param chartInfo - The information regarding the chart
      */
     onFinishChartAnimation?: (chartInfo: IChartInfo) => void;
+}
+
+export interface ILegendOptions {
+    /**
+     * Set to false if you want to hide the legend
+     * [Default value: true (show legend)]
+     */
+    isEnabled?: boolean;
 }
 
 export interface IChartHelper {

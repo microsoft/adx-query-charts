@@ -204,29 +204,14 @@ export class HighchartsVisualizer implements IVisualizer {
             title: {
                 text: chartOptions.title
             },
-            xAxis: {
-                type: isDatetimeAxis ? 'datetime' : undefined,
-                labels: this.getLabelsFormatter(chartOptions, chartOptions.columnsSelection.xAxis),
-                title: {
-                    text: this.getXAxisTitle(chartOptions),
-                    align: 'middle'
-                }
-            },
+            xAxis: this.getXAxis(isDatetimeAxis, chartOptions),
             yAxis: this.getYAxis(chartOptions),
             tooltip: {
                 formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
                 shared: false,
                 useHTML: true
             },
-            legend:{
-                maxHeight: this.getLegendMaxHeight(),
-                accessibility: {
-                    enabled: <any>true,
-                    keyboardNavigation: {
-                    	enabled: <any>true
-                    }
-                }
-            },
+            legend: this.getLegendOptions(chartOptions),
             exporting: {
                 buttons: {
                     contextButton: {
@@ -275,16 +260,41 @@ export class HighchartsVisualizer implements IVisualizer {
         };
     }
 
+    private getXAxis(isDatetimeAxis: boolean, chartOptions: IChartOptions): Highcharts.XAxisOptions {
+        return {
+            type: isDatetimeAxis ? 'datetime' : undefined,
+            labels: this.getLabelsFormatter(chartOptions, chartOptions.columnsSelection.xAxis),
+            title: {
+                text: this.getXAxisTitle(chartOptions),
+                align: 'middle'
+            }
+        }
+    }
+
     private getYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {
-        const yAxis = this.options.chartOptions.columnsSelection.yAxes[0];
+        const firstYAxis = this.options.chartOptions.columnsSelection.yAxes[0];
+
         const yAxisOptions = {
             title: {
-                text: yAxis.name
+                text: this.getYAxisTitle(chartOptions)
             },
-            labels: this.getLabelsFormatter(chartOptions, yAxis)
+            labels: this.getLabelsFormatter(chartOptions, firstYAxis),
+            min: chartOptions.yMinimumValue ? chartOptions.yMinimumValue : null,
+            max: chartOptions.yMaximumValue ? chartOptions.yMaximumValue : null,
         }
         
         return yAxisOptions;
+    }
+
+    private getYAxisTitle(chartOptions: IChartOptions): string {
+        const yAxisColumns = chartOptions.columnsSelection.yAxes;
+        const yAxisTitleFormatter = chartOptions.yAxisTitleFormatter;
+
+        if(yAxisTitleFormatter) {
+            return yAxisTitleFormatter(yAxisColumns);
+        }
+
+        return yAxisColumns[0].name;
     }
 
     private getXAxisTitle(chartOptions: IChartOptions): string {
@@ -368,6 +378,19 @@ export class HighchartsVisualizer implements IVisualizer {
 
         if(columnSelection.yAxes.length > 1 && columnSelection.splitBy && columnSelection.splitBy.length > 0) {
             throw new InvalidInputError("When there are multiple y-axis columns, split-by column isn't allowed", ErrorCode.InvalidColumnsSelection);
+        }
+    }
+
+    private getLegendOptions(chartOptions: IChartOptions): Highcharts.LegendOptions {
+        return {
+            enabled: chartOptions.legendOptions.isEnabled,
+            maxHeight: this.getLegendMaxHeight(),
+            accessibility: {
+                enabled: true,
+                keyboardNavigation: {
+                    enabled: true
+                }
+            }
         }
     }
 
