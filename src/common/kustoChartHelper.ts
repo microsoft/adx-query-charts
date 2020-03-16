@@ -44,7 +44,10 @@ export class KustoChartHelper implements IChartHelper {
         exceedMaxDataPointLabel: 'OTHER',
         aggregationType: AggregationType.Sum,
         chartTheme: ChartTheme.Light,
-        utcOffset: 0
+        utcOffset: 0,
+        legendOptions: {
+            isEnabled: true
+        }
     }
 
     private readonly seriesVisualize: SeriesVisualize;
