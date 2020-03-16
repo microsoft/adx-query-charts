@@ -273,16 +273,21 @@ export class HighchartsVisualizer implements IVisualizer {
 
     private getYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {
         const firstYAxis = this.options.chartOptions.columnsSelection.yAxes[0];
-
-        const yAxisOptions = {
+        const yAxisOptions: Highcharts.YAxisOptions = {
             title: {
                 text: this.getYAxisTitle(chartOptions)
             },
-            labels: this.getLabelsFormatter(chartOptions, firstYAxis),
-            min: chartOptions.yMinimumValue ? chartOptions.yMinimumValue : null,
-            max: chartOptions.yMaximumValue ? chartOptions.yMaximumValue : null,
+            labels: this.getLabelsFormatter(chartOptions, firstYAxis)
+        }
+
+        if(chartOptions.yMinimumValue != null) {
+            yAxisOptions.min = chartOptions.yMinimumValue;
         }
         
+        if(chartOptions.yMaximumValue != null) {
+            yAxisOptions.max = chartOptions.yMaximumValue;
+        }
+
         return yAxisOptions;
     }
 
