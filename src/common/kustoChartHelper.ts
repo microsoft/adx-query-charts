@@ -25,7 +25,6 @@ interface ITransformedQueryResultData {
 type ResolveFn = (value?: IChartInfo | PromiseLike<IChartInfo>) => void;
 
 export class KustoChartHelper implements IChartHelper {
-    
     //#region Public members
 
     public transformedQueryResultData: IQueryResultData;
