@@ -90,7 +90,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[1],  // timestamp
                         yAxes: [columns[3]] // request_count
                     },
-                    getUtcOffset: () => { return 0; } // test
+                    getUtcOffset: () => { return 0; }
                 },
                 queryResultData: {
                     rows: rows,
