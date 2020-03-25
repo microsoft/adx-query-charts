@@ -45,7 +45,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[0],  // country
                         yAxes: [columns[2]] // request_count
                     },
-                    utcOffset: 0
+                    getUtcOffset: () => { return 0; }
                 },
                 queryResultData: {
                     rows: rows,
@@ -89,8 +89,7 @@ describe('Unit tests for Chart methods', () => {
                     columnsSelection: {
                         xAxis: columns[1],  // timestamp
                         yAxes: [columns[3]] // request_count
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -135,7 +134,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[1], // city
                         yAxes: [columns[2], columns[3]] // request_count and second_count
                     },
-                    utcOffset: 0
+                    getUtcOffset: () => { return 0; }
                 },
                 queryResultData: {
                     rows: rows,
@@ -185,7 +184,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[0], // timestamp
                         yAxes: [columns[3], columns[4]] // request_count and second_count
                     },
-                    utcOffset: 0
+                    getUtcOffset: () => { return 0; }
                 },
                 queryResultData: {
                     rows: rows,
@@ -233,8 +232,7 @@ describe('Unit tests for Chart methods', () => {
                     columnsSelection: {
                         xAxis: columns[0],  // country
                         yAxes: [columns[1]] // count
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -278,8 +276,7 @@ describe('Unit tests for Chart methods', () => {
                     columnsSelection: {
                         xAxis: columns[1],  // timestamp
                         yAxes: [columns[3]] // request_count
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -332,8 +329,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[0],    // country
                         yAxes: [columns[2]],  // request_count
                         splitBy: [columns[1]] // city
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -411,8 +407,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[1],   // timestamp
                         yAxes: [columns[3]], // request_count
                         splitBy: [columns[2]], // city
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -483,8 +478,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[0],    // country
                         yAxes: [columns[2]],  // request_count
                         splitBy: [columns[1]] // city
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -539,8 +533,7 @@ describe('Unit tests for Chart methods', () => {
                     columnsSelection: {
                         xAxis: columns[1],    // city
                         yAxes: [columns[2]],  // request_count
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -592,8 +585,7 @@ describe('Unit tests for Chart methods', () => {
                     columnsSelection: {
                         xAxis: columns[1],    // city
                         yAxes: [columns[2]],  // request_count
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -665,8 +657,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[0],    // country
                         yAxes: [columns[2]],  // request_count
                         splitBy: [columns[1]] // city
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
@@ -741,8 +732,7 @@ describe('Unit tests for Chart methods', () => {
                         xAxis: columns[0], // browser
                         yAxes:  [columns[3]], // usage
                         splitBy: [columns[1], columns[2]] // version, minor_version
-                    },
-                    utcOffset: 0
+                    }
                 },
                 queryResultData: {
                     rows: rows,
