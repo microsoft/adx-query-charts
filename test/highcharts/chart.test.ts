@@ -1,12 +1,15 @@
 'use strict';
 
 import * as _ from 'lodash';
-import { DraftColumnType, IColumn, ChartType } from '../../src/common/chartModels';
+import { DraftColumnType, IColumn, ChartType, ColumnsSelection } from '../../src/common/chartModels';
 import { ChartFactory } from '../../src/visualizers/highcharts/charts/chartFactory';
 import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/chart';
 import { Utilities } from '../../src/common/utilities';
 
 describe('Unit tests for Chart methods', () => {
+    let options: any;
+    let columnsSelection: ColumnsSelection;
+
     //#region beforeEach
 
     beforeEach(() => {
@@ -16,6 +19,19 @@ describe('Unit tests for Chart methods', () => {
         .mockImplementation(function(dateStr, offset) {
             return new Date(dateStr).getFullYear();
         });
+
+        columnsSelection = {
+            xAxis: undefined,
+            yAxes: []
+        };
+
+        options = {
+            chartOptions: {
+                columnsSelection: columnsSelection,
+                getUtcOffset: () => { return 0; }
+            },
+            queryResultData: { }
+        };
     })
 
     //#endregion beforeEach
@@ -26,6 +42,7 @@ describe('Unit tests for Chart methods', () => {
         //#region Line chart getStandardCategoriesAndSeries
 
         it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and 1 y-axis', () => {
+            // Input
             const rows = [
                 ['Israel', 'Herzliya', 30],
                 ['United States', 'New York', 100],
@@ -38,20 +55,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],  // country
-                        yAxes: [columns[2]] // request_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -84,19 +91,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],  // timestamp
-                        yAxes: [columns[3]] // request_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];  // timestamp
+            columnsSelection.yAxes = [columns[3]] // request_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -129,19 +127,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1], // city
-                        yAxes: [columns[2], columns[3]] // request_count and second_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];               // city
+            columnsSelection.yAxes = [columns[2], columns[3]]; // request_count and second_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -179,19 +168,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0], // timestamp
-                        yAxes: [columns[3], columns[4]] // request_count and second_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];               // timestamp
+            columnsSelection.yAxes = [columns[3], columns[4]]; // request_count and second_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -228,19 +208,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],  // country
-                        yAxes: [columns[1]] // count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[1]]; // count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -273,19 +244,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],  // timestamp
-                        yAxes: [columns[3]] // request_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];   // timestamp
+            columnsSelection.yAxes = [columns[3]]; // request_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -326,20 +288,11 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],    // country
-                        yAxes: [columns[2]],  // request_count
-                        splitBy: [columns[1]] // city
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -405,20 +358,11 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],   // timestamp
-                        yAxes: [columns[3]], // request_count
-                        splitBy: [columns[2]], // city
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];     // timestamp
+            columnsSelection.yAxes = [columns[3]];   // request_count
+            columnsSelection.splitBy = [columns[2]]; // city
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -477,20 +421,11 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],    // country
-                        yAxes: [columns[2]],  // request_count
-                        splitBy: [columns[1]] // city
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -534,20 +469,11 @@ describe('Unit tests for Chart methods', () => {
             ];
         
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],    // city
-                        yAxes: [columns[2]],  // request_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
-        
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
+
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
             const result: any = chart.getStandardCategoriesAndSeries(options);
@@ -587,19 +513,10 @@ describe('Unit tests for Chart methods', () => {
             ];
         
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],    // city
-                        yAxes: [columns[2]],  // request_count
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
         
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
@@ -659,20 +576,11 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],    // country
-                        yAxes: [columns[2]],  // request_count
-                        splitBy: [columns[1]] // city
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
@@ -735,20 +643,11 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0], // browser
-                        yAxes:  [columns[3]], // usage
-                        splitBy: [columns[1], columns[2]] // version, minor_version
-                    },
-                    getUtcOffset: () => { return 0; }
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];                 // browser
+            columnsSelection.yAxes = [columns[3]];               // usage
+            columnsSelection.splitBy = [columns[1], columns[2]]; // version, minor_version
+            options.queryResultData.rows = rows;
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Donut);
