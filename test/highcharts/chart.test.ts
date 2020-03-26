@@ -42,7 +42,6 @@ describe('Unit tests for Chart methods', () => {
         //#region Line chart getStandardCategoriesAndSeries
 
         it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and 1 y-axis', () => {
-            // Input
             const rows = [
                 ['Israel', 'Herzliya', 30],
                 ['United States', 'New York', 100],
@@ -55,6 +54,7 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
 
+            // Input
             columnsSelection.xAxis = columns[0];   // country
             columnsSelection.yAxes = [columns[2]]; // request_count
             options.queryResultData.rows = rows;
