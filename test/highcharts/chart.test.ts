@@ -204,7 +204,6 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'count', type: DraftColumnType.Decimal },
             ];
 
-            // Input
             columnsSelection.xAxis = columns[0];   // country
             columnsSelection.yAxes = [columns[1]]; // count
             options.queryResultData.columns = columns;
