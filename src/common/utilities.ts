@@ -25,10 +25,10 @@ export class Utilities {
     /**
     * Returns the value of the local date after adding the desired offset (from UTC)
     * @param dateStr - The string value that represents the date to transform.
-    * @param utcOffset - The offset in hours from UTC.
+    * @param getUtcOffset - Callback that returns the offset in hours from UTC.
     * @returns The value of the date + the desired UTC offset
     */
-    public static getDateValue(dateStr: string, utcOffset: number): number {
+    public static getDateValue(dateStr: string, getUtcOffset: (dateStr: string) => number): number {
         const date = new Date(dateStr);
         
         if (date.toDateString() === 'Invalid Date') {
@@ -36,6 +36,7 @@ export class Utilities {
         }
         
         // Add UTC offset to the date
+        const utcOffset = getUtcOffset(dateStr);
         const utcOffsetInMilliseconds = utcOffset * 60 * 60 * 1000;
         const localDateValue = date.valueOf();
        

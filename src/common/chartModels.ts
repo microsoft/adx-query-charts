@@ -192,17 +192,7 @@ export interface IChartOptions {
      * [Default value: ChartTheme.Light]
      */
     chartTheme?: ChartTheme;
-    
-    /**
-     * The desired offset from UTC in hours for date values. Used to handle timezone.
-     * The offset will be added to the original date from the query results data.
-     * For example:
-     * For 'Africa/Harare' timezone provide utcOffset = 2 and the displayed date will be be '11/25/2019, 2:00 AM' instead of '11/25/2019, 12:00 AM' 
-     * See time zone info: https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11).aspx
-     * [Default value: 0]
-     */
-    utcOffset?: number;
-    
+
     /**
      * The legend configuration options
      */
@@ -219,7 +209,18 @@ export interface IChartOptions {
      * If not provided, the maximum value is automatically calculated
      */
     yMaximumValue?: number;
-
+    
+    /**
+     * Callback that is used to get the desired offset from UTC in hours for date value. Used to handle timezone.
+     * The offset will be added to the original date from the query results data.
+     * The callback input is the string value of the date from the query result. For example: '2019-11-25T07:14:00.000Z'
+     * For example:
+     * For 'South Africa Standard Time' timezone return 2 and the displayed date will be '11/25/2019, 04:00 PM' instead of '11/25/2019, 02:00 PM' 
+     * See time zone info: https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11).aspx
+     * [Default value: 0]
+     */
+    getUtcOffset?: (dateStr: string) => number;
+    
     /**
      * Callback that is used to format the date values both in the axis and the tooltip. If not provided - the default formatting will apply
      * Callback inputs:

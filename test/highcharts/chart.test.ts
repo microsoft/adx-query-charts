@@ -1,12 +1,15 @@
 'use strict';
 
 import * as _ from 'lodash';
-import { DraftColumnType, IColumn, ChartType } from '../../src/common/chartModels';
+import { DraftColumnType, IColumn, ChartType, ColumnsSelection } from '../../src/common/chartModels';
 import { ChartFactory } from '../../src/visualizers/highcharts/charts/chartFactory';
 import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/chart';
 import { Utilities } from '../../src/common/utilities';
 
 describe('Unit tests for Chart methods', () => {
+    let options: any;
+    let columnsSelection: ColumnsSelection;
+
     //#region beforeEach
 
     beforeEach(() => {
@@ -16,6 +19,19 @@ describe('Unit tests for Chart methods', () => {
         .mockImplementation(function(dateStr, offset) {
             return new Date(dateStr).getFullYear();
         });
+
+        columnsSelection = {
+            xAxis: undefined,
+            yAxes: []
+        };
+
+        options = {
+            chartOptions: {
+                columnsSelection: columnsSelection,
+                getUtcOffset: () => { return 0; }
+            },
+            queryResultData: { }
+        };
     })
 
     //#endregion beforeEach
@@ -26,7 +42,8 @@ describe('Unit tests for Chart methods', () => {
         //#region Line chart getStandardCategoriesAndSeries
 
         it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and 1 y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', 'Herzliya', 30],
                 ['United States', 'New York', 100],
                 ['Japan', 'Tokyo', 20],
@@ -38,20 +55,9 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],  // country
-                        yAxes: [columns[2]] // request_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -70,7 +76,8 @@ describe('Unit tests for Chart methods', () => {
         });
 
         it('Validate getStandardCategoriesAndSeries for Line chart: date x-axis and 1 y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', '2019-05-25T00:00:00Z', 'Herzliya', 30],
                 ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', 20],
                 ['United States', '2000-06-26T00:00:00Z', 'New York', 100],
@@ -83,20 +90,9 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],  // timestamp
-                        yAxes: [columns[3]] // request_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];  // timestamp
+            columnsSelection.yAxes = [columns[3]] // request_count
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -115,7 +111,8 @@ describe('Unit tests for Chart methods', () => {
         });
 
         it('Validate getStandardCategoriesAndSeries for Line chart: non-date x-axis and multiple y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', 'Herzliya', "30", 300],
                 ['United States', 'New York', "100", 150],
                 ['Japan', 'Tokyo', "20.58305", 200],
@@ -128,20 +125,9 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'second_count', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1], // city
-                        yAxes: [columns[2], columns[3]] // request_count and second_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];               // city
+            columnsSelection.yAxes = [columns[2], columns[3]]; // request_count and second_count
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -164,7 +150,8 @@ describe('Unit tests for Chart methods', () => {
         });
 
         it('Validate getStandardCategoriesAndSeries for Line chart: date x-axis and multiple y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['2019-05-25T00:00:00Z', 'Israel', 'Herzliya', 30, 300],
                 ['2019-05-25T00:00:00Z', 'Japan', 'Tokyo', 20, 150],
                 ['2000-06-26T00:00:00Z', 'United States', 'New York', 100, 200],
@@ -178,20 +165,9 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'second_count', type: DraftColumnType.Long },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0], // timestamp
-                        yAxes: [columns[3], columns[4]] // request_count and second_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];               // timestamp
+            columnsSelection.yAxes = [columns[3], columns[4]]; // request_count and second_count
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -214,7 +190,8 @@ describe('Unit tests for Chart methods', () => {
         });
 
         it('Validate getStandardCategoriesAndSeries for Line chart with decimal y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', "252.3640552995391705069124423963134"],
                 ['United States', "100"],
                 ['Japan', "0.274074"],
@@ -227,20 +204,9 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'count', type: DraftColumnType.Decimal },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],  // country
-                        yAxes: [columns[1]] // count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[1]]; // count
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -259,7 +225,8 @@ describe('Unit tests for Chart methods', () => {
         });
      
         it('Validate getStandardCategoriesAndSeries for Line chart: date x-axis and decimal y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', '2019-05-25T00:00:00Z', 'Herzliya', "252.36"],
                 ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', "-5.5"],
                 ['United States', '2000-06-26T00:00:00Z', 'New York', "250"],
@@ -273,19 +240,9 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],  // timestamp
-                        yAxes: [columns[3]] // request_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];   // timestamp
+            columnsSelection.yAxes = [columns[3]]; // request_count
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -308,7 +265,8 @@ describe('Unit tests for Chart methods', () => {
         //#region Line chart getSplitByCategoriesAndSeries
 
         it('Validate getSplitByCategoriesAndSeries for Line chart: non-date x-axis with splitBy', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['United States', 'Atlanta', 300],
                 ['United States', 'Redmond', 20],
                 ['Israel', 'Herzliya', 1000],
@@ -326,20 +284,10 @@ describe('Unit tests for Chart methods', () => {
             ];
 
             // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],    // country
-                        yAxes: [columns[2]],  // request_count
-                        splitBy: [columns[1]] // city
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -386,7 +334,8 @@ describe('Unit tests for Chart methods', () => {
         });
 
         it('Validate getSplitByCategoriesAndSeries for Line chart: date x-axis with splitBy', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', '1988-06-26T00:00:00Z', 'Jerusalem', 500],
                 ['Israel', '2000-06-26T00:00:00Z', 'Herzliya', 1000],
                 ['United States', '2000-06-26T00:00:00Z', 'Boston', 200],
@@ -404,21 +353,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],   // timestamp
-                        yAxes: [columns[3]], // request_count
-                        splitBy: [columns[2]], // city
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[1];     // timestamp
+            columnsSelection.yAxes = [columns[3]];   // request_count
+            columnsSelection.splitBy = [columns[2]]; // city
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -465,7 +403,8 @@ describe('Unit tests for Chart methods', () => {
         });
      
         it('Validate getSplitByCategoriesAndSeries for Line chart: non-date x-axis with splitBy and decimal y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['United States', 'Atlanta', "300.474"],
                 ['United States', 'Redmond', "20.2"]
             ];
@@ -476,21 +415,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Decimal },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],    // country
-                        yAxes: [columns[2]],  // request_count
-                        splitBy: [columns[1]] // city
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Line);
@@ -517,7 +445,8 @@ describe('Unit tests for Chart methods', () => {
         //#region Pie chart getStandardCategoriesAndSeries
                 
         it('Validate getStandardCategoriesAndSeries for Pie chart', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', 'Tel Aviv', 10],
                 ['United States', 'Redmond', 5],
                 ['United States', 'New York', 2],
@@ -533,21 +462,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
         
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],    // city
-                        yAxes: [columns[2]],  // request_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
-        
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
+
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
             const result: any = chart.getStandardCategoriesAndSeries(options);
@@ -574,7 +492,8 @@ describe('Unit tests for Chart methods', () => {
         });
                 
         it('Validate getStandardCategoriesAndSeries for Pie chart with decimal y-axis', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', 'Tel Aviv', "0.003310"],
                 ['United States', 'Redmond', "0286"],
                 ['United States', 'New York', "3.144"]
@@ -585,21 +504,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'city', type: DraftColumnType.String },
                 { name: 'request_count', type: DraftColumnType.Decimal },
             ];
-        
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[1],    // city
-                        yAxes: [columns[2]],  // request_count
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
         
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
@@ -642,7 +550,8 @@ describe('Unit tests for Chart methods', () => {
         }
 
         it('Validate getSplitByCategoriesAndSeries for Pie chart: pie chart with 2 levels', () => {
-            const rows = [
+            // Input
+            options.queryResultData.rows = [
                 ['Israel', 'Tel Aviv', 10],
                 ['United States', 'Redmond', 5],
                 ['United States', 'New York', 2],
@@ -658,21 +567,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'request_count', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0],    // country
-                        yAxes: [columns[2]],  // request_count
-                        splitBy: [columns[1]] // city
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Pie);
@@ -710,7 +608,8 @@ describe('Unit tests for Chart methods', () => {
         });
 
         it('Validate getSplitByCategoriesAndSeries for Donut chart: pie chart with 3 levels', () => {
-            const rows = [                
+            // Input
+            options.queryResultData.rows = [                
                 ['Internet Explorer', 'v8', '0', 10],
                 ['Chrome', 'v65', '0', 5],
                 ['Firefox', 'v58', '0', 5],
@@ -734,21 +633,10 @@ describe('Unit tests for Chart methods', () => {
                 { name: 'usage', type: DraftColumnType.Int },
             ];
 
-            // Input
-            const options: any = {
-                chartOptions: {
-                    columnsSelection: {
-                        xAxis: columns[0], // browser
-                        yAxes:  [columns[3]], // usage
-                        splitBy: [columns[1], columns[2]] // version, minor_version
-                    },
-                    utcOffset: 0
-                },
-                queryResultData: {
-                    rows: rows,
-                    columns: columns
-                }
-            }
+            columnsSelection.xAxis = columns[0];                 // browser
+            columnsSelection.yAxes = [columns[3]];               // usage
+            columnsSelection.splitBy = [columns[1], columns[2]]; // version, minor_version
+            options.queryResultData.columns = columns;
 
             // Act
             const chart = ChartFactory.create(ChartType.Donut);
