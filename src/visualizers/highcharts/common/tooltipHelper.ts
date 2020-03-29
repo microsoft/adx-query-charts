@@ -12,7 +12,7 @@ export class TooltipHelper {
             formattedValue = TooltipHelper.getFormattedValue(chartOptions, originalValue, column.type);
         }
 
-        return `<tr><td style="color:${context.color}">${columnName || column.name}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
+        return `<tr><td>${columnName || column.name}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
     }
 
     private static getFormattedValue(chartOptions: IChartOptions, originalValue: number, columnType: DraftColumnType): string {
