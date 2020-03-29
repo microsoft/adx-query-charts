@@ -32,8 +32,9 @@
     "typescript": "^3.7.2",
     "@types/jest": "^24.0.22",
     "jest": "^24.9.0",
-    "@types/lodash": "^4.14.135",  
-    "@types/highcharts": "^7.0.0"
+    "@types/lodash": "^4.14.135",
+    "@types/highcharts": "^7.0.0",
+    "acorn": "^7.1.1"
   },
   "dependencies": {
     "css-element-queries": "^1.2.3",
