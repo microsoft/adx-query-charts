@@ -44,6 +44,7 @@ export class KustoChartHelper implements IChartHelper {
         aggregationType: AggregationType.Sum,
         chartTheme: ChartTheme.Light,
         getUtcOffset: () => { return 0; },
+        fontFamily: `az_ea_font, wf_segoe-ui_normal, "Segoe UI", "Segoe WP", Tahoma, Arial, sans-serif`,
         legendOptions: {
             isEnabled: true
         }

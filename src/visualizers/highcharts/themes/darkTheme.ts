@@ -51,9 +51,9 @@ export const DarkThemeOptions: Highcharts.Options = {
         }
     },
     tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        backgroundColor: '#020202',
         style: {
-            color: '#F0F0F0'
+            color: '#faf9f8'
         }
     },
     plotOptions: {

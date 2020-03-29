@@ -199,7 +199,10 @@ export class HighchartsVisualizer implements IVisualizer {
                 enabled: false // Hide the Highcharts watermark on the right corner of the chart
             },
             chart: {
-                displayErrors: false
+                displayErrors: false,
+                style: {
+                    fontFamily: options.chartOptions.fontFamily
+                }
             },
             title: {
                 text: chartOptions.title

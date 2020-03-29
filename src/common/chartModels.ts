@@ -211,6 +211,12 @@ export interface IChartOptions {
     yMaximumValue?: number;
     
     /**
+     * Cahrt labels font family
+     * [Default value: az_ea_font, wf_segoe-ui_normal, "Segoe UI", "Segoe WP", Tahoma, Arial, sans-serif]
+     */
+    fontFamily?: string;
+
+    /**
      * Callback that is used to get the desired offset from UTC in hours for date value. Used to handle timezone.
      * The offset will be added to the original date from the query results data.
      * The callback input is the string value of the date from the query result. For example: '2019-11-25T07:14:00.000Z'
