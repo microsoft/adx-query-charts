@@ -211,7 +211,7 @@ export interface IChartOptions {
     yMaximumValue?: number;
     
     /**
-     * Cahrt labels font family
+     * Chart labels font family
      * [Default value: az_ea_font, wf_segoe-ui_normal, "Segoe UI", "Segoe WP", Tahoma, Arial, sans-serif]
      */
     fontFamily?: string;
