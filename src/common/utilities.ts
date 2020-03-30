@@ -23,24 +23,16 @@ export class Utilities {
     } 
     
     /**
-    * Returns the value of the local date after adding the desired offset (from UTC)
-    * @param dateStr - The string value that represents the date to transform.
-    * @param getUtcOffset - Callback that returns the offset in hours from UTC.
-    * @returns The value of the date + the desired UTC offset
+    * Returns the stored time value in milliseconds since midnight, January 1, 1970 UTC
+    * @param dateStr - The string value that represents the date
+    * @returns The date value in milliseconds since midnight, January 1, 1970 UTC
     */
-    public static getDateValue(dateStr: string, getUtcOffset: (dateStr: string) => number): number {
-        const date = new Date(dateStr);
-        
-        if (date.toDateString() === 'Invalid Date') {
+    public static getDateValue(dateStr: string): number {
+        if (!Utilities.isValidDate(dateStr)) {
             return null;
-        }
-        
-        // Add UTC offset to the date
-        const utcOffset = getUtcOffset(dateStr);
-        const utcOffsetInMilliseconds = utcOffset * 60 * 60 * 1000;
-        const localDateValue = date.valueOf();
-       
-        return localDateValue + utcOffsetInMilliseconds;
+        }     
+
+        return new Date(dateStr).valueOf();
     }
 
     public static isValidDate(str: string): boolean {

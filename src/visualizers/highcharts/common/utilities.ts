@@ -20,12 +20,4 @@ export class HC_Utilities {
         
         return originalValue;  
     }
-
-    public static getUtcWithOffsetDate(originalValue: number): Date {
-        const localWithOffsetDate = new Date(originalValue); // HC gets the local date + utc offset addition
-        const utcWithOffsetDateValue = localWithOffsetDate.valueOf() + (localWithOffsetDate.getTimezoneOffset() * 60 * 1000); // Add the local offset. This way the utc offset addition is added to the UTC, and not to the local
-        const utcWithOffsetDate = new Date(utcWithOffsetDateValue);
-
-        return utcWithOffsetDate;
-    }
 }

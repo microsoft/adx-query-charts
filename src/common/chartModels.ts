@@ -216,26 +216,29 @@ export interface IChartOptions {
      */
     fontFamily?: string;
 
-    /**
-     * Callback that is used to get the desired offset from UTC in hours for date value. Used to handle timezone.
-     * The offset will be added to the original date from the query results data.
-     * The callback input is the string value of the date from the query result. For example: '2019-11-25T07:14:00.000Z'
-     * For example:
-     * For 'South Africa Standard Time' timezone return 2 and the displayed date will be '11/25/2019, 04:00 PM' instead of '11/25/2019, 02:00 PM' 
-     * See time zone info: https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11).aspx
-     * [Default value: 0]
+     /**
+     * Callback that is used to get the desired offset from UTC in minutes for date value. Used to handle timezone.
+     * The offset will be added to the original UTC date from the query results data.
+     * If dateFormatter wasn't provided, the callback will be also used for the X axis labels and the tooltip header. Otherwise - it will only be used for positionning the x-axis.
+     * Callback inputs:
+     *     @param dateValue - The original date value in milliseconds since midnight, January 1, 1970 UTC. For example: 1574666160000 represents '2019-11-25T07:16:00.000Z'
+     * Callback return value:
+     *     @returns The desired offset from UTC in minutes for date value. For example:
+     *              For 'South Africa Standard Time' timezone return -120 and the displayed date will be '11/25/2019, 02:00 PM' instead of '11/25/2019, 04:00 PM'
+     *              See time zone info: https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11).aspx
+     * [Default value: () => { return 0; }]
      */
-    getUtcOffset?: (dateStr: string) => number;
+    getUtcOffset?: (dateValue: number) => number;
     
     /**
-     * Callback that is used to format the date values both in the axis and the tooltip. If not provided - the default formatting will apply
+     * Callback that is used to format the date values both in the axis and the tooltip. If not provided - the default formatting will apply.
      * Callback inputs:
-     *     @param dateValue - The original date value. If utcOffset was provided, this value will include the utcOffset.
+     *     @param dateValue - The original date value in milliseconds since midnight, January 1, 1970 UTC. For example: 1574666160000 represents '2019-11-25T07:16:00.000Z'
      *     @param defaultFormat - The default format of the label.
      * Callback return value:
      *     @returns The string represents the display value of the dateValue 
      */
-    dateFormatter?: (dateValue: Date, defaultFormat: DateFormat) => string;
+    dateFormatter?: (dateValue: number, defaultFormat: DateFormat) => string;
 
     /**
      * Callback that is used to format number values both in the axis and the tooltip. If isn't provided - the default formatting will apply.

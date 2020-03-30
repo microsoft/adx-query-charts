@@ -16,7 +16,7 @@ describe('Unit tests for Chart methods', () => {
         // Add mock to Utilities.getDateValue -> return the full year
         jest
         .spyOn(Utilities, 'getDateValue')
-        .mockImplementation(function(dateStr, offset) {
+        .mockImplementation(function(dateStr) {
             return new Date(dateStr).getFullYear();
         });
 
