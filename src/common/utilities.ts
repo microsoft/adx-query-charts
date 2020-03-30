@@ -28,13 +28,11 @@ export class Utilities {
     * @returns The date value in milliseconds since midnight, January 1, 1970 UTC
     */
     public static getDateValue(dateStr: string): number {
-        const date = new Date(dateStr);
-        
-        if (date.toDateString() === 'Invalid Date') {
+        if (!Utilities.isValidDate(dateStr)) {
             return null;
         }     
 
-        return date.valueOf()
+        return new Date(dateStr).valueOf();
     }
 
     public static isValidDate(str: string): boolean {

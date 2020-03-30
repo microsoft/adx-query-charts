@@ -46,11 +46,11 @@ export abstract class Chart {
         const seriesMap = {};
 
         options.queryResultData.rows.forEach((row) => {
-            let xAxisValue: any = row[xAxisColumnIndex];
+            let xAxisValue: IRowValue = row[xAxisColumnIndex];
     
             // If the x-axis is a date, convert its value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
-                xAxisValue = Utilities.getDateValue(xAxisValue);
+                xAxisValue = Utilities.getDateValue(<string>xAxisValue);
 
                 if(!xAxisValue) {
                     throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
@@ -224,20 +224,20 @@ export abstract class Chart {
         options.queryResultData.rows.forEach((row) => {
             const splitByValue: string = <string>row[splitByColumnIndex];
             const yValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
-            let xValue = row[xAxisColumnIndex];
+            const dateOriginalValue: string = <string>row[xAxisColumnIndex];
 
-            // For date the a-axis, convert its value to ms as this is what expected by Highcharts
-            xValue = Utilities.getDateValue(<string>xValue);
+            // For date a-axis, convert it's value to ms as this is what expected by Highcharts
+            const dateNumericValue: number = Utilities.getDateValue(dateOriginalValue);
          
-            if(!xValue) {
-                throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
+            if(!dateNumericValue) {
+                throw new InvalidInputError(`The x-axis value '${dateOriginalValue}' is an invalid date`, ErrorCode.InvalidDate);
             }
 
             if(!splitByMap[splitByValue]) {
                 splitByMap[splitByValue] = [];
             }
 
-            splitByMap[splitByValue].push([xValue, yValue]);
+            splitByMap[splitByValue].push([dateNumericValue, yValue]);
         });
 
         for (let splitByValue in splitByMap) {
