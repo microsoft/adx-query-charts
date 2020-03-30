@@ -50,7 +50,7 @@ export abstract class Chart {
     
             // If the x-axis is a date, convert its value to milliseconds as this is what expected by 'Highcharts'
             if(isDatetimeAxis) {
-                xAxisValue = Utilities.getDateValue(xAxisValue, chartOptions.getUtcOffset);
+                xAxisValue = Utilities.getDateValue(xAxisValue);
 
                 if(!xAxisValue) {
                     throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
@@ -227,7 +227,7 @@ export abstract class Chart {
             let xValue = row[xAxisColumnIndex];
 
             // For date the a-axis, convert its value to ms as this is what expected by Highcharts
-            xValue = Utilities.getDateValue(<string>xValue, options.chartOptions.getUtcOffset);
+            xValue = Utilities.getDateValue(<string>xValue);
          
             if(!xValue) {
                 throw new InvalidInputError(`The x-axis value '${row[xAxisColumnIndex]}' is an invalid date`, ErrorCode.InvalidDate);
