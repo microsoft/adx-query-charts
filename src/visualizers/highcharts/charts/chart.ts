@@ -226,7 +226,7 @@ export abstract class Chart {
             const yValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
             const dateOriginalValue: string = <string>row[xAxisColumnIndex];
 
-            // For date a-axis, convert it's value to ms as this is what expected by Highcharts
+            // For date a-axis, convert its value to milliseconds as this is what expected by Highcharts
             const dateNumericValue: number = Utilities.getDateValue(dateOriginalValue);
          
             if(!dateNumericValue) {
