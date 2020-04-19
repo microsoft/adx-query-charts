@@ -450,12 +450,9 @@ export class KustoChartHelper implements IChartHelper {
         if(chartOptions.columnsSelection) {
             invalidColumnsSelectionErrorMessage = "Invalid columnsSelection.";
         } else {
-            invalidColumnsSelectionErrorMessage = "Wasn't able to apply default columnsSelection.";
-
             // If columns selection wasn't provided - make sure the default selection can apply
-            if(!chartOptions.columnsSelection) {
-                chartOptions.columnsSelection = this.getDefaultSelection(queryResultData, chartOptions.chartType);
-            }
+            chartOptions.columnsSelection = this.getDefaultSelection(queryResultData, chartOptions.chartType);
+            invalidColumnsSelectionErrorMessage = "Wasn't able to apply default columnsSelection.";
         }
 
         if(!chartOptions.columnsSelection.xAxis || !chartOptions.columnsSelection.yAxes || chartOptions.columnsSelection.yAxes.length === 0) {
