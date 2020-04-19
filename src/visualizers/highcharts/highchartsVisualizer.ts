@@ -90,7 +90,7 @@ export class HighchartsVisualizer implements IVisualizer {
                         // Save the new options
                         this.basicHighchartsOptions = _.merge({}, this.basicHighchartsOptions, newOptions);
                         
-                        resolve();
+                        this.onFinishDrawingChart(resolve, options);
         
                         return;
                     }
@@ -157,21 +157,25 @@ export class HighchartsVisualizer implements IVisualizer {
     
             // Draw the chart
             this.highchartsChart = Highcharts.chart(elementId, highchartsOptions, () => {
-                this.handleResize();
-    
-                // Mark that the chart drawing was finished
-                resolve();
-
-                const finishChartAnimationCallback = options.chartOptions.onFinishChartAnimation;
-
-                if(finishChartAnimationCallback) {
-                    setTimeout(() => {
-                        finishChartAnimationCallback(options.chartInfo);
-                    }, ANIMATION_DURATION_MS + 200);
-                }
+                this.handleResize();           
+                this.onFinishDrawingChart(resolve, options);
             });   
         } catch(ex) {
             reject(new VisualizerError(ex.message, ErrorCode.FailedToCreateVisualization));
+        }
+    }
+
+    private onFinishDrawingChart(resolve: ResolveFn, options: IVisualizerOptions): void {
+        // Mark that the chart drawing was finished
+        resolve();
+
+        // If onFinishChartAnimation callback was given, call it after the anumation duration
+        const finishChartAnimationCallback = options.chartOptions.onFinishChartAnimation;
+
+        if(finishChartAnimationCallback) {
+            setTimeout(() => {
+                finishChartAnimationCallback(options.chartInfo);
+            }, ANIMATION_DURATION_MS + 200);
         }
     }
 
