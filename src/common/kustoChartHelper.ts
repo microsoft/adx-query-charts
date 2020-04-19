@@ -14,7 +14,6 @@ import { ChartInfo } from './chartInfo';
 import { IVisualizerOptions } from '../visualizers/IVisualizerOptions';
 import { InvalidInputError, ChartError } from './errors/errors';
 import { ErrorCode } from './errors/errorCode';
-import { ChartOptions } from 'highcharts';
 
 //#endregion Imports
 
