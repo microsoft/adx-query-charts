@@ -14,6 +14,7 @@ import { ChartInfo } from './chartInfo';
 import { IVisualizerOptions } from '../visualizers/IVisualizerOptions';
 import { InvalidInputError, ChartError } from './errors/errors';
 import { ErrorCode } from './errors/errorCode';
+import { ChartOptions } from 'highcharts';
 
 //#endregion Imports
 
@@ -424,17 +425,12 @@ export class KustoChartHelper implements IChartHelper {
            throw new InvalidInputError("The queryResultData can't be empty", ErrorCode.InvalidQueryResultData);
         } else if (!queryResultData.rows || !queryResultData.columns) {
             throw new InvalidInputError("The queryResultData must contain rows and columns", ErrorCode.InvalidQueryResultData);
-        } else if (chartOptions.columnsSelection && (!chartOptions.columnsSelection.xAxis || !chartOptions.columnsSelection.yAxes || chartOptions.columnsSelection.yAxes.length === 0)) {
-            throw new InvalidInputError("Invalid columnsSelection. The columnsSelection must contain at least 1 x-axis and y-axis column", ErrorCode.InvalidColumnsSelection);
         }
+        
+        this.verifyColumnsSelection(chartOptions, queryResultData);
 
         // Make sure the columns selection is supported
         const supportedColumnTypes = this.getSupportedColumnTypes(chartOptions.chartType);
-     
-        // If columns selection wasn't provided - make sure the default selection can apply
-        if(!chartOptions.columnsSelection) {
-            chartOptions.columnsSelection = this.getDefaultSelection(queryResultData, chartOptions.chartType);
-        }
 
         this.verifyColumnTypeIsSupported(supportedColumnTypes.xAxis, chartOptions.columnsSelection.xAxis, chartOptions, 'x-axis');
 
@@ -446,6 +442,25 @@ export class KustoChartHelper implements IChartHelper {
             chartOptions.columnsSelection.splitBy.forEach((splitBy) => {
                 this.verifyColumnTypeIsSupported(supportedColumnTypes.splitBy, splitBy, chartOptions, 'split-by');
             });
+        }
+    }
+
+    private verifyColumnsSelection(chartOptions: IChartOptions, queryResultData: IQueryResultData): void {
+        let invalidColumnsSelectionErrorMessage: string;
+
+        if(chartOptions.columnsSelection) {
+            invalidColumnsSelectionErrorMessage = "Invalid columnsSelection.";
+        } else {
+            invalidColumnsSelectionErrorMessage = "Wasn't able to apply default columnsSelection.";
+
+            // If columns selection wasn't provided - make sure the default selection can apply
+            if(!chartOptions.columnsSelection) {
+                chartOptions.columnsSelection = this.getDefaultSelection(queryResultData, chartOptions.chartType);
+            }
+        }
+
+        if(!chartOptions.columnsSelection.xAxis || !chartOptions.columnsSelection.yAxes || chartOptions.columnsSelection.yAxes.length === 0) {
+            throw new InvalidInputError(invalidColumnsSelectionErrorMessage + " The columnsSelection must contain at least 1 x-axis and y-axis column", ErrorCode.InvalidColumnsSelection);
         }
     }
 
