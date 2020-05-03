@@ -90,6 +90,12 @@ export const DarkThemeOptions: Highcharts.Options = {
             style: {
                 color: '#C0C0C0'
             }
+        },
+        navigation: {
+            style: {
+                fontWeight: 'bold',
+                color: textMainColor,
+            }
         }
     },
     credits: {

@@ -15,7 +15,7 @@ export class TooltipHelper {
     }
 
     private static getFormattedValue(chartOptions: IChartOptions, originalValue: number, columnType: DraftColumnType): string {
-        if(chartOptions.numberFormatter && Utilities.isNumeric(columnType)) {
+        if(chartOptions.numberFormatter && Utilities.isNumeric(columnType) && typeof originalValue === 'number') {   
             return chartOptions.numberFormatter(originalValue);
         } else if(Utilities.isDate(columnType)) {
             return chartOptions.dateFormatter ? chartOptions.dateFormatter(originalValue, DateFormat.FullDate) : new Date(originalValue).toString();
