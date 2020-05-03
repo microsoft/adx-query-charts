@@ -142,7 +142,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 }
             }
         };
-
+        
         this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
     }
 
@@ -214,7 +214,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 text: chartOptions.title
             },
             xAxis: this.getXAxis(isDatetimeAxis, chartOptions),
-            yAxis: this.getYAxis(chartOptions),
+            yAxis: this.getYAxis(chartOptions),        
             tooltip: {
                 formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
                 shared: false,
@@ -397,6 +397,7 @@ export class HighchartsVisualizer implements IVisualizer {
     private getLegendOptions(chartOptions: IChartOptions): Highcharts.LegendOptions {
         return {
             enabled: chartOptions.legendOptions.isEnabled,
+            width: '100%',
             maxHeight: this.getLegendMaxHeight(),
             accessibility: {
                 enabled: <any>true,
