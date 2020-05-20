@@ -37,6 +37,9 @@ export class Pie extends Chart {
                 dataLabels: {
                     formatter: function() {
                         return `${this.point.name}${self.getPercentageSuffix(this)}`;
+                    },
+                    style: {
+                        textOverflow: 'ellipsis'
                     }
                 }
             }
