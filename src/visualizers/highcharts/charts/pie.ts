@@ -111,7 +111,18 @@ export class Pie extends Chart {
             series: series
         }
     }
-  
+    
+    public sortSeriesByName(series: any[]): any[] {
+        const allData = _.flatMap(series, 'data');
+        const sortedData = _.sortBy(allData, 'name');
+
+        sortedData.forEach((data, i) => {
+            data.legendIndex = ++i;
+        });
+
+        return series;
+    }
+
     public getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
         const self = this;
 

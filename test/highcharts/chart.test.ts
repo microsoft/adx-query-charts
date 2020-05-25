@@ -698,5 +698,310 @@ describe('Unit tests for Chart methods', () => {
         //#endregion Pie chart getSplitByCategoriesAndSeries
     });
    
+    describe('Validate sortSeriesByName method', () => {
+        //#region Line chart - no split by
+
+        it('Validate line chart sortSeriesByName when there is no split by', () => {
+            // Input
+            const series = [{
+                name: 'request_count',
+                data: [30, 100, 20]
+            }];
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = series;
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        it('Validate line chart sortSeriesByName when there is no split by and date x-axis', () => {
+            // Input
+            const series = [{
+                name: 'request_count',
+                data: [[2019,  30], [2019, 20], [2000, 100]]
+            }];
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = series;
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        it('Validate line chart sortSeriesByName when there are 3 lines', () => {
+            // Input
+            const series_1 = {
+                name: 'AAA',
+                data: [[2019,  300], [2019, 150], [2000, 200]]
+            };
+
+            const series_2 = {
+                name: 'ABA',
+                data: [[2019,  30], [2019, 20], [2000, 100]]
+            };
+
+            const series_3 = {
+                name: 'BBB',
+                data: [[2019,  30], [2019, 20], [2000, 100]]
+            };
+
+            const series = [series_2, series_1, series_3];
+  
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = [series_1, series_2, series_3];
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        //#endregion Line chart - no split by
+
+        //#region Line chart - split by
+
+        it('Validate sortSeriesByName for Line chart: non-date x-axis with splitBy', () => {
+            // Input
+            const series_1 = { name: 'Almaty', data: [20, null, null] };
+            const series_2 = { name: 'Atlanta', data: [300, null, null] };
+            const series_3 = { name: 'Boston', data: [200, null, null] };
+            const series_4 = { name: 'Herzliya', data: [null, 1000, null] };
+            const series_5 = { name: 'Jerusalem', data: [null, 5, null] };
+            const series_6 = { name: 'New York', data: [100, null, null] };
+            const series_7 = { name: 'Tel Aviv', data: [null, 10, null] };
+            const series_8 = { name: 'Tokyo', data: [null, null, 20] };
+            const series = [series_6, series_7, series_2, series_1, series_8, series_3, series_5, series_4];
+           
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = [series_1, series_2, series_3, series_4, series_5, series_6, series_7, series_8];
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        it('Validate sortSeriesByName for Line chart: date x-axis with splitBy', () => {
+            // Input
+            const series_1 = { name: 'Almaty', data: [[2019,  20]]};
+            const series_2 = { name: 'Atlanta', data: [[2019,  300]] };
+            const series_3 = { name: 'Boston', data: [[2000,  200]] };
+            const series_4 = { name: 'Herzliya', data: [[2000,  1000]] };
+            const series_5 = { name: 'Jerusalem', data: [[1988,  500]] };
+            const series_6 = { name: 'New York', data: [[2000,  100]] };
+            const series_7 = { name: 'Tel Aviv', data: [[2000,  10]] };
+            const series_8 = { name: 'Tokyo', data: [[2019,  20]] };
+            const series = [series_8, series_6, series_2, series_1, series_4, series_7, series_3, series_5];
+           
+            // Act
+            const chart = ChartFactory.create(ChartType.Line);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = [series_1, series_2, series_3, series_4, series_5, series_6, series_7, series_8];
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        //#endregion Line chart - split by
+        
+        //#region Pie chart
+                
+        it('Validate pie chart sortSeriesByName when there is no split by', () => {
+            // Input
+            const series = [{
+                name: 'request_count',
+                data: [
+                    { name: 'Herzliya', y: 30 },
+                    { name: 'Boston', y: 1 },
+                    { name: 'Tel Aviv', y: 10 },
+                    { name: 'Miami', y: 3 },
+                    { name: 'Coal Creek', y: 5 },
+                    { name: 'New York', y: 2 },
+                    { name: 'Jaffa', y: 50 },
+                ]
+            }];
+                         
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = [{
+                name: 'request_count',
+                data: [
+                    { name: 'Herzliya', y: 30, legendIndex: 3 },
+                    { name: 'Boston', y: 1, legendIndex: 1 },
+                    { name: 'Tel Aviv', y: 10, legendIndex: 7 },
+                    { name: 'Miami', y: 3, legendIndex: 5 },
+                    { name: 'Coal Creek', y: 5, legendIndex: 2 },
+                    { name: 'New York', y: 2, legendIndex: 6 },
+                    { name: 'Jaffa', y: 50, legendIndex: 4 },
+                ]
+            }];
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        it('Validate pie chart sortSeriesByName when there are 2 pie levels', () => {
+            // Input
+           const series = [{
+                name: 'country',
+                size: '50%',
+                data: [
+                    { name: 'Israel',  y: 90 },
+                    { name: 'United States', y: 11}
+                ]
+            }, 
+            {
+                name: 'city',
+                size: '60%',
+                innerSize: '50%',
+                data: [
+                    { name: 'Tel Aviv', y: 10 },
+                    { name: 'Herzliya', y: 30 },
+                    { name: 'Jaffa', y: 50 },
+                    { name: 'Beer sheva', y: 5 },
+                    { name: 'Iceland', y: 2 },
+                    { name: 'Miami', y: 3 },
+                    { name: 'Boston', y: 1 },                ]
+            }];
+                     
+            // Act
+            const chart = ChartFactory.create(ChartType.Donut);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = [{
+                name: 'country',
+                size: '50%',
+                data: [
+                    { name: 'Israel',  y: 90, legendIndex: 5 },
+                    { name: 'United States', y: 11, legendIndex: 9 }
+                ]
+            }, 
+            {
+                name: 'city',
+                size: '60%',
+                innerSize: '50%',
+                data: [
+                    { name: 'Tel Aviv', y: 10, legendIndex: 8 },
+                    { name: 'Herzliya', y: 30, legendIndex: 3 },
+                    { name: 'Jaffa', y: 50, legendIndex: 6 },
+                    { name: 'Beer sheva', y: 5, legendIndex: 1 },
+                    { name: 'Iceland', y: 2, legendIndex: 4 },
+                    { name: 'Miami', y: 3, legendIndex: 7 },
+                    { name: 'Boston', y: 1, legendIndex: 2 },                ]
+            }];
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        it('Validate pie chart sortSeriesByName when there are 3 pie levels', () => {
+            // Input
+        const series = [{
+                name: 'browser',
+                size: '33%',
+                data: [
+                    { name: 'Internet Explorer',  y: 20 },
+                    { name: 'Chrome', y: 50 },
+                    { name: 'Firefox', y: 10 },
+                    { name: 'Safari', y: 20 }
+                ]
+            }, 
+            {
+                name: 'version',
+                size: '43%',
+                innerSize: '33%',
+                data: [
+                    { name: 'v8', y: 19 },
+                    { name: 'v11', y: 1 },
+                    { name: 'v65', y: 25 },
+                    { name: 'v66', y: 25 },
+                    { name: 'v58', y: 7 },
+                    { name: 'v59', y: 3 },
+                    { name: 'v11', y: 20 }
+                ]
+            }, 
+            {
+                name: 'minor_version',
+                size: '53%',
+                innerSize: '43%',
+                data: [
+                    { name: '0', y: 10 },
+                    { name: '1', y: 1 },
+                    { name: '2', y: 5 },
+                    { name: '3', y: 3 },
+                    { name: '0', y: 1 },
+                    { name: '0', y: 5 },
+                    { name: '1', y: 20 },
+                    { name: '0', y: 15 },
+                    { name: '1', y: 5 },
+                    { name: '2', y: 5 },
+                    { name: '0', y: 5 },
+                    { name: '1', y: 2 },
+                    { name: '0', y: 3 },  
+                    { name: '0', y: 20 }
+                ]
+            }];
+                     
+            // Act
+            const chart = ChartFactory.create(ChartType.Donut);
+            const sortedSeries: any = chart.sortSeriesByName(series);
+            const expected = [{
+                name: 'browser',
+                size: '33%',
+                data: [
+                    { name: 'Internet Explorer', y: 20, legendIndex: 17 },
+                    { name: 'Chrome', y: 50, legendIndex: 15 },
+                    { name: 'Firefox', y: 10, legendIndex: 16 },
+                    { name: 'Safari', y: 20, legendIndex: 18 }
+                ]
+            }, 
+            {
+                name: 'version',
+                size: '43%',
+                innerSize: '33%',
+                data: [
+                    { name: 'v8', y: 19, legendIndex: 25 },
+                    { name: 'v11', y: 1, legendIndex: 19 },
+                    { name: 'v65', y: 25, legendIndex: 23 },
+                    { name: 'v66', y: 25, legendIndex: 24 },
+                    { name: 'v58', y: 7, legendIndex: 21 },
+                    { name: 'v59', y: 3, legendIndex: 22 },
+                    { name: 'v11', y: 20, legendIndex: 20 }
+                ]
+            }, 
+            {
+                name: 'minor_version',
+                size: '53%',
+                innerSize: '43%',
+                data: [
+                    { name: '0', y: 10, legendIndex: 1 },
+                    { name: '1', y: 1, legendIndex: 8 },
+                    { name: '2', y: 5, legendIndex: 12 },
+                    { name: '3', y: 3, legendIndex: 14 },
+                    { name: '0', y: 1, legendIndex: 2 },
+                    { name: '0', y: 5, legendIndex: 3 },
+                    { name: '1', y: 20, legendIndex: 9 },
+                    { name: '0', y: 15, legendIndex: 4 },
+                    { name: '1', y: 5, legendIndex: 10 },
+                    { name: '2', y: 5, legendIndex: 13 },
+                    { name: '0', y: 5, legendIndex: 5 },
+                    { name: '1', y: 2, legendIndex: 11 },
+                    { name: '0', y: 3, legendIndex: 6 },  
+                    { name: '0', y: 20, legendIndex: 7 }
+                ]
+            }];
+
+            // Assert
+            expect(sortedSeries).toEqual(expected);
+        });
+
+        //#endregion Pie chart
+    });
+
     //#endregion Tests
 });
