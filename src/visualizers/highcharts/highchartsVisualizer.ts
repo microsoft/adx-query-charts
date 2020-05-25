@@ -341,7 +341,7 @@ export class HighchartsVisualizer implements IVisualizer {
             xAxis: {
                 categories: categoriesAndSeries.categories
             },
-            series: categoriesAndSeries.series
+            series: this.currentChart.sortSeriesByName(categoriesAndSeries.series)
         }
     }
 

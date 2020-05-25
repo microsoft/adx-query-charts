@@ -149,6 +149,12 @@ export abstract class Chart {
         return categoriesAndSeries;
     }
 
+    public sortSeriesByName(series: any[]): any[] {
+        const sortedSeries = _.sortBy(series, 'name');
+
+        return sortedSeries;
+    }
+
     public getChartTypeOptions(): Highcharts.Options {
         return {
             chart: {
