@@ -101,7 +101,7 @@ describe('Unit tests for Chart methods', () => {
             const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
-                    data: [[2019,  30], [2019, 20], [2000, 100]]
+                    data: [[2019, 30], [2019, 20], [2000, 100]]
                 }],
                 categories: undefined
             };
@@ -176,11 +176,11 @@ describe('Unit tests for Chart methods', () => {
             const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
-                    data: [[2019,  30], [2019, 20], [2000, 100]]
+                    data: [[2019, 30], [2019, 20], [2000, 100]]
                 },
                 {
                     name: 'second_count',
-                    data: [[2019,  300], [2019, 150], [2000, 200]]
+                    data: [[2019, 300], [2019, 150], [2000, 200]]
                 }],
                 categories: undefined
             };
@@ -251,7 +251,7 @@ describe('Unit tests for Chart methods', () => {
             const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'request_count',
-                    data: [[2019,  252.36], [2019, -5.5], [2000, 250]]
+                    data: [[2019, 252.36], [2019, -5.5], [2000, 250]]
                 }],
                 categories: undefined
             };
@@ -340,7 +340,7 @@ describe('Unit tests for Chart methods', () => {
                 ['Israel', '2000-06-26T00:00:00Z', 'Herzliya', 1000],
                 ['United States', '2000-06-26T00:00:00Z', 'Boston', 200],
                 ['Israel', '2000-06-26T00:00:00Z', 'Tel Aviv', 10],
-                ['United States', '2000-06-26T00:00:00Z', 'New York', 100],      
+                ['United States', '2000-06-26T00:00:00Z', 'New York', 100],
                 ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', 20],
                 ['United States', '2019-05-25T00:00:00Z', 'Atlanta', 300],
                 ['United States', '2019-05-25T00:00:00Z', 'Redmond', 20]
@@ -365,35 +365,35 @@ describe('Unit tests for Chart methods', () => {
             const expected: ICategoriesAndSeries = {
                 series: [{
                     name: 'Jerusalem',
-                    data: [[1988,  500]]
+                    data: [[1988, 500]]
                 },
                 {
                     name: 'Herzliya',
-                    data: [[2000,  1000]]
+                    data: [[2000, 1000]]
                 },
                 {
                     name: 'Boston',
-                    data: [[2000,  200]]
+                    data: [[2000, 200]]
                 },
                 {
                     name: 'Tel Aviv',
-                    data: [[2000,  10]]
+                    data: [[2000, 10]]
                 },
                 {
                     name: 'New York',
-                    data: [[2000,  100]]
+                    data: [[2000, 100]]
                 },
                 {
                     name: 'Tokyo',
-                    data: [[2019,  20]]
+                    data: [[2019, 20]]
                 },
                 {
                     name: 'Atlanta',
-                    data: [[2019,  300]]
+                    data: [[2019, 300]]
                 },
                 {
                     name: 'Redmond',
-                    data: [[2019,  20]]
+                    data: [[2019, 20]]
                 }],
                 categories: undefined
             };
@@ -581,7 +581,7 @@ describe('Unit tests for Chart methods', () => {
                     name: 'country',
                     size: '50%',
                     data: [
-                        { name: 'Israel',  y: 90 },
+                        { name: 'Israel', y: 90 },
                         { name: 'United States', y: 11}
                     ]
                 }, 
@@ -647,7 +647,7 @@ describe('Unit tests for Chart methods', () => {
                     name: 'browser',
                     size: '33%',
                     data: [
-                        { name: 'Internet Explorer',  y: 20 },
+                        { name: 'Internet Explorer', y: 20 },
                         { name: 'Chrome', y: 50 },
                         { name: 'Firefox', y: 10 },
                         { name: 'Safari', y: 20 }
@@ -684,7 +684,7 @@ describe('Unit tests for Chart methods', () => {
                         { name: '2', y: 5 },
                         { name: '0', y: 5 },
                         { name: '1', y: 2 },
-                        { name: '0', y: 3 },  
+                        { name: '0', y: 3 },
                         { name: '0', y: 20 }
                    ]
                 }],
@@ -721,7 +721,7 @@ describe('Unit tests for Chart methods', () => {
             // Input
             const series = [{
                 name: 'request_count',
-                data: [[2019,  30], [2019, 20], [2000, 100]]
+                data: [[2019, 30], [2019, 20], [2000, 100]]
             }];
 
             // Act
@@ -737,17 +737,17 @@ describe('Unit tests for Chart methods', () => {
             // Input
             const series_1 = {
                 name: 'AAA',
-                data: [[2019,  300], [2019, 150], [2000, 200]]
+                data: [[2019, 300], [2019, 150], [2000, 200]]
             };
 
             const series_2 = {
                 name: 'ABA',
-                data: [[2019,  30], [2019, 20], [2000, 100]]
+                data: [[2019, 30], [2019, 20], [2000, 100]]
             };
 
             const series_3 = {
                 name: 'BBB',
-                data: [[2019,  30], [2019, 20], [2000, 100]]
+                data: [[2019, 30], [2019, 20], [2000, 100]]
             };
 
             const series = [series_2, series_1, series_3];
@@ -788,14 +788,14 @@ describe('Unit tests for Chart methods', () => {
 
         it('Validate sortSeriesByName for Line chart: date x-axis with splitBy', () => {
             // Input
-            const series_1 = { name: 'Almaty', data: [[2019,  20]]};
-            const series_2 = { name: 'Atlanta', data: [[2019,  300]] };
-            const series_3 = { name: 'Boston', data: [[2000,  200]] };
-            const series_4 = { name: 'Herzliya', data: [[2000,  1000]] };
-            const series_5 = { name: 'Jerusalem', data: [[1988,  500]] };
-            const series_6 = { name: 'New York', data: [[2000,  100]] };
-            const series_7 = { name: 'Tel Aviv', data: [[2000,  10]] };
-            const series_8 = { name: 'Tokyo', data: [[2019,  20]] };
+            const series_1 = { name: 'Almaty', data: [[2019, 20]]};
+            const series_2 = { name: 'Atlanta', data: [[2019, 300]] };
+            const series_3 = { name: 'Boston', data: [[2000, 200]] };
+            const series_4 = { name: 'Herzliya', data: [[2000, 1000]] };
+            const series_5 = { name: 'Jerusalem', data: [[1988, 500]] };
+            const series_6 = { name: 'New York', data: [[2000, 100]] };
+            const series_7 = { name: 'Tel Aviv', data: [[2000, 10]] };
+            const series_8 = { name: 'Tokyo', data: [[2019, 20]] };
             const series = [series_8, series_6, series_2, series_1, series_4, series_7, series_3, series_5];
            
             // Act
@@ -852,7 +852,7 @@ describe('Unit tests for Chart methods', () => {
                 name: 'country',
                 size: '50%',
                 data: [
-                    { name: 'Israel',  y: 90 },
+                    { name: 'Israel', y: 90 },
                     { name: 'United States', y: 11}
                 ]
             }, 
@@ -867,7 +867,8 @@ describe('Unit tests for Chart methods', () => {
                     { name: 'Beer sheva', y: 5 },
                     { name: 'Iceland', y: 2 },
                     { name: 'Miami', y: 3 },
-                    { name: 'Boston', y: 1 },                ]
+                    { name: 'Boston', y: 1 }
+                ]
             }];
                      
             // Act
@@ -877,7 +878,7 @@ describe('Unit tests for Chart methods', () => {
                 name: 'country',
                 size: '50%',
                 data: [
-                    { name: 'Israel',  y: 90, legendIndex: 5 },
+                    { name: 'Israel', y: 90, legendIndex: 5 },
                     { name: 'United States', y: 11, legendIndex: 9 }
                 ]
             }, 
@@ -892,7 +893,8 @@ describe('Unit tests for Chart methods', () => {
                     { name: 'Beer sheva', y: 5, legendIndex: 1 },
                     { name: 'Iceland', y: 2, legendIndex: 4 },
                     { name: 'Miami', y: 3, legendIndex: 7 },
-                    { name: 'Boston', y: 1, legendIndex: 2 },                ]
+                    { name: 'Boston', y: 1, legendIndex: 2 }
+                ]
             }];
 
             // Assert
@@ -905,7 +907,7 @@ describe('Unit tests for Chart methods', () => {
                 name: 'browser',
                 size: '33%',
                 data: [
-                    { name: 'Internet Explorer',  y: 20 },
+                    { name: 'Internet Explorer', y: 20 },
                     { name: 'Chrome', y: 50 },
                     { name: 'Firefox', y: 10 },
                     { name: 'Safari', y: 20 }
@@ -942,7 +944,7 @@ describe('Unit tests for Chart methods', () => {
                     { name: '2', y: 5 },
                     { name: '0', y: 5 },
                     { name: '1', y: 2 },
-                    { name: '0', y: 3 },  
+                    { name: '0', y: 3 },
                     { name: '0', y: 20 }
                 ]
             }];
@@ -991,7 +993,7 @@ describe('Unit tests for Chart methods', () => {
                     { name: '2', y: 5, legendIndex: 13 },
                     { name: '0', y: 5, legendIndex: 5 },
                     { name: '1', y: 2, legendIndex: 11 },
-                    { name: '0', y: 3, legendIndex: 6 },  
+                    { name: '0', y: 3, legendIndex: 6 },
                     { name: '0', y: 20, legendIndex: 7 }
                 ]
             }];
