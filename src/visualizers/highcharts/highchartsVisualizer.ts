@@ -240,31 +240,42 @@ export class HighchartsVisualizer implements IVisualizer {
     }
   
     private getLabelsFormatter(chartOptions: IChartOptions, column: IColumn) {
-        let formatter;
+        const formatter = function() {
+            const dataPoint = this;
+            const value = dataPoint.value;
+            let formattedValue = value;
 
-        if(chartOptions.numberFormatter && Utilities.isNumeric(column.type)) {
-            formatter = function() {
-                const dataPoint = this;
-                const value = dataPoint.value;
-
+            if(chartOptions.numberFormatter && Utilities.isNumeric(column.type)) {
                 // Ignore cases where the value is undefined / null / NaN etc.
                 if (typeof value === 'number') {
-                    return chartOptions.numberFormatter(value);
-                } else {
-                    return value;
-                }         
-            }
-        } else if(chartOptions.dateFormatter && Utilities.isDate(column.type)) {
-            formatter = function() {
-                const dataPoint = this;
+                    formattedValue = chartOptions.numberFormatter(value);
+                }
+            } else if(chartOptions.dateFormatter && Utilities.isDate(column.type)) {
                 const dateFormat = HighchartsDateFormatToCommon[dataPoint.dateTimeLabelFormat] || DateFormat.FullDate;
 
-                return chartOptions.dateFormatter(dataPoint.value, dateFormat);
+                formattedValue = chartOptions.dateFormatter(dataPoint.value, dateFormat);
             }
+            
+            // If the label value greater than the max size, truncate it
+            const maxLabelLength: number = 100;
+            let truncatedValue = formattedValue;
+
+            if (formattedValue.length > maxLabelLength) {
+                truncatedValue = value.slice(0, maxLabelLength) + '...';              
+            }
+        
+            return `<span title="${formattedValue}">${truncatedValue}</span>`;
         }
 
         return {
-            formatter: formatter
+            formatter: formatter,
+            useHTML: true,
+            style: {
+                'whiteSpace': 'nowrap',
+                'max-width': '100px',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis',
+            }
         };
     }
 
