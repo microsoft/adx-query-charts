@@ -256,15 +256,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 formattedValue = chartOptions.dateFormatter(dataPoint.value, dateFormat);
             }
             
-            // If the label value greater than the max size, truncate it
-            const maxLabelLength: number = 100;
-            let truncatedValue = formattedValue;
-
-            if (formattedValue.length > maxLabelLength) {
-                truncatedValue = value.slice(0, maxLabelLength) + '...';              
-            }
-        
-            return `<span title="${formattedValue}">${truncatedValue}</span>`;
+            return `<span title="${formattedValue}">${formattedValue}</span>`;
         }
 
         return {
