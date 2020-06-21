@@ -264,8 +264,8 @@ export class _LimitVisResults {
         limitedResults.rows = originalRows;
         limitedResults.isPartialData = false;
 
-        // Don't limit DateTime X values
-        if (params.xColumnType === DraftColumnType.DateTime) {
+        // Don't limit date/numeric X values
+        if (Utilities.isDate(params.xColumnType) || Utilities.isNumeric(params.xColumnType)) {
             return;
         }
 
