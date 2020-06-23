@@ -10,14 +10,15 @@ export class Formatter {
         const maxLabelWidth: number = 100;
         let formattedValue = '';
         
-        if(originalValue !== undefined) {
+        if(originalValue != undefined) {
             formattedValue = Formatter.getFormattedValue(chartOptions, originalValue, column.type);
+            
+            // Truncate the value if it's too long
+            if(originalValue.length > maxLabelWidth) {
+                formattedValue = formattedValue.slice(0, maxLabelWidth) + '...';
+            }
         }
-        
-        // Truncate the value if it's too long
-        if(originalValue.length > maxLabelWidth) {
-            formattedValue = formattedValue.slice(0, maxLabelWidth) + '...';
-        }
+
         return `<tr><td>${columnName || column.name}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
     }
           
@@ -38,7 +39,7 @@ export class Formatter {
                 yColumn = yAxes[0];
             } else { // Multiple y-axes - find the current y column
                 const yColumnIndex = _.findIndex(yAxes, (col) => { 
-                    return col.name === this.series.name 
+                    return col.name === context.series.name 
                 });
 
                 yColumn = yAxes[yColumnIndex];
