@@ -12,14 +12,14 @@ import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
-import { ChartTheme, DateFormat, IChartOptions, IColumn, DrawChartStatus } from '../../common/chartModels';
+import { ChartTheme, IChartOptions, DrawChartStatus } from '../../common/chartModels';
 import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
-import { HighchartsDateFormatToCommon } from './highchartsDateFormatToCommon';
 import { InvalidInputError, VisualizerError } from '../../common/errors/errors';
 import { ErrorCode } from '../../common/errors/errorCode';
 import { ANIMATION_DURATION_MS } from './common/constants';
+import { Formatter } from './common/formatter';
 
 //#endregion Imports
 
@@ -169,7 +169,7 @@ export class HighchartsVisualizer implements IVisualizer {
         // Mark that the chart drawing was finished
         resolve();
 
-        // If onFinishChartAnimation callback was given, call it after the anumation duration
+        // If onFinishChartAnimation callback was given, call it after the animation duration
         const finishChartAnimationCallback = options.chartOptions.onFinishChartAnimation;
 
         if(finishChartAnimationCallback) {
@@ -216,7 +216,7 @@ export class HighchartsVisualizer implements IVisualizer {
             xAxis: this.getXAxis(isDatetimeAxis, chartOptions),
             yAxis: this.getYAxis(chartOptions),        
             tooltip: {
-                formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
+                formatter: Formatter.getChartTooltipFormatter(chartOptions),
                 shared: false,
                 useHTML: true
             },
@@ -239,42 +239,21 @@ export class HighchartsVisualizer implements IVisualizer {
         return highchartsOptions;
     }
   
-    private getLabelsFormatter(chartOptions: IChartOptions, column: IColumn) {
-        const formatter = function() {
-            const dataPoint = this;
-            const value = dataPoint.value;
-            let formattedValue = value;
-
-            if(chartOptions.numberFormatter && Utilities.isNumeric(column.type)) {
-                // Ignore cases where the value is undefined / null / NaN etc.
-                if (typeof value === 'number') {
-                    formattedValue = chartOptions.numberFormatter(value);
-                }
-            } else if(chartOptions.dateFormatter && Utilities.isDate(column.type)) {
-                const dateFormat = HighchartsDateFormatToCommon[dataPoint.dateTimeLabelFormat] || DateFormat.FullDate;
-
-                formattedValue = chartOptions.dateFormatter(dataPoint.value, dateFormat);
-            }
-            
-            return `<span title="${formattedValue}">${formattedValue}</span>`;
-        }
-
-        return {
-            formatter: formatter,
-            useHTML: true,
-            style: {
-                'whiteSpace': 'nowrap',
-                'max-width': '100px',
-                'overflow': 'hidden',
-                'text-overflow': 'ellipsis',
-            }
-        };
-    }
-
     private getXAxis(isDatetimeAxis: boolean, chartOptions: IChartOptions): Highcharts.XAxisOptions {
+        const useHTML: boolean = true;
+
         return {
             type: isDatetimeAxis ? 'datetime' : undefined,
-            labels: this.getLabelsFormatter(chartOptions, chartOptions.columnsSelection.xAxis),
+            labels: {
+                formatter: Formatter.getLabelsFormatter(chartOptions, chartOptions.columnsSelection.xAxis, useHTML),
+                useHTML: useHTML,
+                style: {
+                    'whiteSpace': 'nowrap',
+                    'max-width': '100px',
+                    'overflow': 'hidden',
+                    'text-overflow': 'ellipsis',
+                }
+            },
             title: {
                 text: this.getXAxisTitle(chartOptions),
                 align: 'middle'
@@ -288,7 +267,9 @@ export class HighchartsVisualizer implements IVisualizer {
             title: {
                 text: this.getYAxisTitle(chartOptions)
             },
-            labels: this.getLabelsFormatter(chartOptions, firstYAxis)
+            labels: {
+                formatter: Formatter.getLabelsFormatter(chartOptions, firstYAxis, /*useHTML*/ false)
+            },
         }
 
         if(chartOptions.yMinimumValue != null) {

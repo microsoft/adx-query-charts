@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import { HC_Utilities } from '../common/utilities';
 import { Chart, ICategoriesAndSeries } from './chart';
-import { TooltipHelper } from '../common/tooltipHelper';
+import { Formatter } from '../common/formatter';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
 import { IColumn, IChartOptions } from '../../../common/chartModels';
@@ -150,12 +150,12 @@ export class Pie extends Chart {
                 keyColumnName = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(keyColumn) : undefined;     
             }
 
-            tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, keyColumn, context.key, keyColumnName);  
+            tooltip = Formatter.getSingleTooltip(chartOptions, keyColumn, context.key, keyColumnName);  
 
             // Y axis
             const yColumn = chartOptions.columnsSelection.yAxes[0]; // We allow only 1 y axis in pie chart
 
-            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, context.y, /*columnName*/ undefined, self.getPercentageSuffix(context));
+            tooltip += Formatter.getSingleTooltip(chartOptions, yColumn, context.y, /*columnName*/ undefined, self.getPercentageSuffix(context));
 
             return '<table>' + tooltip + '</table>';
         }
