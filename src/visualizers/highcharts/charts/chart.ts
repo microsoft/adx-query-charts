@@ -4,11 +4,10 @@
 
 import * as _ from 'lodash';
 import * as Highcharts from 'highcharts';
-import { TooltipHelper } from '../common/tooltipHelper';
 import { HC_Utilities } from '../common/utilities';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IChartOptions, IRowValue } from '../../../common/chartModels';
+import { IColumn, IRowValue } from '../../../common/chartModels';
 import { InvalidInputError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
 import { ANIMATION_DURATION_MS } from '../common/constants';
@@ -162,42 +161,6 @@ export abstract class Chart {
             },
             plotOptions: { ...Chart.defaultPlotOptions, ...this.plotOptions() }
         };
-    }
-        
-    public getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
-        return function () {
-            const context = this;
-
-            // X axis
-            const xAxisColumn = chartOptions.columnsSelection.xAxis;
-            const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
-            let tooltip = TooltipHelper.getSingleTooltip(chartOptions, context, xAxisColumn, context.x, xColumnTitle);
-
-            // Y axis
-            const yAxes = chartOptions.columnsSelection.yAxes;
-            let yColumn;
-            
-            if(yAxes.length === 1) {
-                yColumn = yAxes[0];
-            } else { // Multiple y-axes - find the current y column
-                const yColumnIndex = _.findIndex(yAxes, (col) => { 
-                    return col.name === this.series.name 
-                });
-
-                yColumn = yAxes[yColumnIndex];
-            }
-
-            tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, yColumn, context.y);
-            
-            // Split by
-            const splitBy = chartOptions.columnsSelection.splitBy;
-
-            if(splitBy && splitBy.length > 0) {
-                tooltip += TooltipHelper.getSingleTooltip(chartOptions, context, splitBy[0], context.series.name);
-            }
-            
-            return '<table>' + tooltip + '</table>';
-        }
     }
 
     public verifyInput(options: IVisualizerOptions): void {    
