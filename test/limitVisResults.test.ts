@@ -115,6 +115,80 @@ describe('Unit tests for LimitVisResults', () => {
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
         });
 
+        it("When X values are numeric, the X values aren't limited", () => {
+            originalRows = [
+                [1, 1, "X1"],
+                [2, 2, "X2"],
+                [3, 3, "X3"],
+                [4, 4, "X4"],
+                [5, 5, "X5"]
+            ];
+
+            const limitAndAggregateParams: ILimitAndAggregateParams = {
+                queryResultData: { rows: originalRows, columns: [] },
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [1],
+                    splitBy: []
+                },
+                xColumnType: DraftColumnType.Int,
+                aggregationType: AggregationType.Sum,
+                maxUniqueXValues: maxUniqueXValues,
+                otherStr: exceedMaxDataPointLabel
+            }
+
+            // Act
+            const limitedResults = emptyLimitedResults;
+
+            triggerLimitAllRows(limitAndAggregateParams, limitedResults);
+
+            const expectedLimitesRows = originalRows;
+
+            // Assert
+            expect(limitedResults.isPartialData).toEqual(false);
+            expect(limitedResults.rows).toEqual(expectedLimitesRows);
+        });
+        
+        it("When X values are numeric, and split-by values exceeds maximum size the split by values are limited, and the x values preserve the initial order", () => {
+            originalRows = [
+                [1, 1, "X1"],
+                [2, 2, "X2"],
+                [3, 3, "X3"],
+                [4, 4, "X4"],
+                [5, 5, "X5"]
+            ];
+
+            const limitAndAggregateParams: ILimitAndAggregateParams = {
+                queryResultData: { rows: originalRows, columns: [] },
+                axesIndexes: {
+                    xAxis: 0,
+                    yAxes: [1],
+                    splitBy: [2]
+                },
+                xColumnType: DraftColumnType.Int,
+                aggregationType: AggregationType.Sum,
+                maxUniqueXValues: maxUniqueXValues,
+                otherStr: exceedMaxDataPointLabel
+            }
+
+            // Act
+            const limitedResults = emptyLimitedResults;
+
+            triggerLimitAllRows(limitAndAggregateParams, limitedResults);
+
+            const expectedLimitesRows = [
+                [1, 1, exceedMaxDataPointLabel],
+                [2, 2, exceedMaxDataPointLabel],
+                [3, 3, exceedMaxDataPointLabel],
+                [4, 4, "X4"],
+                [5, 5, "X5"]
+            ];
+
+            // Assert
+            expect(limitedResults.isPartialData).toEqual(false);
+            expect(limitedResults.rows).toEqual(expectedLimitesRows);
+        });
+
         it("When X values exceeds maximum size, the X values are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
@@ -150,7 +224,7 @@ describe('Unit tests for LimitVisResults', () => {
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
         });
 
-        it("When X values are DateTime, and Filter exceeds maximum size, only Filter values are limited", () => {
+        it("When X values are DateTime, and split-by exceeds maximum size, only split-by values are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
                 axesIndexes: {
@@ -170,13 +244,13 @@ describe('Unit tests for LimitVisResults', () => {
             triggerLimitAllRows(limitAndAggregateParams, limitedResults);
 
             const expectedLimitesRows = [
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 500, 600],
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Donetsk', 700, 800],
                 ['2017-03-27T00:00:00Z', 'Ukraine', exceedMaxDataPointLabel, 100, 200],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 10, 20],
                 ['2017-03-27T00:00:00Z', 'Ukraine', exceedMaxDataPointLabel, 300, 400],
                 ['2017-03-27T00:00:00Z', 'United States', exceedMaxDataPointLabel, 5, 6],
                 ['2017-03-27T00:00:00Z', 'United States', exceedMaxDataPointLabel, 5, 6],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 500, 600],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Donetsk', 700, 800],
                 ['2017-03-27T00:00:00Z', 'United States', exceedMaxDataPointLabel, 5, 6],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 30, 40],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 50, 60],
@@ -188,7 +262,7 @@ describe('Unit tests for LimitVisResults', () => {
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
         });
 
-        it("When both X values and Filter values exceeds maximum size, both of them are limited", () => {
+        it("When both X values and split-by values exceeds maximum size, both of them are limited", () => {
             const limitAndAggregateParams: ILimitAndAggregateParams = {
                 queryResultData: { rows: originalRows, columns: [] },
                 axesIndexes: {
@@ -208,11 +282,11 @@ describe('Unit tests for LimitVisResults', () => {
             triggerLimitAllRows(limitAndAggregateParams, limitedResults);
 
             const expectedLimitesRows = [
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 500, 600],
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Donetsk', 700, 800],
                 ['2017-03-27T00:00:00Z', 'Ukraine', exceedMaxDataPointLabel, 100, 200],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 10, 20],
                 ['2017-03-27T00:00:00Z', 'Ukraine', exceedMaxDataPointLabel, 300, 400],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 500, 600],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Donetsk', 700, 800],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 30, 40],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 50, 60],
                 [, exceedMaxDataPointLabel, exceedMaxDataPointLabel, 16, 20],
@@ -223,7 +297,7 @@ describe('Unit tests for LimitVisResults', () => {
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
         });
 
-        it("When there are 2 Filter values, and both of them exceeds maximum size, both of them are limited", () => {
+        it("When there are 2 split-by values, and both of them exceeds maximum size, both of them are limited", () => {
             const originalRows = [
                 ['X', 'a', 1, 'aa'],
                 ['X', 'b', 2, 'bb'],
@@ -258,16 +332,16 @@ describe('Unit tests for LimitVisResults', () => {
 
             const expectedLimitesRows = [
                 ['X', 'a', 1, 'aa'],
+                ['X', exceedMaxDataPointLabel, 2, exceedMaxDataPointLabel],
+                ['X', 'c', 3, exceedMaxDataPointLabel],
+                ['X', exceedMaxDataPointLabel, 5, 'aa'],
+                ['X', 'a', 10, exceedMaxDataPointLabel],
                 ['X', 'a', 1, 'aa'],
+                ['X', exceedMaxDataPointLabel, 1, exceedMaxDataPointLabel],
+                ['X', 'c', 5, exceedMaxDataPointLabel],
                 ['X', 'c', 30, 'aa'],
                 ['X', 'a', 50, 'aa'],
-                ['X', 'a', 12, 'ee'],
-                ['X', exceedMaxDataPointLabel, 5, 'aa'],
-                ['X', 'c', 3, exceedMaxDataPointLabel],
-                ['X', 'a', 10, exceedMaxDataPointLabel],
-                ['X', 'c', 5, exceedMaxDataPointLabel],
-                ['X', exceedMaxDataPointLabel, 2, exceedMaxDataPointLabel],
-                ['X', exceedMaxDataPointLabel, 1, exceedMaxDataPointLabel],
+                ['X', 'a', 12, 'ee']
             ];
 
             // Assert
@@ -275,7 +349,7 @@ describe('Unit tests for LimitVisResults', () => {
             expect(limitedResults.rows).toEqual(expectedLimitesRows);
         });
 
-        it("Average aggregation - When both X values and Filter values exceeds maximum size, both of them are limited", () => {
+        it("Average aggregation - When both X values and split-by values exceeds maximum size, both of them are limited", () => {
             originalRows.push(['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 300, 1000]);
             originalRows.push(['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 100, 30]);
 
@@ -298,15 +372,15 @@ describe('Unit tests for LimitVisResults', () => {
             triggerLimitAllRows(limitAndAggregateParams, limitedResults);
 
             const expectedLimitesRows = [
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 500, 600],
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Donetsk', 700, 800],
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 300, 1000],
-                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 100, 30],
                 ['2017-03-27T00:00:00Z', 'Ukraine', exceedMaxDataPointLabel, 100, 200],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 10, 20],
                 ['2017-03-27T00:00:00Z', 'Ukraine', exceedMaxDataPointLabel, 300, 400],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 500, 600],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Donetsk', 700, 800],
                 ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 30, 40],
-                ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 50, 60],
+                ['2017-03-27T00:00:00Z', 'Israel', exceedMaxDataPointLabel, 50, 60],        
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 300, 1000],
+                ['2017-03-27T00:00:00Z', 'Ukraine', 'Odesa', 100, 30],
                 [, exceedMaxDataPointLabel, exceedMaxDataPointLabel, 4, 5],
             ];
 
