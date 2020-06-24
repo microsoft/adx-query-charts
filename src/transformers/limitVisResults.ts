@@ -184,7 +184,7 @@ export class _LimitVisResults {
                     });
                 } else {
                     rowClone[indexOfLimitedColumn] = params.otherStr;
-                    otherRows.push(rowClone);
+                    limitedRows.push(rowClone);
                 }
             }
         });
