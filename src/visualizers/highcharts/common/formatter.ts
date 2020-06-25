@@ -58,7 +58,7 @@ export class Formatter {
         }
     }
 
-    public static getLabelsFormatter(chartOptions: IChartOptions, column: IColumn, useHTML: boolean): Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject> {
+    public static getLabelsFormatter(chartOptions: IChartOptions, column: IColumn, useHTML: boolean): Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject<number>> {
         return function() {
             const dataPoint = this;
             const value = dataPoint.value;
