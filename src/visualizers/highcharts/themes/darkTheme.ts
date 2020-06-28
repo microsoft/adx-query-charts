@@ -9,7 +9,7 @@ const hiddenStyleColor: string = '#606063';
 const strokeColor: string = '000000';
 
 export const DarkThemeOptions: Highcharts.Options = {
-    colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+    colors: ['#0078D4', '#CB4936', '#BEDFFF', '#038387', '#F6C0FF', '#D90086', '#A4E1D2', '#6E5DB7', '#C7D3FF', '#FFCA8A'],
     chart: {
         backgroundColor: '#111111',
     },
