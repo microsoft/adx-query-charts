@@ -60,7 +60,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -95,7 +95,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -130,7 +130,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -170,7 +170,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -209,7 +209,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -245,7 +245,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -290,7 +290,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -359,7 +359,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -421,7 +421,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -467,7 +467,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Pie);
+            const chart = ChartFactory.create(ChartType.Pie, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -510,7 +510,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
         
             // Act
-            const chart = ChartFactory.create(ChartType.Pie);
+            const chart = ChartFactory.create(ChartType.Pie, options);
             const result: any = chart.getStandardCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -573,7 +573,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Pie);
+            const chart = ChartFactory.create(ChartType.Pie, options);
             const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -639,7 +639,7 @@ describe('Unit tests for Chart methods', () => {
             options.queryResultData.columns = columns;
 
             // Act
-            const chart = ChartFactory.create(ChartType.Donut);
+            const chart = ChartFactory.create(ChartType.Donut, options);
             const result: any = chart.getSplitByCategoriesAndSeries(options);
 
             const expected: ICategoriesAndSeries = {
@@ -709,7 +709,7 @@ describe('Unit tests for Chart methods', () => {
             }];
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = series;
 
@@ -725,7 +725,7 @@ describe('Unit tests for Chart methods', () => {
             }];
 
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = series;
 
@@ -753,7 +753,7 @@ describe('Unit tests for Chart methods', () => {
             const series = [series_2, series_1, series_3];
   
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = [series_1, series_2, series_3];
 
@@ -778,7 +778,7 @@ describe('Unit tests for Chart methods', () => {
             const series = [series_6, series_7, series_2, series_1, series_8, series_3, series_5, series_4];
            
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = [series_1, series_2, series_3, series_4, series_5, series_6, series_7, series_8];
 
@@ -799,7 +799,7 @@ describe('Unit tests for Chart methods', () => {
             const series = [series_8, series_6, series_2, series_1, series_4, series_7, series_3, series_5];
            
             // Act
-            const chart = ChartFactory.create(ChartType.Line);
+            const chart = ChartFactory.create(ChartType.Line, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = [series_1, series_2, series_3, series_4, series_5, series_6, series_7, series_8];
 
@@ -827,7 +827,7 @@ describe('Unit tests for Chart methods', () => {
             }];
                          
             // Act
-            const chart = ChartFactory.create(ChartType.Pie);
+            const chart = ChartFactory.create(ChartType.Pie, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = [{
                 name: 'request_count',
@@ -872,7 +872,7 @@ describe('Unit tests for Chart methods', () => {
             }];
                      
             // Act
-            const chart = ChartFactory.create(ChartType.Donut);
+            const chart = ChartFactory.create(ChartType.Donut, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = [{
                 name: 'country',
@@ -950,7 +950,7 @@ describe('Unit tests for Chart methods', () => {
             }];
                      
             // Act
-            const chart = ChartFactory.create(ChartType.Donut);
+            const chart = ChartFactory.create(ChartType.Donut, options);
             const sortedSeries: any = chart.sortSeriesByName(series);
             const expected = [{
                 name: 'browser',
