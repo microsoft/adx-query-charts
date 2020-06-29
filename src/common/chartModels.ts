@@ -211,6 +211,13 @@ export interface IChartOptions {
     yMaximumValue?: number;
     
     /**
+     * The duration of the animation for chart rendering. 
+     * The animation can be disabled by setting it to 0.
+     * [Default value: 1000]
+     */
+    animationDurationMS?: number;
+
+    /**
      * Chart labels font family
      * [Default value: az_ea_font, wf_segoe-ui_normal, "Segoe UI", "Segoe WP", Tahoma, Arial, sans-serif]
      */
@@ -219,7 +226,7 @@ export interface IChartOptions {
      /**
      * Callback that is used to get the desired offset from UTC in minutes for date value. Used to handle timezone.
      * The offset will be added to the original UTC date from the query results data.
-     * If dateFormatter wasn't provided, the callback will be also used for the X axis labels and the tooltip header. Otherwise - it will only be used for positionning the x-axis.
+     * If dateFormatter wasn't provided, the callback will be also used for the X axis labels and the tooltip header. Otherwise - it will only be used for positioning the x-axis.
      * Callback inputs:
      *     @param dateValue - The original date value in milliseconds since midnight, January 1, 1970 UTC. For example: 1574666160000 represents '2019-11-25T07:16:00.000Z'
      * Callback return value:
@@ -266,6 +273,17 @@ export interface IChartOptions {
      *     @returns The desired y-axis title
      */
     yAxisTitleFormatter?: (yAxisColumns: IColumn[]) => string;
+
+    /**
+     * Callback that is called to allow altering the options of the external charting library before rendering the chart.
+     * Used to allow flexibility and control of the external charting library.
+     * USE WITH CAUTION - changing the original options might break the functionality / backward compatibility when using a different IVisualizer or upgrading the charting library.
+     * Validating the updated options is the user's responsibility.
+     * For official chart options - please make contribution to the base code.
+     * Callback inputs:
+     *     @param originalOptions - The custom charting options that are given to the external charting library.
+     */
+    updateCustomOptions?: (originalOptions: any) => void;
 
     /**
      * Callback that is called when all the data transformations required to draw the chart are finished.

@@ -43,6 +43,7 @@ export class KustoChartHelper implements IChartHelper {
         exceedMaxDataPointLabel: 'OTHER',
         aggregationType: AggregationType.Sum,
         chartTheme: ChartTheme.Light,
+        animationDurationMS: 1000,
         getUtcOffset: () => { return 0; },
         fontFamily: `az_ea_font, wf_segoe-ui_normal, "Segoe UI", "Segoe WP", Tahoma, Arial, sans-serif`,
         legendOptions: {

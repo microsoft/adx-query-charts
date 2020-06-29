@@ -18,7 +18,6 @@ import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
 import { InvalidInputError, VisualizerError } from '../../common/errors/errors';
 import { ErrorCode } from '../../common/errors/errorCode';
-import { ANIMATION_DURATION_MS } from './common/constants';
 import { Formatter } from './common/formatter';
 
 //#endregion Imports
@@ -50,7 +49,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 const chartOptions = options.chartOptions;
 
                 this.options = options;
-                this.currentChart = ChartFactory.create(chartOptions.chartType);
+                this.currentChart = ChartFactory.create(chartOptions.chartType, options.chartOptions);
                 this.currentChart.verifyInput(options);
                 this.basicHighchartsOptions = this.getHighchartsOptions(options);
                 this.themeOptions = Themes.getThemeOptions(chartOptions.chartTheme);
@@ -73,7 +72,7 @@ export class HighchartsVisualizer implements IVisualizer {
     
                 if(isChartExist && isChartTypeTheOnlyChange) {
                     const oldChart = this.currentChart;
-                    const newChart = ChartFactory.create(options.chartOptions.chartType);
+                    const newChart = ChartFactory.create(options.chartOptions.chartType, options.chartOptions);
         
                     // We update the existing chart options only if the new chart categories and series builder method is the same as the previous chart's method
                     if(oldChart.getSplitByCategoriesAndSeries === newChart.getSplitByCategoriesAndSeries && 
@@ -152,7 +151,13 @@ export class HighchartsVisualizer implements IVisualizer {
         try {
             const elementId = options.elementId;
             const highchartsOptions = _.merge({}, this.basicHighchartsOptions, this.themeOptions);
-    
+            const updateCustomOptionsFn = options.chartOptions.updateCustomOptions;
+
+            // Allow changing the chart options externally before rendering the chart
+            if(updateCustomOptionsFn && typeof updateCustomOptionsFn === 'function') {
+                updateCustomOptionsFn(highchartsOptions);
+            }
+
             this.destroyExistingChart();
     
             // Draw the chart
@@ -175,7 +180,7 @@ export class HighchartsVisualizer implements IVisualizer {
         if(finishChartAnimationCallback) {
             setTimeout(() => {
                 finishChartAnimationCallback(options.chartInfo);
-            }, ANIMATION_DURATION_MS + 200);
+            }, options.chartOptions.animationDurationMS + 200);
         }
     }
 
@@ -196,6 +201,11 @@ export class HighchartsVisualizer implements IVisualizer {
     private getHighchartsOptions(options: IVisualizerOptions): Highcharts.Options {
         const chartOptions = options.chartOptions;     
         const isDatetimeAxis = Utilities.isDate(chartOptions.columnsSelection.xAxis.type);
+        let animation;
+
+        if(options.chartOptions.animationDurationMS === 0) {
+            animation = false;
+        }
 
         let highchartsOptions: Highcharts.Options = {
             credits: {
@@ -203,6 +213,7 @@ export class HighchartsVisualizer implements IVisualizer {
             },
             chart: {
                 displayErrors: false,
+                animation: animation,
                 style: {
                     fontFamily: options.chartOptions.fontFamily
                 }

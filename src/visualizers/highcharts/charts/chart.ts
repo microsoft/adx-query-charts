@@ -7,10 +7,9 @@ import * as Highcharts from 'highcharts';
 import { HC_Utilities } from '../common/utilities';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IRowValue } from '../../../common/chartModels';
+import { IColumn, IRowValue, IChartOptions } from '../../../common/chartModels';
 import { InvalidInputError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
-import { ANIMATION_DURATION_MS } from '../common/constants';
 
 //#endregion Imports
 
@@ -20,14 +19,12 @@ export interface ICategoriesAndSeries {
 }
 
 export abstract class Chart {
-    private static defaultPlotOptions: Highcharts.PlotOptions = {
-        series: {
-            animation: {
-                duration: ANIMATION_DURATION_MS
-            }
-        }
-    };
+    protected chartOptions: IChartOptions;
     
+    public constructor(chartOptions: IChartOptions) {
+        this.chartOptions = chartOptions;
+    }
+
     public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const chartOptions = options.chartOptions;
         const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
@@ -159,7 +156,7 @@ export abstract class Chart {
             chart: {
                 type: this.getChartType()
             },
-            plotOptions: { ...Chart.defaultPlotOptions, ...this.plotOptions() }
+            plotOptions: { ...this.getDefaultPlotOptions(), ...this.plotOptions() }
         };
     }
 
@@ -220,6 +217,16 @@ export abstract class Chart {
             series: series
         }
     }
+   
+    private getDefaultPlotOptions(): Highcharts.PlotOptions {
+        return {
+            series: {
+                animation: {
+                    duration: this.chartOptions.animationDurationMS
+                }
+            }
+        }
+    };
 
     //#endregion Private methods
 }
