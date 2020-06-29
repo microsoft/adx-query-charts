@@ -312,23 +312,12 @@ export interface IChartOptions {
     onFinishChartAnimation?: (chartInfo: IChartInfo) => void;
 }
 
-export enum LegendPosition {
-    Bottom = 'Bottom',
-    Right = 'Right'
-}
-
 export interface ILegendOptions {
     /**
      * When set to false the legend is hidden, otherwise the legend is visible 
      * [Default value: true (show legend)]
      */
     isEnabled?: boolean;
-
-    /**
-     * The position of the legend.
-     * [Default value: Bottom]
-     */
-    position?: LegendPosition;
 }
 
 export interface IChartHelper {
