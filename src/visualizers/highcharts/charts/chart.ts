@@ -19,10 +19,16 @@ export interface ICategoriesAndSeries {
 }
 
 export abstract class Chart {
-    protected chartOptions: IChartOptions;
+    private defaultPlotOptions: Highcharts.PlotOptions;
     
     public constructor(chartOptions: IChartOptions) {
-        this.chartOptions = chartOptions;
+        this.defaultPlotOptions = {
+            series: {
+                animation: {
+                    duration: chartOptions.animationDurationMS
+                }
+            }
+        }
     }
 
     public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
@@ -156,7 +162,7 @@ export abstract class Chart {
             chart: {
                 type: this.getChartType()
             },
-            plotOptions: { ...this.getDefaultPlotOptions(), ...this.plotOptions() }
+            plotOptions: { ...this.defaultPlotOptions, ...this.plotOptions() }
         };
     }
 
@@ -217,16 +223,6 @@ export abstract class Chart {
             series: series
         }
     }
-   
-    private getDefaultPlotOptions(): Highcharts.PlotOptions {
-        return {
-            series: {
-                animation: {
-                    duration: this.chartOptions.animationDurationMS
-                }
-            }
-        }
-    };
 
     //#endregion Private methods
 }
