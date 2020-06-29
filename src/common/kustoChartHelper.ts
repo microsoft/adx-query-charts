@@ -3,7 +3,7 @@
 //#region Imports
 
 import * as _ from 'lodash';
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, ColumnsSelection, IChartOptions, AggregationType, ChartTheme, IChartInfo, DrawChartStatus } from './chartModels';
+import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, ColumnsSelection, IChartOptions, AggregationType, ChartTheme, IChartInfo, DrawChartStatus, LegendPosition } from './chartModels';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
 import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
@@ -47,7 +47,8 @@ export class KustoChartHelper implements IChartHelper {
         getUtcOffset: () => { return 0; },
         fontFamily: `az_ea_font, wf_segoe-ui_normal, "Segoe UI", "Segoe WP", Tahoma, Arial, sans-serif`,
         legendOptions: {
-            isEnabled: true
+            isEnabled: true,
+            position: LegendPosition.Bottom
         }
     }
 
@@ -404,7 +405,7 @@ export class KustoChartHelper implements IChartHelper {
     }
 
     private updateDefaultChartOptions(queryResultData: IQueryResultData, chartOptions: IChartOptions): IChartOptions {
-        const updatedChartOptions: IChartOptions = { ...KustoChartHelper.defaultChartOptions, ...chartOptions };
+        const updatedChartOptions: IChartOptions = _.merge({}, KustoChartHelper.defaultChartOptions, chartOptions);
 
         // Apply default columns selection if columns selection wasn't provided
         if (!updatedChartOptions.columnsSelection) {

@@ -12,7 +12,7 @@ import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
-import { ChartTheme, IChartOptions, DrawChartStatus } from '../../common/chartModels';
+import { ChartTheme, IChartOptions, DrawChartStatus, LegendPosition } from '../../common/chartModels';
 import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
@@ -40,6 +40,13 @@ export class HighchartsVisualizer implements IVisualizer {
 
         // init Highcharts accessibility module
         HC_Accessibility(Highcharts);
+
+        // Workaround for bug No tooltip on legend items when accessibility module is attached. See: https://github.com/highcharts/highcharts/issues/13765
+        Highcharts.wrap(Highcharts.AccessibilityComponent.prototype, 'updateProxyButtonPosition', function (proceed, btn) {
+            var ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+            btn.style.width = '12px';
+            return ret;
+        });
     }
 
     public drawNewChart(options: IVisualizerOptions): Promise<void> {
@@ -390,17 +397,32 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     private getLegendOptions(chartOptions: IChartOptions): Highcharts.LegendOptions {
-        return {
+        const legendOptions: Highcharts.LegendOptions = {
             enabled: chartOptions.legendOptions.isEnabled,
-            width: '100%',
-            maxHeight: this.getLegendMaxHeight(),
             accessibility: {
                 enabled: <any>true,
                 keyboardNavigation: {
                     enabled: <any>true
                 }
-            }
-        }
+            },
+            itemWidth: 100,
+            width: '100%',
+            maxHeight: this.getLegendMaxHeight()
+        };
+
+        /*if(chartOptions.legendOptions.position === LegendPosition.Bottom) {
+            legendOptions.width = '100%';
+            legendOptions.maxHeight = this.getLegendMaxHeight();
+        } else { // LegendPosition.Right
+            legendOptions.layout = 'vertical';
+            legendOptions.verticalAlign = 'top';
+            legendOptions.align = 'right';
+            legendOptions.itemWidth = 100;
+            //legendOptions.margin = 5;
+            //legendOptions.padding = 2;
+        }*/
+
+        return legendOptions;
     }
 
     private getLegendMaxHeight(): number {
