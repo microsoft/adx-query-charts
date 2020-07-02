@@ -68,13 +68,13 @@ export class Formatter {
         }
     }
 
-    private static getFormattedValue(chartOptions: IChartOptions, originalValue: number, columnType: DraftColumnType, dateFormat: DateFormat = DateFormat.FullDate): string {
+    private static getFormattedValue(chartOptions: IChartOptions, originalValue: any, columnType: DraftColumnType, dateFormat: DateFormat = DateFormat.FullDate): string {
         if(chartOptions.numberFormatter && Utilities.isNumeric(columnType) && typeof originalValue === 'number') {   
             return chartOptions.numberFormatter(originalValue);
         } else if(Utilities.isDate(columnType)) {
             return chartOptions.dateFormatter ? chartOptions.dateFormatter(originalValue, dateFormat) : new Date(originalValue).toString();
         }
 
-        return originalValue.toString();
+        return originalValue != null ? originalValue.toString() : '';
     }
 }
