@@ -280,7 +280,11 @@ describe('Unit tests for KustoChartHelper', () => {
                 errorMessage = err.message;
             }
 
-            const expected: string = "One or more of the selected x-axis columns don't exist in the query result data: name = 'date' type = 'TimeSpan'";
+            const expected: string =
+`One or more of the selected x-axis columns don't exist in the query result data: 
+name = 'date' type = 'TimeSpan'
+columns in query data:
+name = 'date' type = 'datetime', name = 'city' type = 'string', name = 'request_count' type = 'int'`;
 
             // Assert
             expect(errorMessage).toEqual(expected);
@@ -313,7 +317,11 @@ describe('Unit tests for KustoChartHelper', () => {
                 errorMessage = err.message;
             }
 
-            const expected: string = "One or more of the selected y-axes columns don't exist in the query result data: name = 'duration' type = 'Date', name = 'count' type = 'int'";
+            const expected: string =
+`One or more of the selected y-axes columns don't exist in the query result data: 
+name = 'duration' type = 'Date', name = 'count' type = 'int'
+columns in query data:
+name = 'date' type = 'datetime', name = 'duration' type = 'long', name = 'request_count' type = 'int'`;
 
             // Assert
             expect(errorMessage).toEqual(expected);
@@ -349,7 +357,11 @@ describe('Unit tests for KustoChartHelper', () => {
                 errorMessage = err.message;
             }
 
-            const expected: string = "One or more of the selected split-by columns don't exist in the query result data: name = 'city' type = 'int'";
+            const expected: string =
+`One or more of the selected split-by columns don't exist in the query result data: 
+name = 'city' type = 'int'
+columns in query data:
+name = 'date' type = 'datetime', name = 'duration' type = 'long', name = 'request_count' type = 'int', name = 'city' type = 'string', name = 'country' type = 'string'`;
 
             // Assert
             expect(errorMessage).toEqual(expected);

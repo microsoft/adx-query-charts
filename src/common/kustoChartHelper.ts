@@ -230,12 +230,12 @@ export class KustoChartHelper implements IChartHelper {
 
         const chartColumns: IColumn[] = [];
         const indexOfXAxisColumn: number[] = [];
-        const xAxisColum = chartOptions.columnsSelection.xAxis;
+        const xAxisColumn = chartOptions.columnsSelection.xAxis;
 
         // X-Axis
-        let notFoundColumns: IColumn[] = this.addColumnsIfExistInResult([xAxisColum], resolvedAsSeriesData, indexOfXAxisColumn, chartColumns);
+        let notFoundColumns: IColumn[] = this.addColumnsIfExistInResult([xAxisColumn], resolvedAsSeriesData, indexOfXAxisColumn, chartColumns);
 
-        this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'x-axis');
+        this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'x-axis', resolvedAsSeriesData);
 
         // Get all the indexes for all the splitBy columns
         const splitByColumnsSelection = chartOptions.columnsSelection.splitBy;
@@ -244,7 +244,7 @@ export class KustoChartHelper implements IChartHelper {
         if (splitByColumnsSelection) {
             notFoundColumns = this.addColumnsIfExistInResult(splitByColumnsSelection, resolvedAsSeriesData, indexesOfSplitByColumns, chartColumns);
 
-            this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'split-by');
+            this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'split-by', resolvedAsSeriesData);
         }
 
         // Get all the indexes for all the y fields
@@ -252,7 +252,7 @@ export class KustoChartHelper implements IChartHelper {
 
         notFoundColumns = this.addColumnsIfExistInResult(chartOptions.columnsSelection.yAxes, resolvedAsSeriesData, indexesOfYAxes, chartColumns);
 
-        this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'y-axes');
+        this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'y-axes', resolvedAsSeriesData);
         
         // Create transformed rows for visualization
         const limitAndAggregateParams: ILimitAndAggregateParams = {
@@ -279,14 +279,24 @@ export class KustoChartHelper implements IChartHelper {
         }
     }
 
-    private throwInvalidColumnsSelectionIfNeeded(notFoundColumns: IColumn[], axesStr: string) {
+    private throwInvalidColumnsSelectionIfNeeded(notFoundColumns: IColumn[], axesStr: string, queryResultData: IQueryResultData) {
         if (notFoundColumns.length > 0) {
-            let notFoundColumnsStr: string = _.map(notFoundColumns, (notFoundColumn) => {
-                return `name = '${notFoundColumn.name}' type = '${notFoundColumn.type}'`;
-            }).join(', ');
+            const errorMessage: string =
+`One or more of the selected ${axesStr} columns don't exist in the query result data: 
+${this.getColumnsStr(notFoundColumns)}
+columns in query data:
+${this.getColumnsStr(queryResultData.columns)}`;
 
-            throw new InvalidInputError(`One or more of the selected ${axesStr} columns don't exist in the query result data: ${notFoundColumnsStr}`, ErrorCode.InvalidColumnsSelection);
+            throw new InvalidInputError(errorMessage, ErrorCode.InvalidColumnsSelection);
         }
+    }
+
+    private getColumnsStr(columns: IColumn[]): string {
+        const columnsStr: string = _.map(columns, (column) => {
+            return `name = '${column.name}' type = '${column.type}'`;
+        }).join(', ');
+
+        return columnsStr;
     }
 
     private tryResolveResultsAsSeries(queryResultData: IQueryResultData): IQueryResultData {
