@@ -230,27 +230,30 @@ export class KustoChartHelper implements IChartHelper {
 
         const chartColumns: IColumn[] = [];
         const indexOfXAxisColumn: number[] = [];
-        const xAxisColum = chartOptions.columnsSelection.xAxis;
+        const xAxisColumn = chartOptions.columnsSelection.xAxis;
 
-        if (!this.addColumnsIfExistInResult([xAxisColum], resolvedAsSeriesData, indexOfXAxisColumn, chartColumns)) {
-            throw new InvalidInputError(`The selected x-axis column '${xAxisColum.name}' doesn't exist in the query result data`, ErrorCode.InvalidColumnsSelection);
-        }
+        // X-Axis
+        let notFoundColumns: IColumn[] = this.addColumnsIfExistInResult([xAxisColumn], resolvedAsSeriesData, indexOfXAxisColumn, chartColumns);
+
+        this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'x-axis', resolvedAsSeriesData);
 
         // Get all the indexes for all the splitBy columns
         const splitByColumnsSelection = chartOptions.columnsSelection.splitBy;
         const indexesOfSplitByColumns: number[] = [];
 
-        if (splitByColumnsSelection && !this.addColumnsIfExistInResult(splitByColumnsSelection, resolvedAsSeriesData, indexesOfSplitByColumns, chartColumns)) {
-            throw new InvalidInputError("One or more of the selected split-by columns don't exist in the query result data", ErrorCode.InvalidColumnsSelection);
+        if (splitByColumnsSelection) {
+            notFoundColumns = this.addColumnsIfExistInResult(splitByColumnsSelection, resolvedAsSeriesData, indexesOfSplitByColumns, chartColumns);
+
+            this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'split-by', resolvedAsSeriesData);
         }
 
         // Get all the indexes for all the y fields
         const indexesOfYAxes: number[] = [];
 
-        if (!this.addColumnsIfExistInResult(chartOptions.columnsSelection.yAxes, resolvedAsSeriesData, indexesOfYAxes, chartColumns)) {
-            throw new InvalidInputError("One or more of the selected y-axes columns don't exist in the query result data", ErrorCode.InvalidColumnsSelection);
-        }
+        notFoundColumns = this.addColumnsIfExistInResult(chartOptions.columnsSelection.yAxes, resolvedAsSeriesData, indexesOfYAxes, chartColumns);
 
+        this.throwInvalidColumnsSelectionIfNeeded(notFoundColumns, 'y-axes', resolvedAsSeriesData);
+        
         // Create transformed rows for visualization
         const limitAndAggregateParams: ILimitAndAggregateParams = {
             queryResultData: resolvedAsSeriesData,
@@ -274,6 +277,26 @@ export class KustoChartHelper implements IChartHelper {
             },
             limitedResults: limitedResults
         }
+    }
+
+    private throwInvalidColumnsSelectionIfNeeded(notFoundColumns: IColumn[], axesStr: string, queryResultData: IQueryResultData) {
+        if (notFoundColumns.length > 0) {
+            const errorMessage: string =
+`One or more of the selected ${axesStr} columns don't exist in the query result data: 
+${this.getColumnsStr(notFoundColumns)}
+columns in query data:
+${this.getColumnsStr(queryResultData.columns)}`;
+
+            throw new InvalidInputError(errorMessage, ErrorCode.InvalidColumnsSelection);
+        }
+    }
+
+    private getColumnsStr(columns: IColumn[]): string {
+        const columnsStr: string = _.map(columns, (column) => {
+            return `name = '${column.name}' type = '${column.type}'`;
+        }).join(', ');
+
+        return columnsStr;
     }
 
     private tryResolveResultsAsSeries(queryResultData: IQueryResultData): IQueryResultData {
@@ -380,15 +403,19 @@ export class KustoChartHelper implements IChartHelper {
      * @param indexes - The array that the existing columns index will be added to
      * @param chartColumns - The array that the existing columns will be added to
      *
-     * @returns True if all the columns were found in 'queryResultData'
+     * @returns An array of the columns that don't exist in the queryResultData. If all columns exist - the array will be empty.
      */
-    private addColumnsIfExistInResult(columnsToAdd: IColumn[], queryResultData: IQueryResultData, indexes: number[], chartColumns: IColumn[]): boolean {
+    private addColumnsIfExistInResult(columnsToAdd: IColumn[], queryResultData: IQueryResultData, indexes: number[], chartColumns: IColumn[]): IColumn[] {
+        const notFoundColumns: IColumn[] = [];
+
         for (let i = 0; i < columnsToAdd.length; ++i) {
             const column = columnsToAdd[i];
             const indexOfColumn = Utilities.getColumnIndex(queryResultData, column);
 
             if (indexOfColumn < 0) {
-                return false;
+                notFoundColumns.push(column);
+
+                continue;
             }
 
             indexes.push(indexOfColumn);
@@ -400,7 +427,7 @@ export class KustoChartHelper implements IChartHelper {
             });
         }
 
-        return true;
+        return notFoundColumns;
     }
 
     private updateDefaultChartOptions(queryResultData: IQueryResultData, chartOptions: IChartOptions): IChartOptions {
