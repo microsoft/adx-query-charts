@@ -1,6 +1,6 @@
 'use strict';
 
-import { DraftColumnType, AggregationType, ChartType, IQueryResultData, ISupportedColumns, IColumn, ColumnsSelection } from '../src/common/chartModels';
+import { DraftColumnType, ChartType, IQueryResultData, ISupportedColumns, IColumn, ColumnsSelection } from '../src/common/chartModels';
 import { KustoChartHelper } from '../src/common/kustoChartHelper';
 import { VisualizerMock } from './mocks/visualizerMock';
 
@@ -197,6 +197,162 @@ describe('Unit tests for KustoChartHelper', () => {
 
             // Assert
             expect(result).toEqual(expectedResult);
+        });
+    });
+
+    describe('Validate transformQueryResultData method', () => {                  
+        it("When the columns selection input is valid, the query result transformed as expected", () => {
+            // Input
+            const queryResultData = {
+                rows: [
+                    ['Israel', '1988-06-26T00:00:00Z', 'Jerusalem', 500],
+                    ['Israel', '2000-06-26T00:00:00Z', 'Herzliya', 1000],
+                    ['United States', '2000-06-26T00:00:00Z', 'Boston', 200],
+                    ['Israel', '2000-06-26T00:00:00Z', 'Tel Aviv', 10],
+                    ['United States', '2000-06-26T00:00:00Z', 'New York', 100],
+                    ['Japan', '2019-05-25T00:00:00Z', 'Tokyo', 20],
+                    ['United States', '2019-05-25T00:00:00Z', 'Atlanta', 300],
+                    ['United States', '2019-05-25T00:00:00Z', 'Redmond', 20]
+                ],
+                columns: [
+                    { name: 'country', type: DraftColumnType.String },
+                    { name: 'date', type: DraftColumnType.DateTime },
+                    { name: 'city', type: DraftColumnType.String },
+                    { name: 'request_count', type: DraftColumnType.Int },       
+                ]
+            };
+
+            const chartOptions = {
+                columnsSelection: {
+                    xAxis: queryResultData.columns[1],
+                    yAxes: [queryResultData.columns[3]]
+                }
+            };
+
+            // Act
+            const result = kustoChartHelper['transformQueryResultData'](queryResultData, <any>chartOptions);
+            const aggregatedRows = [
+                ["1988-06-26T00:00:00Z", 500],
+                ["2000-06-26T00:00:00Z", 1310],
+                ["2019-05-25T00:00:00Z", 340]
+            ];
+
+            const expected = {
+                data: {
+                    rows: aggregatedRows,
+                    columns: [queryResultData.columns[1], queryResultData.columns[3]]
+                },
+                limitedResults: {
+                    rows: aggregatedRows,
+                    isAggregationApplied: true,
+                    isPartialData: false
+                }
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+
+        it("When the x-axis columns selection input is invalid", () => {
+            // Input
+            const queryResultData = {
+                rows: [],
+                columns: [
+                    { name: 'date', type: DraftColumnType.DateTime },
+                    { name: 'city', type: DraftColumnType.String },
+                    { name: 'request_count', type: DraftColumnType.Int },
+                ]
+            };
+
+            const chartOptions = {
+                columnsSelection: {
+                    xAxis: { name: 'date', type: 'TimeSpan' },
+                    yAxes: [{ name: 'request_count', type: DraftColumnType.Int }],
+                }
+            };
+
+            // Act
+            let errorMessage;
+
+            try {
+                kustoChartHelper['transformQueryResultData'](queryResultData, <any>chartOptions);
+            } catch(err) {
+                errorMessage = err.message;
+            }
+
+            const expected: string = "One or more of the selected x-axis columns don't exist in the query result data: name = 'date' type = 'TimeSpan'";
+
+            // Assert
+            expect(errorMessage).toEqual(expected);
+        });
+
+        it("When the y-axes columns selection input is invalid", () => {
+            // Input
+            const queryResultData = {
+                rows: [],
+                columns: [
+                    { name: 'date', type: DraftColumnType.DateTime },
+                    { name: 'duration', type: DraftColumnType.Long },
+                    { name: 'request_count', type: DraftColumnType.Int },
+                ]
+            };
+
+            const chartOptions = {
+                columnsSelection: {
+                    xAxis: { name: 'date', type: DraftColumnType.DateTime },
+                    yAxes: [{ name: 'duration', type: 'Date' }, { name: 'count', type: DraftColumnType.Int }]
+                }
+            };
+
+            // Act
+            let errorMessage;
+
+            try {
+                kustoChartHelper['transformQueryResultData'](queryResultData, <any>chartOptions);
+            } catch(err) {
+                errorMessage = err.message;
+            }
+
+            const expected: string = "One or more of the selected y-axes columns don't exist in the query result data: name = 'duration' type = 'Date', name = 'count' type = 'int'";
+
+            // Assert
+            expect(errorMessage).toEqual(expected);
+        });
+              
+        it("When the split-by columns selection input is invalid", () => {
+            // Input
+            const queryResultData = {
+                rows: [],
+                columns: [
+                    { name: 'date', type: DraftColumnType.DateTime },
+                    { name: 'duration', type: DraftColumnType.Long },
+                    { name: 'request_count', type: DraftColumnType.Int },
+                    { name: 'city', type: DraftColumnType.String },
+                    { name: 'country', type: DraftColumnType.String },
+                ]
+            };
+
+            const chartOptions = {
+                columnsSelection: {
+                    xAxis: { name: 'date', type: DraftColumnType.DateTime },
+                    yAxes: [{ name: 'duration', type: DraftColumnType.Long }, { name: 'request_count', type: DraftColumnType.Int }],
+                    splitBy: [{ name: 'country', type: DraftColumnType.String }, { name: 'city', type: DraftColumnType.Int }],
+                }
+            };
+
+            // Act
+            let errorMessage;
+
+            try {
+                kustoChartHelper['transformQueryResultData'](queryResultData, <any>chartOptions);
+            } catch(err) {
+                errorMessage = err.message;
+            }
+
+            const expected: string = "One or more of the selected split-by columns don't exist in the query result data: name = 'city' type = 'int'";
+
+            // Assert
+            expect(errorMessage).toEqual(expected);
         });
     });
 
