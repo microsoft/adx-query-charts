@@ -23,11 +23,11 @@ interface IPieSeries {
 export class Pie extends Chart {
     //#region Methods override
  
-    protected getChartType(): string {
+    protected /*override*/ getChartType(): string {
         return 'pie';
     };
 
-    protected plotOptions(): Highcharts.PlotOptions {
+    protected /*override*/ plotOptions(): Highcharts.PlotOptions {
         const self = this;
 
         return {
@@ -46,7 +46,7 @@ export class Pie extends Chart {
         }
     }
 
-    public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+    public /*override*/ getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
         const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);    
         const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
@@ -75,7 +75,7 @@ export class Pie extends Chart {
         }
     }
 
-    public getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+    public /*override*/ getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const yAxisColumn = options.chartOptions.columnsSelection.yAxes[0]; // We allow only 1 yAxis in pie charts
         const yAxisColumnIndex = Utilities.getColumnIndex(options.queryResultData, yAxisColumn);
         const keyIndexes = this.getAllPieKeyIndexes(options);
@@ -112,7 +112,7 @@ export class Pie extends Chart {
         }
     }
     
-    public sortSeriesByName(series: any[]): any[] {
+    public /*override*/ sortSeriesByName(series: any[]): any[] {
         const allData = _.flatMap(series, 'data');
         const sortedData = _.sortBy(allData, 'name');
 
@@ -123,7 +123,7 @@ export class Pie extends Chart {
         return series;
     }
 
-    public getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
+    public /*override*/ getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
         const self = this;
 
         return function () {
@@ -161,7 +161,7 @@ export class Pie extends Chart {
         }
     }
   
-    public verifyInput(options: IVisualizerOptions): void {    
+    public /*override*/ verifyInput(options: IVisualizerOptions): void {    
         const columnSelection = options.chartOptions.columnsSelection;
 
         if(columnSelection.yAxes.length > 1) {

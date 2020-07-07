@@ -22,42 +22,6 @@ export class Formatter {
         return `<tr><td>${columnName || column.name}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
     }
           
-    public static getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
-        return function () {
-            const context = this;
-
-            // X axis
-            const xAxisColumn = chartOptions.columnsSelection.xAxis;
-            const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
-            let tooltip = Formatter.getSingleTooltip(chartOptions, xAxisColumn, context.x, xColumnTitle);
-
-            // Y axis
-            const yAxes = chartOptions.columnsSelection.yAxes;
-            let yColumn;
-            
-            if(yAxes.length === 1) {
-                yColumn = yAxes[0];
-            } else { // Multiple y-axes - find the current y column
-                const yColumnIndex = _.findIndex(yAxes, (col) => { 
-                    return col.name === context.series.name 
-                });
-
-                yColumn = yAxes[yColumnIndex];
-            }
-
-            tooltip += Formatter.getSingleTooltip(chartOptions, yColumn, context.y);
-            
-            // Split by
-            const splitBy = chartOptions.columnsSelection.splitBy;
-
-            if(splitBy && splitBy.length > 0) {
-                tooltip += Formatter.getSingleTooltip(chartOptions, splitBy[0], context.series.name);
-            }
-            
-            return '<table>' + tooltip + '</table>';
-        }
-    }
-
     public static getLabelsFormatter(chartOptions: IChartOptions, column: IColumn, useHTML: boolean): Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject<number>> {
         return function() {
             const dataPoint = this;

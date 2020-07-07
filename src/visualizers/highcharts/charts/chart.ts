@@ -10,6 +10,7 @@ import { Utilities } from '../../../common/utilities';
 import { IColumn, IRowValue, IChartOptions } from '../../../common/chartModels';
 import { InvalidInputError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
+import { Formatter } from '../common/formatter';
 
 //#endregion Imports
 
@@ -31,7 +32,9 @@ export abstract class Chart {
         }
     }
 
-    public getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+    //#region Virtual methods
+
+    public /*virtual*/ getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const chartOptions = options.chartOptions;
         const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
         const isDatetimeAxis: boolean = Utilities.isDate(xColumn.type);
@@ -85,7 +88,7 @@ export abstract class Chart {
         return categoriesAndSeries;
     }
     
-    public getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
+    public /*virtual*/ getSplitByCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const xColumn: IColumn =  options.chartOptions.columnsSelection.xAxis;
         const isDatetimeAxis: boolean = Utilities.isDate(xColumn.type);
         const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);
@@ -151,13 +154,13 @@ export abstract class Chart {
         return categoriesAndSeries;
     }
 
-    public sortSeriesByName(series: any[]): any[] {
+    public /*virtual*/ sortSeriesByName(series: any[]): any[] {
         const sortedSeries = _.sortBy(series, 'name');
 
         return sortedSeries;
     }
 
-    public getChartTypeOptions(): Highcharts.Options {
+    public /*virtual*/ getChartTypeOptions(): Highcharts.Options {
         return {
             chart: {
                 type: this.getChartType()
@@ -166,13 +169,51 @@ export abstract class Chart {
         };
     }
 
-    public verifyInput(options: IVisualizerOptions): void {    
+    public /*virtual*/ getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
+        return function () {
+            const context = this;
+
+            // X axis
+            const xAxisColumn = chartOptions.columnsSelection.xAxis;
+            const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
+            let tooltip = Formatter.getSingleTooltip(chartOptions, xAxisColumn, context.x, xColumnTitle);
+
+            // Y axis
+            const yAxes = chartOptions.columnsSelection.yAxes;
+            let yColumn;
+
+            if(yAxes.length === 1) {
+                yColumn = yAxes[0];
+            } else { // Multiple y-axes - find the current y column
+                const yColumnIndex = _.findIndex(yAxes, (col) => { 
+                    return col.name === context.series.name 
+                });
+
+                yColumn = yAxes[yColumnIndex];
+            }
+
+            tooltip += Formatter.getSingleTooltip(chartOptions, yColumn, context.y);
+
+            // Split by
+            const splitBy = chartOptions.columnsSelection.splitBy;
+
+            if(splitBy && splitBy.length > 0) {
+                tooltip += Formatter.getSingleTooltip(chartOptions, splitBy[0], context.series.name);
+            }
+
+            return '<table>' + tooltip + '</table>';
+        }
+    }
+
+    public /*virtual*/ verifyInput(options: IVisualizerOptions): void {    
         const columnSelection = options.chartOptions.columnsSelection;
 
         if(columnSelection.splitBy && columnSelection.splitBy.length > 1) {
             throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
         }
     }
+
+    //#endregion Virtual methods
 
     //#region Abstract methods
 
