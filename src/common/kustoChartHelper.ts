@@ -419,11 +419,12 @@ ${this.getColumnsStr(queryResultData.columns)}`;
             }
 
             indexes.push(indexOfColumn);
+            const originalColumn = queryResultData.columns[indexOfColumn];
 
             // Add each column name and type to the chartColumns
             chartColumns.push({
-                name: <string>LimitVisResultsSingleton.escapeStr(column.name),
-                type: column.type
+                name: <string>LimitVisResultsSingleton.escapeStr(originalColumn.name),
+                type: originalColumn.type
             });
         }
 
