@@ -54,7 +54,14 @@ export class Utilities {
     }
 
     public static areColumnsEqual(first: IColumn, second: IColumn): boolean {
-        return first.name == second.name && first.type == second.type;
+        let columnsEqual: boolean = first.name == second.name;
+
+        // Check type equality
+        if(columnsEqual) {
+            columnsEqual = first.type == second.type || (Utilities.isNumeric(first.type) && Utilities.isNumeric(second.type));
+        }
+
+        return columnsEqual;
     }
 
     public static isPieOrDonut(chartType: ChartType): boolean {

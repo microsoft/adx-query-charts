@@ -253,6 +253,53 @@ describe('Unit tests for KustoChartHelper', () => {
             expect(result).toEqual(expected);
         });
 
+        it("When the columns selection and query results both numeric, but different types - the input is valid, the query result transformed as expected", () => {
+            // Input
+            const queryResultData = {
+                rows: [
+                    ['Israel', '2000-05-24T00:00:00Z', 100, 10],
+                    ['United States', '2000-05-25T00:00:00Z', 80, 8],
+                    ['Japan', '2019-05-26T00:00:00Z', 20, 2]
+                ],
+                columns: [
+                    { name: 'country', type: DraftColumnType.String },
+                    { name: 'date', type: DraftColumnType.DateTime },
+                    { name: 'request_count', type: DraftColumnType.Int },
+                    { name: 'second_count', type: DraftColumnType.Real },     
+                ]
+            };
+
+            const chartOptions = {
+                columnsSelection: {
+                    xAxis: queryResultData.columns[1],
+                    yAxes: [{ name: 'request_count', type: DraftColumnType.Decimal }, { name: 'second_count', type: DraftColumnType.Long }]
+                }
+            };
+
+            // Act
+            const result = kustoChartHelper['transformQueryResultData'](queryResultData, <any>chartOptions);
+            const aggregatedRows = [
+                ['2000-05-24T00:00:00Z', 100, 10],
+                ['2000-05-25T00:00:00Z', 80, 8],
+                ['2019-05-26T00:00:00Z', 20, 2]
+            ];
+
+            const expected = {
+                data: {
+                    rows: aggregatedRows,
+                    columns: [queryResultData.columns[1], queryResultData.columns[2], queryResultData.columns[3]]
+                },
+                limitedResults: {
+                    rows: aggregatedRows,
+                    isAggregationApplied: false,
+                    isPartialData: false
+                }
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+
         it("When the x-axis columns selection input is invalid", () => {
             // Input
             const queryResultData = {
