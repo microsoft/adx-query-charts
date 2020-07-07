@@ -227,7 +227,7 @@ export class HighchartsVisualizer implements IVisualizer {
             xAxis: this.getXAxis(isDatetimeAxis, chartOptions),
             yAxis: this.getYAxis(chartOptions),        
             tooltip: {
-                formatter: Formatter.getChartTooltipFormatter(chartOptions),
+                formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
                 shared: false,
                 useHTML: true
             },
