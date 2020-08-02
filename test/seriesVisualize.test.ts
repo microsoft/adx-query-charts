@@ -11,7 +11,7 @@ interface ITestParams {
 describe('Unit tests for series visualization class', () => {
     //#region Test models getters
 
-    // Model that tests basic series.
+    // Model that tests basic series
     function getHappyTestParams(): ITestParams {
         const rows = [
 	        ['[1,2,3]', 'seg1', '["2016-11-10T06:00:00.0000000Z","2016-11-10T07:00:00.0000000Z","2016-11-10T08:00:00.0000000Z"]', '[-473527419.17344036,-463977987.2103976,-454428555.24735489]'],
@@ -39,6 +39,150 @@ describe('Unit tests for series visualization class', () => {
             { name: 'segment', type: DraftColumnType.String },
             { name: 'timestamp', type: DraftColumnType.DateTime },
             { name: 'values2', type: DraftColumnType.Real }
+        ];
+
+        return {
+            queryResultData: { rows: rows, columns: columns },
+            expectedResults: { rows: expectedRows, columns: expectedColumns }
+        };
+    }
+
+    // Model that tests valid series where all number values are zero
+    function getZeroNumbersHappyTestParams(): ITestParams {
+        const rows = [
+	        [
+                'AIAnalyticsPortal-INT', 
+                '[0,0,0,0,0,0,0,0,0,0]', 
+                '[0,0,0,0,0,0,0,0,0,0]',
+                '["2020-08-01T06:25:10.1488180Z","2020-08-01T06:55:10.1488180Z","2020-08-01T07:25:10.1488180Z","2020-08-01T07:55:10.1488180Z","2020-08-01T08:25:10.1488180Z","2020-08-01T08:55:10.1488180Z","2020-08-01T09:25:10.1488180Z","2020-08-01T09:55:10.1488180Z","2020-08-01T10:25:10.1488180Z","2020-08-01T10:55:10.1488180Z"]'
+            ],
+        ];
+
+        const columns: IColumn[] = [
+            { type: DraftColumnType.String, name: 'appName' },
+            { type: DraftColumnType.Dynamic, name: 'sum_value' },
+            { type: DraftColumnType.Dynamic, name: 'default' },
+            { type: DraftColumnType.Dynamic, name: 'timestamp' }
+        ];
+
+        const expectedRows = [
+	        ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T06:25:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T06:55:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T07:25:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T07:55:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T08:25:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T08:55:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T09:25:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T09:55:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T10:25:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 0, 0, '2020-08-01T10:55:10.1488180Z']
+        ];
+
+        const expectedColumns: IColumn[] = [
+            { name: 'appName', type: DraftColumnType.String },
+            { name: 'sum_value', type: DraftColumnType.Real },
+            { name: 'default', type: DraftColumnType.Real },
+            { name: 'timestamp', type: DraftColumnType.DateTime }
+        ];
+
+        return {
+            queryResultData: { rows: rows, columns: columns },
+            expectedResults: { rows: expectedRows, columns: expectedColumns }
+        };
+    }
+
+    // Model that tests valid series where all number values are 1
+    function getOneNumbersHappyTestParams(): ITestParams {
+        const rows = [
+	        [
+                'AIAnalyticsPortal-INT', 
+                '[1,1,1,1,1,1,1,1,1,1]', 
+                '[1,1,1,1,1,1,1,1,1,1]',
+                '["2020-08-01T06:25:10.1488180Z","2020-08-01T06:55:10.1488180Z","2020-08-01T07:25:10.1488180Z","2020-08-01T07:55:10.1488180Z","2020-08-01T08:25:10.1488180Z","2020-08-01T08:55:10.1488180Z","2020-08-01T09:25:10.1488180Z","2020-08-01T09:55:10.1488180Z","2020-08-01T10:25:10.1488180Z","2020-08-01T10:55:10.1488180Z"]'
+            ],
+        ];
+
+        const columns: IColumn[] = [
+            { type: DraftColumnType.String, name: 'appName' },
+            { type: DraftColumnType.Dynamic, name: 'sum_value' },
+            { type: DraftColumnType.Dynamic, name: 'default' },
+            { type: DraftColumnType.Dynamic, name: 'timestamp' }
+        ];
+
+        const expectedRows = [
+	        ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T06:25:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T06:55:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T07:25:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T07:55:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T08:25:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T08:55:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T09:25:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T09:55:10.1488180Z'],
+            ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T10:25:10.1488180Z'],
+	        ['AIAnalyticsPortal-INT', 1, 1, '2020-08-01T10:55:10.1488180Z']
+        ];
+
+        const expectedColumns: IColumn[] = [
+            { name: 'appName', type: DraftColumnType.String },
+            { name: 'sum_value', type: DraftColumnType.Real },
+            { name: 'default', type: DraftColumnType.Real },
+            { name: 'timestamp', type: DraftColumnType.DateTime }
+        ];
+
+        return {
+            queryResultData: { rows: rows, columns: columns },
+            expectedResults: { rows: expectedRows, columns: expectedColumns }
+        };
+    }
+
+    // Model that tests valid multi series values
+    function getMultiSeriesHappyTestParams(): ITestParams {
+        const rows = [
+	        [
+                '["2020-07-26T06:00:00.0000000Z","2020-07-26T12:00:00.0000000Z","2020-07-26T18:00:00.0000000Z","2020-07-27T00:00:00.0000000Z","2020-07-27T06:00:00.0000000Z","2020-07-27T12:00:00.0000000Z","2020-07-27T18:00:00.0000000Z","2020-07-28T00:00:00.0000000Z","2020-07-28T06:00:00.0000000Z","2020-07-28T12:00:00.0000000Z"]',
+                0.06703198044804248, 
+                -184.4472906403939,
+                36795992.04433497,
+                34329483.82505278,
+                39427.192118226594,
+                '[39242.7448275862,39058.29753694581,38873.85024630541,38689.40295566502,38504.95566502462,38320.50837438423,38136.061083743836,37951.61379310345,37767.16650246305,37582.71921182265]',
+                '[21658.2,29227.4,36827.4,38066.6,38065.200000000004,37986.600000000006,38011.2,38031.8,37963.2,37962.8]'
+            ],
+        ];
+
+        const columns: IColumn[] = [
+            { type: DraftColumnType.Dynamic, name: "Timestamp" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_rsquare" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_slope" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_variance" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_rvariance" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_interception" },
+            { type: DraftColumnType.Dynamic, name: "Trend" },
+            { type: DraftColumnType.Dynamic, name: "SmoothedCount"},
+        ];
+
+        const expectedRows = [
+	        ['2020-07-26T06:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 39242.7448275862, 21658.2],
+            ['2020-07-26T12:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 39058.29753694581, 29227.4],
+	        ['2020-07-26T18:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 38873.85024630541, 36827.4],
+	        ['2020-07-27T00:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 38689.40295566502, 38066.6],
+            ['2020-07-27T06:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 38504.95566502462, 38065.200000000004],
+            ['2020-07-27T12:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 38320.50837438423, 37986.600000000006],
+            ['2020-07-27T18:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 38136.061083743836, 38011.2],
+	        ['2020-07-28T00:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 37951.61379310345, 38031.8],
+            ['2020-07-28T06:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 37767.16650246305, 37963.2],
+	        ['2020-07-28T12:00:00.0000000Z', 0.06703198044804248, -184.4472906403939, 36795992.04433497, 34329483.82505278, 39427.192118226594, 37582.71921182265, 37962.8]
+        ];
+
+        const expectedColumns: IColumn[] = [
+            { type: DraftColumnType.DateTime, name: "Timestamp" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_rsquare" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_slope" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_variance" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_rvariance" },
+            { type: DraftColumnType.Real, name: "series_fit_line_items_interception" },
+            { type: DraftColumnType.Real, name: "Trend" },
+            { type: DraftColumnType.Real, name: "SmoothedCount"},
         ];
 
         return {
@@ -386,7 +530,10 @@ describe('Unit tests for series visualization class', () => {
     }
 
     describe('Testing tryResolveResultsAsSeries', () => {
-        testTryResolveResultsAsSeries(getHappyTestParams, 'HappyFlow');
+        testTryResolveResultsAsSeries(getHappyTestParams, 'Happy flow');
+        testTryResolveResultsAsSeries(getZeroNumbersHappyTestParams, 'Happy flow - zero numbers');
+        testTryResolveResultsAsSeries(getOneNumbersHappyTestParams, 'Happy flow - 1 numbers');
+        testTryResolveResultsAsSeries(getMultiSeriesHappyTestParams, 'Happy flow - multi series');
         testTryResolveResultsAsSeries(getNonSeriesResultsTestParams, 'NonSeriesResults');
         testTryResolveResultsAsSeries(getMissingSegmentTestParams, 'MissingSegment');
         testTryResolveResultsAsSeries(getMissingSegmentButOneRowOnlyTestParams, 'MissingSegmentButOneRowOnly');

@@ -241,20 +241,22 @@ export class SeriesVisualize {
 
             for (let i = 0; i < currentValues.length; i++) {
                 // Allow null values in this flow, the null values won't be displayed in the chart, so we can ignore them
-                if (currentValues[i]) {
-                    const type: DraftColumnType = this.getItemFieldType(currentValues[i]);
+                if (currentValues[i] == null) {
+                    continue;
+                }
 
-                    if (type === undefined) {
-                        // Type not recognized - return with no information about the column
-                        return false;
-                    }
+                const type: DraftColumnType = this.getItemFieldType(currentValues[i]);
 
-                    if (columnType !== undefined && type !== columnType) {
-                        // Type not match previous types - return with no information about the column
-                        return false;
-                    } else {
-                        columnType = type;
-                    }
+                if (type === undefined) {
+                    // Type not recognized - return with no information about the column
+                    return false;
+                }
+
+                if (columnType !== undefined && type !== columnType) {
+                    // Type not match previous types - return with no information about the column
+                    return false;
+                } else {
+                    columnType = type;
                 }
             }
         }
