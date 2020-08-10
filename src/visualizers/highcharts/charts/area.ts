@@ -13,7 +13,8 @@ export abstract class Area extends Chart {
     protected plotOptions(): Highcharts.PlotOptions {
         return {
             area:  {
-                stacking: this.getStackingOption()
+                stacking: this.getStackingOption(),
+			    connectNulls: true
             }
         }
     }
