@@ -318,7 +318,11 @@ export class HighchartsVisualizer implements IVisualizer {
 
     private destroyExistingChart(): void {
         if(this.highchartsChart) {
-            this.highchartsChart.destroy();
+            try {
+                this.highchartsChart.destroy();
+            } catch(err) {
+                // Do nothing - this means that the chart object was already destroyed by Highcharts
+            }
         }
     }
 
