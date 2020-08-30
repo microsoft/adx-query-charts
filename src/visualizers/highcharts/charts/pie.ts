@@ -62,10 +62,13 @@ export class Pie extends Chart {
             const xAxisValue = <string>row[xAxisColumnIndex];
             const yAxisValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
 
-            pieSeries.data.push({
-                name: xAxisValue,
-                y: yAxisValue
-            })
+            // Ignore empty/zero y values since they can't be placed on the pie chart
+            if(yAxisValue) {
+                pieSeries.data.push({
+                    name: xAxisValue,
+                    y: yAxisValue
+                });
+            }
         });
 
         this.validateNonEmptyPie(pieSeries);
@@ -87,22 +90,25 @@ export class Pie extends Chart {
         options.queryResultData.rows.forEach((row) => {
             const yAxisValue = HC_Utilities.getYValue(options.queryResultData.columns, row, yAxisColumnIndex);
 
-            keyIndexes.forEach((keyIndex) => {  
-                const keyValue: string = <string>row[keyIndex];
-                let keysMap = pieLevelData[keyValue];
+            // Ignore empty/zero y values since they can't be placed on the pie chart
+            if (yAxisValue) {
+                keyIndexes.forEach((keyIndex) => {  
+                    const keyValue: string = <string>row[keyIndex];
+                    let keysMap = pieLevelData[keyValue];
 
-                if(!keysMap) {
-                    pieLevelData[keyValue] = {
-                        drillDown: {},
-                        y: 0
-                    };
-                }
+                    if(!keysMap) {
+                        pieLevelData[keyValue] = {
+                            drillDown: {},
+                            y: 0
+                        };
+                    }
 
-                pieLevelData[keyValue].y += yAxisValue;
-                pieLevelData = pieLevelData[keyValue].drillDown;
-            });
+                    pieLevelData[keyValue].y += yAxisValue;
+                    pieLevelData = pieLevelData[keyValue].drillDown;
+                });
 
-            pieLevelData = pieData;
+                pieLevelData = pieData;
+            }
         });
 
         const series = this.spreadMultiLevelSeries(options, pieData);
@@ -246,10 +252,10 @@ export class Pie extends Chart {
     }
 
     private validateNonEmptyPie(pieSeries: IPieSeries): void {    
-        // Make sure that the pie data contains non-empty values (not only zero / null / undefined), otherwise the pie can't be drawn
-        const allZeroPie: boolean = _.every(pieSeries.data, (currentData) => !currentData.y);
+        // Make sure that the pie data contains non-empty values (not only zero / null / undefined / negative values), otherwise the pie can't be drawn
+        const isEmptyPie: boolean = _.every(pieSeries.data, (currentData) => !currentData.y || currentData.y < 0);
 
-        if(allZeroPie) {
+        if(isEmptyPie) {
             throw new EmptyPieError();
         }
     }
