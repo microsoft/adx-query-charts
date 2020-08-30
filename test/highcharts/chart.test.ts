@@ -5,6 +5,7 @@ import { DraftColumnType, IColumn, ChartType, ColumnsSelection } from '../../src
 import { ChartFactory } from '../../src/visualizers/highcharts/charts/chartFactory';
 import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/chart';
 import { Utilities } from '../../src/common/utilities';
+import { EmptyPieError } from '../../src/common/errors/errors';
 
 describe('Unit tests for Chart methods', () => {
     let options: any;
@@ -529,6 +530,83 @@ describe('Unit tests for Chart methods', () => {
             expect(result.series).toEqual(expected.series);
             expect(result.categories).toEqual(expected.categories);
         });
+                
+        it('Validate getStandardCategoriesAndSeries for Pie chart with empty values', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Tel Aviv', 10],
+                ['United States', 'Redmond', 0],
+                ['United States', 'New York', 2],
+                ['United States', 'Miami', 3],
+                ['Israel', 'Herzliya', null],
+                ['Israel', 'Jaffa', 50],
+                ['United States', 'Boston', undefined],
+            ];
+        
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+            ];
+        
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie, options);
+            const result: any = chart.getStandardCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'request_count',
+                    data: [
+                        { name: 'Tel Aviv', y: 10 },
+                        { name: 'New York', y: 2 },
+                        { name: 'Miami', y: 3 },
+                        { name: 'Jaffa', y: 50 }
+                    ]
+                }],
+                categories: undefined
+            };
+        
+            // Assert
+            expect(result.series).toEqual(expected.series);
+            expect(result.categories).toEqual(expected.categories);
+        });
+                         
+        it('Validate getStandardCategoriesAndSeries for Pie chart with negative values', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Tel Aviv', -10],
+                ['United States', 'Redmond', 0],
+                ['United States', 'Boston', -1],
+            ];
+        
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+            ];
+        
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie, options);
+            let error: EmptyPieError;
+
+            try {
+                const result: any = chart.getStandardCategoriesAndSeries(options);
+            } catch(err) {
+                error = err;
+            }
+
+            // Assert
+            expect(error).toBeDefined();
+            expect(error.message).toContain("empty");
+        });
 
         //#endregion Pie chart getStandardCategoriesAndSeries
         
@@ -607,7 +685,7 @@ describe('Unit tests for Chart methods', () => {
             validateResults(result, expected);
         });
 
-        it('Validate getSplitByCategoriesAndSeries for Donut chart: pie chart with 3 levels', () => {
+        it('Validate getSplitByCategoriesAndSeries for Donut chart: donut chart with 3 levels', () => {
             // Input
             options.queryResultData.rows = [                
                 ['Internet Explorer', 'v8', '0', 10],
@@ -686,6 +764,143 @@ describe('Unit tests for Chart methods', () => {
                         { name: '1', y: 2 },
                         { name: '0', y: 3 },
                         { name: '0', y: 20 }
+                   ]
+                }],
+                categories: undefined
+            };
+
+            // Assert
+            validateResults(result, expected);
+        });
+
+        it('Validate getSplitByCategoriesAndSeries for Pie chart: pie chart with 2 levels and empty values', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Tel Aviv', null],
+                ['United States', 'Redmond', 5],
+                ['United States', 'New York', undefined],
+                ['United States', 'Miami', 3],
+                ['Israel', 'Herzliya', 30],
+                ['Israel', 'Jaffa', 0],
+                ['United States', 'Boston', 1],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+            ];
+
+            columnsSelection.xAxis = columns[0];     // country
+            columnsSelection.yAxes = [columns[2]];   // request_count
+            columnsSelection.splitBy = [columns[1]]; // city
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie, options);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'country',
+                    size: '50%',
+                    data: [
+                        { name: 'United States', y: 9},
+                        { name: 'Israel', y: 30 }
+                    ]
+                }, 
+                {
+                    name: 'city',
+                    size: '60%',
+                    innerSize: '50%',
+                    data: [
+                        { name: 'Redmond', y: 5 },
+                        { name: 'Miami', y: 3 },
+                        { name: 'Boston', y: 1 },
+                        { name: 'Herzliya', y: 30 }
+                   ]
+                }],
+                categories: undefined
+            };
+
+            // Assert
+            validateResults(result, expected);
+        });
+
+       it('Validate getSplitByCategoriesAndSeries for Donut chart: donut chart with 3 levels and empty values', () => {
+            // Input
+            options.queryResultData.rows = [                
+                ['Internet Explorer', 'v8', '0', 10],
+                ['Chrome', 'v65', '0', 5],
+                ['Firefox', 'v58', '0', 5],
+                ['Firefox', 'v58', '1', undefined],
+                ['Chrome', 'v66', '0', 15],
+                ['Internet Explorer', 'v8', '1', 0],
+                ['Internet Explorer', 'v11', '0', null],
+                ['Chrome', 'v66', '1', 5],
+                ['Chrome', 'v66', '2', 5],
+                ['Safari', 'v11', '0', 11],
+                ['Firefox', 'v59', '0', 3],
+                ['Chrome', 'v65', '1', 20],
+                ['Internet Explorer', 'v8', '2', null],
+                ['Internet Explorer', 'v8', '3', 3],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'browser', type: DraftColumnType.String },
+                { name: 'version', type: DraftColumnType.String },
+                { name: 'minor_version', type: DraftColumnType.String },
+                { name: 'usage', type: DraftColumnType.Int },
+            ];
+
+            columnsSelection.xAxis = columns[0];                 // browser
+            columnsSelection.yAxes = [columns[3]];               // usage
+            columnsSelection.splitBy = [columns[1], columns[2]]; // version, minor_version
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Donut, options);
+            const result: any = chart.getSplitByCategoriesAndSeries(options);
+
+            const expected: ICategoriesAndSeries = {
+                series: [{
+                    name: 'browser',
+                    size: '33%',
+                    data: [
+                        { name: 'Internet Explorer', y: 13 },
+                        { name: 'Chrome', y: 50 },
+                        { name: 'Firefox', y: 8 },
+                        { name: 'Safari', y: 11 }
+                    ]
+                }, 
+                {
+                    name: 'version',
+                    size: '43%',
+                    innerSize: '33%',
+                    data: [
+                        { name: 'v8', y: 13 },
+                        { name: 'v65', y: 25 },
+                        { name: 'v66', y: 25 },
+                        { name: 'v58', y: 5 },
+                        { name: 'v59', y: 3 },
+                        { name: 'v11', y: 11 }
+                   ]
+                }, 
+                {
+                    name: 'minor_version',
+                    size: '53%',
+                    innerSize: '43%',
+                    data: [
+                        { name: '0', y: 10 }, // v8
+                        { name: '3', y: 3 },
+                        { name: '0', y: 5 }, // v65
+                        { name: '1', y: 20 },
+                        { name: '0', y: 15 }, // v66
+                        { name: '1', y: 5 },
+                        { name: '2', y: 5 },
+                        { name: '0', y: 5 }, // v58
+                        { name: '0', y: 3 }, // v59
+                        { name: '0', y: 11 }, // v11
                    ]
                 }],
                 categories: undefined
