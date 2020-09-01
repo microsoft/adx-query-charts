@@ -36,7 +36,7 @@ export class Pie extends Chart {
                 showInLegend: true,
                 dataLabels: {
                     formatter: function() {
-                        return `${this.point.name}${self.getPercentageSuffix(this)}`;
+                        return `<b>${this.point.name}</b>${self.getPercentageSuffix(this)}`;
                     },
                     style: {
                         textOverflow: 'ellipsis'
