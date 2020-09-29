@@ -29,7 +29,7 @@ export abstract class Chart {
                     duration: chartOptions.animationDurationMS
                 },
                 marker: {
-                    radius: 2 // The radius of chart's the point marker
+                    radius: 2 // The radius of the chart's point marker
                 }
             }
         }
