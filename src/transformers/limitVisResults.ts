@@ -51,15 +51,6 @@ interface IRowsTotalCountHash { [key: string]: IRowsTotalCount }
 export class _LimitVisResults {
     //#region Public methods
 
-    public escapeStr(value: IRowValue): IRowValue {
-        // Don't escape non-string or timestamp values
-        if (typeof (value) !== 'string' || Utilities.isValidDate(value)) {
-            return value;
-        }
-
-        return _.escape(value);
-    }
-
     /**
      * 1. Remove rows when the number of unique X-axis values exceeds 'maxUniqueXValues'.
      *    The method will take the biggest 'maxUniqueXValues' X-axis values, and all other X-axis values will be summed and added as 'Others'
@@ -306,13 +297,13 @@ export class _LimitVisResults {
 
         limitedResults.rows.forEach((row: IRow, index: number) => {
             const xValue = row[params.axesIndexes.xAxis];
-            const transformedRow = [this.escapeStr(xValue)];
+            const transformedRow = [Utilities.escapeStr(xValue)];
 
             // Add all split-by values
             const splitByIndexes = params.axesIndexes.splitBy || [];
 
             splitByIndexes.forEach((splitByIndex) => {
-                transformedRow.push(this.escapeStr(row[splitByIndex]));
+                transformedRow.push(Utilities.escapeStr(row[splitByIndex]));
             });
 
             const key = this.getKey(transformedRow);
@@ -337,7 +328,7 @@ export class _LimitVisResults {
                 if (yValue != undefined) {
                     const yValues = aggregatedRowInfoMap[key].yValues[i];
 
-                    yValues.push(this.escapeStr(yValue));
+                    yValues.push(Utilities.escapeStr(yValue));
                 }
             });
         });

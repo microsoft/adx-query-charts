@@ -423,7 +423,7 @@ ${this.getColumnsStr(queryResultData.columns)}`;
 
             // Add each column name and type to the chartColumns
             chartColumns.push({
-                name: <string>LimitVisResultsSingleton.escapeStr(originalColumn.name),
+                name: <string>Utilities.escapeStr(originalColumn.name),
                 type: originalColumn.type
             });
         }
@@ -443,6 +443,10 @@ ${this.getColumnsStr(queryResultData.columns)}`;
                     "Wasn't able to create default columns selection. Probably there are not enough columns to create the chart. Try using the 'getSupportedColumnsInResult' method",
                     ErrorCode.InvalidQueryResultData);
             }
+        }
+
+        if (updatedChartOptions.title) {
+            updatedChartOptions.title = Utilities.escapeStr(updatedChartOptions.title) as string;
         }
 
         return updatedChartOptions;

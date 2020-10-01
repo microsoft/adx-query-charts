@@ -1,6 +1,7 @@
 'use strict';
 
-import { IQueryResultData, IColumn, DraftColumnType, ChartType } from './chartModels';
+import * as _ from 'lodash';
+import { IQueryResultData, IColumn, DraftColumnType, ChartType, IRowValue } from './chartModels';
 
 export class Utilities {
     // Returns the index of the column with the same name and type in the columns array
@@ -66,5 +67,14 @@ export class Utilities {
 
     public static isPieOrDonut(chartType: ChartType): boolean {
         return chartType === ChartType.Pie || chartType === ChartType.Donut;
+    }
+    
+    public static escapeStr(value: IRowValue): IRowValue {
+        // Don't escape non-string or timestamp values
+        if (typeof (value) !== 'string' || Utilities.isValidDate(value)) {
+            return value;
+        }
+
+        return _.escape(value);
     }
 }
