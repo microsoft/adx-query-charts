@@ -85,7 +85,7 @@ export class KustoChartHelper implements IChartHelper {
                 const changes = ChangeDetection.detectChanges(this.queryResultData, this.options, queryResultData, chartOptions);
         
                 // Update current options and data
-                this.options = chartOptions;
+                this.options = { ...chartOptions};
                 this.queryResultData = queryResultData;
                 
                 // First initialization / query data change / columns selection change / aggregation type change
@@ -98,6 +98,7 @@ export class KustoChartHelper implements IChartHelper {
                     this.transformedQueryResultData = transformed.data;
                     this.chartInfo.dataTransformationInfo.isAggregationApplied = transformed.limitedResults.isAggregationApplied;
                     this.chartInfo.dataTransformationInfo.isPartialData = transformed.limitedResults.isPartialData;
+                    this.escapeColumnsSelection(chartOptions);              
                 }
         
                 const visualizerOptions: IVisualizerOptions = {
@@ -422,10 +423,7 @@ ${this.getColumnsStr(queryResultData.columns)}`;
             const originalColumn = queryResultData.columns[indexOfColumn];
 
             // Add each column name and type to the chartColumns
-            chartColumns.push({
-                name: <string>Utilities.escapeStr(originalColumn.name),
-                type: originalColumn.type
-            });
+            chartColumns.push(this.escapeColumnName(originalColumn));
         }
 
         return notFoundColumns;
@@ -516,6 +514,21 @@ ${this.getColumnsStr(queryResultData.columns)}`;
         this.chartInfo.status = DrawChartStatus.Failed;
         this.chartInfo.error = error;
         this.finishDrawing(resolve, chartOptions);
+    }
+
+    private escapeColumnsSelection(chartOptions: IChartOptions): void {
+        chartOptions.columnsSelection = {
+            xAxis: chartOptions.columnsSelection.xAxis && this.escapeColumnName(chartOptions.columnsSelection.xAxis),
+            yAxes: chartOptions.columnsSelection.yAxes && chartOptions.columnsSelection.yAxes.map(y => this.escapeColumnName(y)),
+            splitBy: chartOptions.columnsSelection.splitBy && chartOptions.columnsSelection.splitBy.map(s => this.escapeColumnName(s))
+        };
+    }
+
+    private escapeColumnName(originalColumn: IColumn): IColumn {
+        return {
+            name: <string>Utilities.escapeStr(originalColumn.name),
+            type: originalColumn.type
+        };
     }
 
     //#endregion Private methods

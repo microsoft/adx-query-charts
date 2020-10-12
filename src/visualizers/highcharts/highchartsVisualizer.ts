@@ -299,7 +299,10 @@ export class HighchartsVisualizer implements IVisualizer {
         const yAxisTitleFormatter = chartOptions.yAxisTitleFormatter;
 
         if(yAxisTitleFormatter) {
-            return yAxisTitleFormatter(yAxisColumns);
+            let yAxisTitle = yAxisTitleFormatter(yAxisColumns);
+            let escapedYAxisTitle = Utilities.escapeStr(yAxisTitle);
+
+            return escapedYAxisTitle as string;
         }
 
         return yAxisColumns[0].name;
@@ -310,7 +313,10 @@ export class HighchartsVisualizer implements IVisualizer {
         const xAxisTitleFormatter = chartOptions.xAxisTitleFormatter;
 
         if(xAxisTitleFormatter) {
-            return xAxisTitleFormatter(xAxisColumn);
+            let xAxisTitle = xAxisTitleFormatter(xAxisColumn);
+            let escapedXAxisTitle = Utilities.escapeStr(xAxisTitle);
+
+            return escapedXAxisTitle as string;
         }
 
         return xAxisColumn.name;
