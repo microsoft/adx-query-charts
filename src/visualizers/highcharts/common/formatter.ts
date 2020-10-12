@@ -19,7 +19,7 @@ export class Formatter {
             }
         }
 
-        return `<tr><td>${_.escape(columnName || column.name)}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
+        return `<tr><td>${columnName || column.name}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
     }
           
     public static getLabelsFormatter(chartOptions: IChartOptions, column: IColumn, useHTML: boolean): Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject<number>> {
