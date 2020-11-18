@@ -324,9 +324,9 @@ export interface IChartOptions {
          
     /**
      * When this callback is provided, the chart data points will be clickable.
-     * The callback will be called after a click on a certain data point in the chart.
+     * The callback will be called when chart's data point will be clicked, providing the clicked data point information.
      * Callback inputs:
-     *    @param dataPoint - The information regarding the values of the clicked data point. 
+     *    @param dataPoint - The information regarding the columns and values of the clicked data point. 
      *                       Note that the value of a date-time column in the dataPoint object will be its numeric value - Date.valueOf().
      */
     onDataPointClicked?: (dataPoint: IDataPoint) => void;

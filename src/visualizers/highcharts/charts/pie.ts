@@ -153,14 +153,6 @@ export class Pie extends Chart {
             return '<table>' + tooltip + '</table>';
         }
     }
-
-    public /*override*/ verifyInput(options: IVisualizerOptions): void {    
-        const columnSelection = options.chartOptions.columnsSelection;
-
-        if(columnSelection.yAxes.length > 1) {
-            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
-        }
-    }
        
     public /*virtual*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
         const seriesColumnName: string = point.series.name; 
@@ -197,6 +189,14 @@ export class Pie extends Chart {
         return dataPointInfo;
     }
 
+    public /*override*/ verifyInput(options: IVisualizerOptions): void {    
+        const columnSelection = options.chartOptions.columnsSelection;
+
+        if(columnSelection.yAxes.length > 1) {
+            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
+        }
+    }
+    
     //#endregion Methods override
 
     protected getInnerSize(): string {
