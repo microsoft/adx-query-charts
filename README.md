@@ -63,8 +63,9 @@ chartHelper.draw(queryResultData, chartOptions);
 | yAxisTitleFormatter    | Function<br/>(yAxisColumns: IColumn[]): string | Callback that is used to get the yAxis title<br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IColumn[]](#IColumn) - The y-axis columns<br/>Callback return value:<br/>&nbsp;&nbsp;&nbsp;&nbsp;The desired y-axis title | If not provided - the yAxis title will be the first yAxis column name |
 | updateCustomOptions    | Function<br/>(originalOptions: any): void | Callback that is called to allow altering the options of the external charting library before rendering the chart.<br/>Used to allow flexibility and control of the external charting library.<br/><b>USE WITH CAUTION</b> changing the original options might break the functionality / backward compatibility when using a different IVisualizer or upgrading the charting library.<br/>Validating the updated options is the user's responsibility.<br/>For official chart options - please make contribution to the base code.<br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;originalOptions - The custom charting options that are given to the external charting library<br/> | |
 | onFinishDataTransformation | Function(dataTransformationInfo: IDataTransformationInfo) : Promise&lt;boolean&gt; | Callback that is called when all the data transformations required to draw the chart are finished<br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IDataTransformationInfo](#IDataTransformationInfo) - The information regarding the applied transformations on the original query results<br/>Callback return value:<br/>&nbsp;&nbsp;&nbsp;&nbsp;The promise that is used to continue/stop drawing the chart<br/>&nbsp;&nbsp;&nbsp;&nbsp;When provided, the drawing of the chart will be suspended until this promise will be resolved<br/>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with true - the chart will continue the drawing<br/>&nbsp;&nbsp;&nbsp;&nbsp;When resolved with false - the chart drawing will be canceled | | 
-| onFinishDrawing        | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart drawing is finished <br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart | | |
-| onFinishChartAnimation | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart animation is finished <br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) -  The information regarding the chart | | |
+| onFinishDrawing        | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart drawing is finished <br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) - The information regarding the chart | | |
+| onFinishChartAnimation | Function(chartInfo: IChartInfo) : void       | Callback that is called when the chart animation is finished <br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IChartInfo](#IChartInfo) - The information regarding the chart | | |
+| onDataPointClicked | Function(dataPoint: IDataPoint) : void           | When this callback is provided, the chart data points will be clickable.<br/>The callback will be called after a click on a certain data point in the chart.<br/>Callback inputs:<br/>&nbsp;&nbsp;&nbsp;&nbsp;[IDataPoint](#IDataPoint) - The information regarding the values of the clicked data point.<br/>&nbsp;&nbsp;&nbsp;&nbsp;<b>Note</b> that the value of a date-time column in the dataPoint object will be its numeric value - Date.valueOf().  | | |
 
 ### IDataTransformationInfo
 | Option name:                 | Type:                                | Details:                                                                                           |
@@ -247,6 +248,20 @@ interface ISupportedColumnTypes {
 }
 ```
 See [DraftColumnType](#DraftColumnType) 
+
+### IDataPoint
+```typescript
+export interface IDataPointInfo {
+    column: IColumn;
+    value: IRowValue;
+}
+
+export interface IDataPoint {
+    x: IDataPointInfo;
+    y: IDataPointInfo;
+    splitBy?: IDataPointInfo;
+}
+```
 
 ## Test
 Unit tests are written using [Jest](https://jestjs.io/).

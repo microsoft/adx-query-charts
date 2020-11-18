@@ -35,6 +35,17 @@ export interface IQueryResultData {
     columns: IColumn[];
 }
 
+export interface IDataPointInfo {
+    column: IColumn;
+    value: IRowValue;
+}
+
+export interface IDataPoint {
+    x: IDataPointInfo;
+    y: IDataPointInfo;
+    splitBy?: IDataPointInfo;
+}
+
 export enum ChartType {
     Line = 'Line',
     Scatter = 'Scatter',
@@ -310,6 +321,15 @@ export interface IChartOptions {
      *    @param chartInfo - The information regarding the chart
      */
     onFinishChartAnimation?: (chartInfo: IChartInfo) => void;
+         
+    /**
+     * When this callback is provided, the chart data points will be clickable.
+     * The callback will be called after a click on a certain data point in the chart.
+     * Callback inputs:
+     *    @param dataPoint - The information regarding the values of the clicked data point. 
+     *                       Note that the value of a date-time column in the dataPoint object will be its numeric value - Date.valueOf().
+     */
+    onDataPointClicked?: (dataPoint: IDataPoint) => void;
 }
 
 export interface ILegendOptions {
