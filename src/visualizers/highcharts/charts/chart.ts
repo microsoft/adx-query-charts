@@ -185,7 +185,15 @@ export abstract class Chart {
         }
     }
 
-    public /*virtual*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
+    public /*virtual*/ verifyInput(options: IVisualizerOptions): void {    
+        const columnSelection = options.chartOptions.columnsSelection;
+
+        if(columnSelection.splitBy && columnSelection.splitBy.length > 1) {
+            throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
+        }
+    }
+
+    protected /*virtual*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
         // Y axis
         const yAxes = chartOptions.columnsSelection.yAxes;
         let yAxisColumn;
@@ -222,14 +230,6 @@ export abstract class Chart {
         }
 
         return dataPointInfo;
-    }
-
-    public /*virtual*/ verifyInput(options: IVisualizerOptions): void {    
-        const columnSelection = options.chartOptions.columnsSelection;
-
-        if(columnSelection.splitBy && columnSelection.splitBy.length > 1) {
-            throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
-        }
     }
 
     //#endregion Virtual methods

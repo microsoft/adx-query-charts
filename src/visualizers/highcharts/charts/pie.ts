@@ -24,29 +24,6 @@ interface IPieSeries {
 export class Pie extends Chart {
     //#region Methods override
  
-    protected /*override*/ getChartType(): string {
-        return 'pie';
-    };
-
-    protected /*override*/ plotOptions(): Highcharts.PlotOptions {
-        const self = this;
-
-        return {
-            pie: {
-                innerSize: this.getInnerSize(),
-                showInLegend: true,
-                dataLabels: {
-                    formatter: function() {
-                        return `<b>${this.point.name}</b>${self.getPercentageSuffix(this)}`;
-                    },
-                    style: {
-                        textOverflow: 'ellipsis'
-                    }
-                }
-            }
-        }
-    }
-
     public /*override*/ getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
         const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);    
@@ -154,7 +131,38 @@ export class Pie extends Chart {
         }
     }
        
-    public /*virtual*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
+    public /*override*/ verifyInput(options: IVisualizerOptions): void {    
+        const columnSelection = options.chartOptions.columnsSelection;
+
+        if(columnSelection.yAxes.length > 1) {
+            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
+        }
+    }
+
+    protected /*override*/ getChartType(): string {
+        return 'pie';
+    };
+
+    protected /*override*/ plotOptions(): Highcharts.PlotOptions {
+        const self = this;
+
+        return {
+            pie: {
+                innerSize: this.getInnerSize(),
+                showInLegend: true,
+                dataLabels: {
+                    formatter: function() {
+                        return `<b>${this.point.name}</b>${self.getPercentageSuffix(this)}`;
+                    },
+                    style: {
+                        textOverflow: 'ellipsis'
+                    }
+                }
+            }
+        }
+    }
+
+    protected /*override*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
         const seriesColumnName: string = point.series.name; 
         const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
         const splitBy = chartOptions.columnsSelection.splitBy;
@@ -189,14 +197,6 @@ export class Pie extends Chart {
         return dataPointInfo;
     }
 
-    public /*override*/ verifyInput(options: IVisualizerOptions): void {    
-        const columnSelection = options.chartOptions.columnsSelection;
-
-        if(columnSelection.yAxes.length > 1) {
-            throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
-        }
-    }
-    
     //#endregion Methods override
 
     protected getInnerSize(): string {
