@@ -6,9 +6,10 @@ import { Chart, ICategoriesAndSeries } from './chart';
 import { Formatter } from '../common/formatter';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IChartOptions } from '../../../common/chartModels';
+import { IColumn, IChartOptions, IDataPoint } from '../../../common/chartModels';
 import { InvalidInputError, EmptyPieError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
+import { chart } from 'highcharts';
 
 interface IPieSeriesData {
     name: string;
@@ -23,29 +24,6 @@ interface IPieSeries {
 export class Pie extends Chart {
     //#region Methods override
  
-    protected /*override*/ getChartType(): string {
-        return 'pie';
-    };
-
-    protected /*override*/ plotOptions(): Highcharts.PlotOptions {
-        const self = this;
-
-        return {
-            pie: {
-                innerSize: this.getInnerSize(),
-                showInLegend: true,
-                dataLabels: {
-                    formatter: function() {
-                        return `<b>${this.point.name}</b>${self.getPercentageSuffix(this)}`;
-                    },
-                    style: {
-                        textOverflow: 'ellipsis'
-                    }
-                }
-            }
-        }
-    }
-
     public /*override*/ getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
         const xColumn: IColumn = options.chartOptions.columnsSelection.xAxis;
         const xAxisColumnIndex: number =  Utilities.getColumnIndex(options.queryResultData, xColumn);    
@@ -133,46 +111,90 @@ export class Pie extends Chart {
         const self = this;
 
         return function () {
-            const context = this;
-            let tooltip: string;
+            const context: Highcharts.TooltipFormatterContextObject = this;
+            const dataPoint: IDataPoint = self.getDataPoint(chartOptions, context.point);
 
             // Key
-            const splitBy = chartOptions.columnsSelection.splitBy;
-            let keyColumn: IColumn;
-            let keyColumnName: string;
+            let keyColumn: IColumn = dataPoint.x.column;
+            let keyColumnName: string = keyColumn.name;
 
-            if(splitBy && splitBy.length > 0) {
-                // Find the current key column
-                const keyColumnIndex = _.findIndex(splitBy, (col) => { 
-                    return col.name === context.series.name 
-                });
-    
-                keyColumn = splitBy[keyColumnIndex];
-            }
-
-            // If the key column isn't one of the splitBy columns -> it's the x axis column
-            if(!keyColumn) {
-                keyColumn = chartOptions.columnsSelection.xAxis;
+            if (keyColumn === chartOptions.columnsSelection.xAxis) {
                 keyColumnName = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(keyColumn) : undefined;     
             }
 
-            tooltip = Formatter.getSingleTooltip(chartOptions, keyColumn, context.key, keyColumnName);  
+            let tooltip: string = Formatter.getSingleTooltip(chartOptions, keyColumn, dataPoint.x.value, keyColumnName);  
 
             // Y axis
-            const yColumn = chartOptions.columnsSelection.yAxes[0]; // We allow only 1 y axis in pie chart
-
-            tooltip += Formatter.getSingleTooltip(chartOptions, yColumn, context.y, /*columnName*/ undefined, self.getPercentageSuffix(context));
+            tooltip += Formatter.getSingleTooltip(chartOptions, dataPoint.y.column, dataPoint.y.value, /*columnName*/ undefined, self.getPercentageSuffix(context));
 
             return '<table>' + tooltip + '</table>';
         }
     }
-  
+       
     public /*override*/ verifyInput(options: IVisualizerOptions): void {    
         const columnSelection = options.chartOptions.columnsSelection;
 
         if(columnSelection.yAxes.length > 1) {
             throw new InvalidInputError(`Multiple y-axis columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
         }
+    }
+
+    protected /*override*/ getChartType(): string {
+        return 'pie';
+    };
+
+    protected /*override*/ plotOptions(): Highcharts.PlotOptions {
+        const self = this;
+
+        return {
+            pie: {
+                innerSize: this.getInnerSize(),
+                showInLegend: true,
+                dataLabels: {
+                    formatter: function() {
+                        return `<b>${this.point.name}</b>${self.getPercentageSuffix(this)}`;
+                    },
+                    style: {
+                        textOverflow: 'ellipsis'
+                    }
+                }
+            }
+        }
+    }
+
+    protected /*override*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
+        const seriesColumnName: string = point.series.name; 
+        const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
+        const splitBy = chartOptions.columnsSelection.splitBy;
+        let seriesColumn: IColumn;
+
+        // Try to find series column in the split-by columns
+        if (splitBy && splitBy.length > 0) {
+            // Find the current key column
+            const keyColumnIndex = _.findIndex(splitBy, (col) => { 
+                return col.name === point.series.name 
+            });
+
+            seriesColumn = splitBy[keyColumnIndex];
+        }
+                 
+        // If the series column isn't one of the splitBy columns -> it's the x axis column
+        if (!seriesColumn) {
+            seriesColumn = xColumn;     
+        }
+
+        const dataPointInfo: IDataPoint = {
+            x: {
+                column: seriesColumn,
+                value: point.name
+            },
+            y: {
+                column: chartOptions.columnsSelection.yAxes[0], // We allow only 1 y axis in pie chart
+                value: point.y
+            }
+        };
+
+        return dataPointInfo;
     }
 
     //#endregion Methods override

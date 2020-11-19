@@ -7,7 +7,7 @@ import * as Highcharts from 'highcharts';
 import { HC_Utilities } from '../common/utilities';
 import { IVisualizerOptions } from '../../IVisualizerOptions';
 import { Utilities } from '../../../common/utilities';
-import { IColumn, IRowValue, IChartOptions } from '../../../common/chartModels';
+import { IColumn, IRowValue, IChartOptions, IDataPoint } from '../../../common/chartModels';
 import { InvalidInputError } from '../../../common/errors/errors';
 import { ErrorCode } from '../../../common/errors/errorCode';
 import { Formatter } from '../common/formatter';
@@ -23,18 +23,9 @@ export abstract class Chart {
     private defaultPlotOptions: Highcharts.PlotOptions;
     
     public constructor(chartOptions: IChartOptions) {
-        this.defaultPlotOptions = {
-            series: {
-                animation: {
-                    duration: chartOptions.animationDurationMS
-                },
-                marker: {
-                    radius: 2 // The radius of the chart's point marker
-                }
-            }
-        }
+        this.defaultPlotOptions = this.getDefaultPlotOptions(chartOptions);
     }
-
+        
     //#region Virtual methods
 
     public /*virtual*/ getStandardCategoriesAndSeries(options: IVisualizerOptions): ICategoriesAndSeries {
@@ -173,35 +164,21 @@ export abstract class Chart {
     }
 
     public /*virtual*/ getChartTooltipFormatter(chartOptions: IChartOptions): Highcharts.TooltipFormatterCallbackFunction {
+        const self = this;
+
         return function () {
-            const context = this;
+            const dataPoint: IDataPoint = self.getDataPoint(chartOptions, this.point);
 
             // X axis
-            const xAxisColumn = chartOptions.columnsSelection.xAxis;
-            const xColumnTitle = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(xAxisColumn) : undefined;
-            let tooltip = Formatter.getSingleTooltip(chartOptions, xAxisColumn, context.x, xColumnTitle);
+            const xColumnTitle: string = chartOptions.xAxisTitleFormatter ? chartOptions.xAxisTitleFormatter(dataPoint.x.column) : undefined;
+            let tooltip: string = Formatter.getSingleTooltip(chartOptions, dataPoint.x.column, dataPoint.x.value, xColumnTitle);
 
             // Y axis
-            const yAxes = chartOptions.columnsSelection.yAxes;
-            let yColumn;
-
-            if(yAxes.length === 1) {
-                yColumn = yAxes[0];
-            } else { // Multiple y-axes - find the current y column
-                const yColumnIndex = _.findIndex(yAxes, (col) => { 
-                    return col.name === context.series.name 
-                });
-
-                yColumn = yAxes[yColumnIndex];
-            }
-
-            tooltip += Formatter.getSingleTooltip(chartOptions, yColumn, context.y);
+            tooltip += Formatter.getSingleTooltip(chartOptions, dataPoint.y.column, dataPoint.y.value);
 
             // Split by
-            const splitBy = chartOptions.columnsSelection.splitBy;
-
-            if(splitBy && splitBy.length > 0) {
-                tooltip += Formatter.getSingleTooltip(chartOptions, splitBy[0], context.series.name);
+            if(dataPoint.splitBy) {
+                tooltip += Formatter.getSingleTooltip(chartOptions, dataPoint.splitBy.column, dataPoint.splitBy.value);
             }
 
             return '<table>' + tooltip + '</table>';
@@ -214,6 +191,45 @@ export abstract class Chart {
         if(columnSelection.splitBy && columnSelection.splitBy.length > 1) {
             throw new InvalidInputError(`Multiple split-by columns selection isn't allowed for ${options.chartOptions.chartType}`, ErrorCode.InvalidColumnsSelection);
         }
+    }
+
+    protected /*virtual*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
+        // Y axis
+        const yAxes = chartOptions.columnsSelection.yAxes;
+        let yAxisColumn;
+
+        if (yAxes.length === 1) {
+            yAxisColumn = yAxes[0];
+        } else { // Multiple y-axes - find the current y column
+            const yColumnIndex = _.findIndex(yAxes, (col) => { 
+                return col.name === point.series.name 
+            });
+
+            yAxisColumn = yAxes[yColumnIndex];
+        }
+
+        const dataPointInfo: IDataPoint = {
+            x: {
+                column: chartOptions.columnsSelection.xAxis,
+                value: point.category
+            },
+            y: {
+                column: yAxisColumn,
+                value: point.y
+            },
+        };
+
+        // Split by
+        const splitBy = chartOptions.columnsSelection.splitBy;
+
+        if(splitBy && splitBy.length > 0) {
+            dataPointInfo.splitBy = {
+                column: splitBy[0],
+                value: point.series.name
+            }
+        }
+
+        return dataPointInfo;
     }
 
     //#endregion Virtual methods
@@ -266,6 +282,39 @@ export abstract class Chart {
         return {
             series: series
         }
+    }
+
+    private getDefaultPlotOptions(chartOptions: IChartOptions): Highcharts.PlotOptions {
+        const defaultPlotOptions = {
+            series: {
+                animation: {
+                    duration: chartOptions.animationDurationMS
+                },
+                marker: {
+                    radius: 2 // The radius of the chart's point marker
+                }
+            }
+        };
+
+        if (chartOptions.onDataPointClicked) {
+            const self = this;
+            const clickableSeries: Highcharts.PlotSeriesOptions = {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function () {
+                            const dataPoint: IDataPoint = self.getDataPoint(chartOptions, /*point*/ this);      
+
+                            chartOptions.onDataPointClicked(dataPoint);
+                        }
+                    }
+                }
+            }
+
+            _.merge(defaultPlotOptions.series, clickableSeries);
+        }
+
+        return defaultPlotOptions;
     }
 
     //#endregion Private methods

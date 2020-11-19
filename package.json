@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "css-element-queries": "^1.2.3",
-    "highcharts": "^8.1.2",
+    "highcharts": "^8.2.2",
     "lodash": "^4.17.15"
   },
   "jest": {

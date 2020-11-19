@@ -1,7 +1,7 @@
 'use strict';
 
 import * as _ from 'lodash';
-import { DraftColumnType, IColumn, ChartType, ColumnsSelection } from '../../src/common/chartModels';
+import { DraftColumnType, IColumn, ChartType, ColumnsSelection, IDataPoint } from '../../src/common/chartModels';
 import { ChartFactory } from '../../src/visualizers/highcharts/charts/chartFactory';
 import { ICategoriesAndSeries } from '../../src/visualizers/highcharts/charts/chart';
 import { Utilities } from '../../src/common/utilities';
@@ -1220,5 +1220,319 @@ describe('Unit tests for Chart methods', () => {
         //#endregion Pie chart
     });
 
+    describe('Validate getDataPoint method', () => {
+        //#region Line chart getDataPoint
+
+        it('Validate getDataPoint for Line chart with 1 y-axis', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Herzliya', 30, 300],
+                ['United States', 'New York', 100, 1000],
+                ['Japan', 'Tokyo', 20, 2000],
+                ['Russia', 'Moscow', 25, 2250000],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+                { name: 'second_count', type: DraftColumnType.Int },
+            ];
+
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line, options);
+            const point = {
+                category: 'Israel',
+                name: undefined,
+                y: 30,
+                series: {
+                    name: 'request_count'
+                }
+            };
+
+            const result: IDataPoint = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            const expected: IDataPoint = {
+                x: {
+                    column: columnsSelection.xAxis,
+                    value: 'Israel'
+                },
+                y: {
+                    column: columnsSelection.yAxes[0],
+                    value: 30
+                },
+                splitBy: undefined
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+      
+        it('Validate getDataPoint for Line chart with 2 y-axes', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Herzliya', 30, 300],
+                ['United States', 'New York', 100, 1000],
+                ['Japan', 'Tokyo', 20, 2000],
+                ['Russia', 'Moscow', 25, 2250000],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+                { name: 'second_count', type: DraftColumnType.Int },
+            ];
+
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2], columns[3]]; // request_count, second_count
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line, options);
+
+            // Select first y-axis point
+            let point = {
+                category: 'Moscow',
+                name: undefined,
+                y: 25,
+                series: {
+                    name: 'request_count'
+                }
+            };
+
+            let result: IDataPoint = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            let expected: IDataPoint = {
+                x: {
+                    column: columnsSelection.xAxis,
+                    value: 'Moscow'
+                },
+                y: {
+                    column: columnsSelection.yAxes[0],
+                    value: 25
+                },
+                splitBy: undefined
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+         
+            // Select second y-axis point
+            point = {
+                category: 'Moscow',
+                name: undefined,
+                y: 2250000,
+                series: {
+                    name: 'second_count'
+                }
+            };
+
+            result = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            expected = {
+                x: {
+                    column: columnsSelection.xAxis,
+                    value: 'Moscow'
+                },
+                y: {
+                    column: columnsSelection.yAxes[1],
+                    value: 2250000
+                },
+                splitBy: undefined
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+     
+        it('Validate getDataPoint for Line chart with split-by', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Herzliya', 30, 300],
+                ['Israel', 'Holon', 12, 120],
+                ['United States', 'New York', 100, 1000],
+                ['Japan', 'Tokyo', 20, 2000],
+                ['Russia', 'Moscow', 25, 2250000],
+            ];
+
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+                { name: 'second_count', type: DraftColumnType.Int },
+            ];
+
+            columnsSelection.xAxis = columns[0];    // country
+            columnsSelection.yAxes = [columns[2]];  // request_count
+            columnsSelection.splitBy = [columns[1]] // city
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Line, options);
+            const point = {
+                category: 'Israel',
+                name: undefined,
+                y: 12,
+                series: {
+                    name: 'Holon'
+                }
+            };
+
+            const result: IDataPoint = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            const expected: IDataPoint = {
+                x: {
+                    column: columnsSelection.xAxis,
+                    value: 'Israel'
+                },
+                y: {
+                    column: columnsSelection.yAxes[0],
+                    value: 12
+                },
+                splitBy: {
+                    column: columnsSelection.splitBy[0],
+                    value: 'Holon'
+                },
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+
+        //#endregion Line chart getDataPoint
+
+        //#region Pie chart getDataPoint
+                
+        it('Validate getDataPoint for Pie chart without split-by', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Tel Aviv', 10],
+                ['United States', 'Redmond', 5],
+                ['United States', 'New York', 2],
+                ['United States', 'Miami', 3],
+                ['Israel', 'Herzliya', 30],
+                ['Israel', 'Jaffa', 50],
+                ['United States', 'Boston', 1],
+            ];
+        
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+            ];
+        
+            columnsSelection.xAxis = columns[1];   // city
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie, options);
+            const point = {
+                category: undefined,
+                name: 'New York',
+                y: 2,
+                series: {
+                    name: 'request_count'
+                }
+            };
+
+            const result: IDataPoint = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            const expected: IDataPoint = {
+                x: {
+                    column: columnsSelection.xAxis,
+                    value: 'New York'
+                },
+                y: {
+                    column: columnsSelection.yAxes[0],
+                    value: 2
+                },
+                splitBy: undefined
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+                
+        it('Validate getDataPoint for Pie chart with split-by', () => {
+            // Input
+            options.queryResultData.rows = [
+                ['Israel', 'Tel Aviv', 10],
+                ['United States', 'Redmond', 5],
+                ['United States', 'New York', 2],
+                ['United States', 'Miami', 3],
+                ['Israel', 'Herzliya', 30],
+                ['Israel', 'Jaffa', 50],
+                ['United States', 'Boston', 1],
+            ];
+        
+            const columns: IColumn[] = [
+                { name: 'country', type: DraftColumnType.String },
+                { name: 'city', type: DraftColumnType.String },
+                { name: 'request_count', type: DraftColumnType.Int },
+            ];
+        
+            columnsSelection.xAxis = columns[0];   // country
+            columnsSelection.yAxes = [columns[2]]; // request_count
+            columnsSelection.splitBy = [columns[1]] // city
+            options.queryResultData.columns = columns;
+
+            // Act
+            const chart = ChartFactory.create(ChartType.Pie, options);
+
+            // Point in the first pie level
+            let point = {
+                category: undefined,
+                name: 'United States',
+                y: 11,
+                series: {
+                    name: 'country'
+                }
+            };
+
+            let result: IDataPoint = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            let expected: IDataPoint = {
+                x: {
+                    column: columnsSelection.xAxis,
+                    value: 'United States'
+                },
+                y: {
+                    column: columnsSelection.yAxes[0],
+                    value: 11
+                }
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        
+            // Point in the second pie level
+            point = {
+                category: undefined,
+                name: 'Herzliya',
+                y: 30,
+                series: {
+                    name: 'city'
+                }
+            };
+
+            result = chart['getDataPoint'](options.chartOptions, <Highcharts.Point>point);
+            expected = {
+                x: {
+                    column: columnsSelection.splitBy[0],
+                    value: 'Herzliya'
+                },
+                y: {
+                    column: columnsSelection.yAxes[0],
+                    value: 30
+                }
+            };
+
+            // Assert
+            expect(result).toEqual(expected);
+        });
+
+        //#endregion Pie chart getDataPoint
+    });
+   
     //#endregion Tests
 });
