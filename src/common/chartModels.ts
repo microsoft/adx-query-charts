@@ -90,6 +90,11 @@ export enum DrawChartStatus {
     Canceled = 'Canceled' // The chart drawing was canceled. See onFinishDataTransformation return value for more information regarding drawing cancellation
 }
 
+export enum LegendPosition {
+    Bottom = 'Bottom',
+    Right = 'Right'
+}
+
 export interface ISupportedColumnTypes {
     xAxis: DraftColumnType[];
     yAxis: DraftColumnType[];
@@ -338,6 +343,12 @@ export interface ILegendOptions {
      * [Default value: true (show legend)]
      */
     isEnabled?: boolean;
+
+    /**
+     * The position of the legend (relative to the chart)
+     * [Default value: Bottom]
+     */
+    position?: LegendPosition;
 }
 
 export interface IChartHelper {
