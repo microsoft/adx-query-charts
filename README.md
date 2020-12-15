@@ -79,12 +79,13 @@ chartHelper.draw(queryResultData, chartOptions);
 | --------------------------   |----------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | dataTransformationInfo       | [IDataTransformationInfo](#IDataTransformationInfo)  | The information regarding the applied transformations on the original query results                |
 | status                       | [DrawChartStatus](#DrawChartStatus)                  | The status of the draw action                                                                      |
-| error                        | [ChartError] (#ChartError)                           | [Optional] The error information in case that the draw action failed                               |
+| error                        | [ChartError](#ChartError)                            | [Optional] The error information in case that the draw action failed                               |
 
 ### ILegendOptions
-| Option name: | Type:      | Details:                                                                                           |
-| ------------ |----------- | -------------------------------------------------------------------------------------------------- |
-| isEnabled    | boolean    | Set to false if you want to hide the legend. <br/> [Default value: true (show legend)]             |
+| Option name: | Type:                               | Details:                                                                                           |
+| ------------ | ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| isEnabled    | boolean                             | [Optional] Set to false if you want to hide the legend. <br/> [Default value: true (show legend)]  |
+| position     | [LegendPosition](#LegendPosition)   | [Optional] The position of the legend (relative to the chart). <br/> [Default value: Bottom]       |
 
 ### ChartType
 ```typescript
@@ -260,6 +261,14 @@ export interface IDataPoint {
     x: IDataPointInfo;
     y: IDataPointInfo;
     splitBy?: IDataPointInfo;
+}
+```
+
+### LegendPosition
+```typescript
+export enum LegendPosition {
+    Bottom,
+    Right
 }
 ```
 

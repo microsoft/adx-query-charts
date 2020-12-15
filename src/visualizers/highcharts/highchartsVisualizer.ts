@@ -12,7 +12,7 @@ import { Chart } from './charts/chart';
 import { IVisualizer } from '../IVisualizer';
 import { IVisualizerOptions } from '../IVisualizerOptions';
 import { ChartFactory } from './charts/chartFactory';
-import { ChartTheme, IChartOptions, DrawChartStatus } from '../../common/chartModels';
+import { ChartTheme, IChartOptions, DrawChartStatus, LegendPosition } from '../../common/chartModels';
 import { Changes, ChartChange } from '../../common/chartChange';
 import { Utilities } from '../../common/utilities';
 import { Themes } from './themes/themes';
@@ -400,22 +400,43 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     private getLegendOptions(chartOptions: IChartOptions): Highcharts.LegendOptions {
-        return {
+        const legendOptions: Highcharts.LegendOptions = {
             enabled: chartOptions.legendOptions.isEnabled,
-            width: '100%',
-            maxHeight: this.getLegendMaxHeight(),
             accessibility: {
                 enabled: <any>true,
                 keyboardNavigation: {
                     enabled: <any>true
                 }
             }
+        };
+
+        if (chartOptions.legendOptions.position === LegendPosition.Bottom) {
+            legendOptions.width = '100%';
+            legendOptions.maxHeight = this.getLegendMaxHeight();
+        } else { // Right
+            legendOptions.layout = 'vertical'
+            legendOptions.verticalAlign = 'top';
+            legendOptions.align = 'right';
+            legendOptions.itemWidth = 100;
+            legendOptions.margin = 5;
+            legendOptions.padding = 2;
+
+            // To fix missing tooltip on legend items. See: https://support.highcharts.com/support/tickets/7053
+            Highcharts.wrap(Highcharts.AccessibilityComponent.prototype, 'updateProxyButtonPosition', function (proceed, btn) {
+                const ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+                btn.style.width = '12px';
+
+                return ret;
+            });
         }
+
+        return legendOptions;
     }
 
     private getLegendMaxHeight(): number {
-        let legendMaxHeight = 150; // Default
-        const chartContainer = document.querySelector('#' + this.options.elementId);
+        let legendMaxHeight: number = 70; // Default
+        const chartContainer: Element = document.querySelector('#' + this.options.elementId);
 
         if(chartContainer && chartContainer.clientHeight) {
             legendMaxHeight = chartContainer.clientHeight / 5;
