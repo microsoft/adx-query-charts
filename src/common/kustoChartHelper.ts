@@ -99,9 +99,11 @@ export class KustoChartHelper implements IChartHelper {
                     this.transformedQueryResultData = transformed.data;
                     this.chartInfo.dataTransformationInfo.isAggregationApplied = transformed.limitedResults.isAggregationApplied;
                     this.chartInfo.dataTransformationInfo.isPartialData = transformed.limitedResults.isPartialData;
-                    this.escapeColumnsSelection(chartOptions);              
                 }
         
+                // Escape columns selection since the columns data is used in the tooltips
+                this.escapeColumnsSelection(chartOptions);         
+
                 const visualizerOptions: IVisualizerOptions = {
                     elementId: this.elementId,
                     queryResultData: this.transformedQueryResultData,
