@@ -121,6 +121,7 @@ export class HighchartsVisualizer implements IVisualizer {
             }
 
             // Update new theme options
+            this.options.chartOptions.chartTheme = newTheme;
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
             // Re-draw the a new chart with the new theme           
