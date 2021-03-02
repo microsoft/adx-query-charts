@@ -121,6 +121,7 @@ export class HighchartsVisualizer implements IVisualizer {
             }
 
             // Update new theme options
+            this.options.chartOptions.chartTheme = newTheme;
             this.themeOptions = Themes.getThemeOptions(newTheme);
             
             // Re-draw the a new chart with the new theme           
@@ -413,6 +414,7 @@ export class HighchartsVisualizer implements IVisualizer {
         if (chartOptions.legendOptions.position === LegendPosition.Bottom) {
             legendOptions.width = '100%';
             legendOptions.maxHeight = this.getLegendMaxHeight();
+            legendOptions.itemDistance = 35; // To allow text spacing (accessibility) See: https://msazure.visualstudio.com/One/_workitems/edit/9255411
         } else { // Right
             legendOptions.layout = 'vertical'
             legendOptions.verticalAlign = 'top';

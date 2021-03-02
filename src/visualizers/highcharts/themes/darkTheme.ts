@@ -68,9 +68,6 @@ export const DarkThemeOptions: Highcharts.Options = {
         boxplot: {
             fillColor: minorGridLineColor
         },
-        candlestick: {
-            lineColor: 'white'
-        },
         errorbar: {
             color: 'white'
         }
