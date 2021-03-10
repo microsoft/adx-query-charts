@@ -8,6 +8,7 @@ import { Utilities } from "../../../common/utilities";
 export class Formatter {
     public static getSingleTooltip(chartOptions: IChartOptions, column: IColumn, originalValue: any, columnName?: string, valueSuffix: string = ''): string {
         const maxLabelWidth: number = 100;
+        let escapedColumnName = Utilities.escapeStr(columnName || column.name);
         let formattedValue = '';
         
         if(originalValue != undefined) {
@@ -19,7 +20,7 @@ export class Formatter {
             }
         }
 
-        return `<tr><td>${columnName || column.name}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
+        return `<tr><td>${escapedColumnName}: </td><td><b>${formattedValue + valueSuffix}</b></td></tr>`;
     }
           
     public static getLabelsFormatter(chartOptions: IChartOptions, column: IColumn, useHTML: boolean): Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject<number>> {

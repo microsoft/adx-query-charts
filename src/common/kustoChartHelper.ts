@@ -101,9 +101,6 @@ export class KustoChartHelper implements IChartHelper {
                     this.chartInfo.dataTransformationInfo.isPartialData = transformed.limitedResults.isPartialData;
                 }
         
-                // Escape columns selection since the columns data is used in the tooltips
-                this.escapeColumnsSelection(chartOptions);         
-
                 const visualizerOptions: IVisualizerOptions = {
                     elementId: this.elementId,
                     queryResultData: this.transformedQueryResultData,
@@ -426,7 +423,7 @@ ${this.getColumnsStr(queryResultData.columns)}`;
             const originalColumn = queryResultData.columns[indexOfColumn];
 
             // Add each column name and type to the chartColumns
-            chartColumns.push(this.escapeColumnName(originalColumn));
+            chartColumns.push(originalColumn);
         }
 
         return notFoundColumns;
@@ -517,21 +514,6 @@ ${this.getColumnsStr(queryResultData.columns)}`;
         this.chartInfo.status = DrawChartStatus.Failed;
         this.chartInfo.error = error;
         this.finishDrawing(resolve, chartOptions);
-    }
-
-    private escapeColumnsSelection(chartOptions: IChartOptions): void {
-        chartOptions.columnsSelection = {
-            xAxis: chartOptions.columnsSelection.xAxis && this.escapeColumnName(chartOptions.columnsSelection.xAxis),
-            yAxes: chartOptions.columnsSelection.yAxes && chartOptions.columnsSelection.yAxes.map(y => this.escapeColumnName(y)),
-            splitBy: chartOptions.columnsSelection.splitBy && chartOptions.columnsSelection.splitBy.map(s => this.escapeColumnName(s))
-        };
-    }
-
-    private escapeColumnName(originalColumn: IColumn): IColumn {
-        return {
-            name: <string>Utilities.escapeStr(originalColumn.name),
-            type: originalColumn.type
-        };
     }
 
     //#endregion Private methods
