@@ -163,7 +163,6 @@ export class Pie extends Chart {
     }
 
     protected /*override*/ getDataPoint(chartOptions: IChartOptions, point: Highcharts.Point): IDataPoint {
-        const seriesColumnName: string = point.series.name; 
         const xColumn: IColumn = chartOptions.columnsSelection.xAxis;
         const splitBy = chartOptions.columnsSelection.splitBy;
         let seriesColumn: IColumn;
@@ -172,7 +171,7 @@ export class Pie extends Chart {
         if (splitBy && splitBy.length > 0) {
             // Find the current key column
             const keyColumnIndex = _.findIndex(splitBy, (col) => { 
-                return col.name === point.series.name 
+                return col.name === point.series.name; 
             });
 
             seriesColumn = splitBy[keyColumnIndex];
