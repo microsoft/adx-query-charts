@@ -1,6 +1,6 @@
 {
   "name": "adx-query-charts",
-  "version": "1.1.59",
+  "version": "1.1.60",
   "description": "Draw charts from Azure Data Explorer queries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
