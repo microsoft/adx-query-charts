@@ -1,5 +1,6 @@
 'use strict';
 
+import { ICustomVizualizerChartOptions } from "../visualizers/customVizualizerChartOptions";
 import { ChartError } from "./errors/errors";
 
 //#region Draft contracts
@@ -165,10 +166,21 @@ export interface IChartOptions {
     chartType: ChartType;
 
     /**
+     * extra custom chart options
+     */
+    customVizualizerChartOptions?: ICustomVizualizerChartOptions;
+
+    /**
      * The columns selection for the Axes and the split-by of the chart
      * If not provided, default columns will be selected. See: getDefaultSelection method
      */
     columnsSelection?: ColumnsSelection;
+
+    /**
+     * The columns selection for the Axes and the split-by of the chart
+     * If not provided, default columns will be selected. See: getDefaultSelection method
+     */
+    customChartOptions?: ColumnsSelection;
 
     /**
      * The maximum number of the unique X-axis values.
