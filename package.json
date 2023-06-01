@@ -1,5 +1,5 @@
 {
-  "name": "adx-query-charts",
+  "name": "@inimco/adx-query-charts",
   "version": "1.1.60",
   "description": "Draw charts from Azure Data Explorer queries",
   "main": "dist/index.js",

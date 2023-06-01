@@ -87,7 +87,7 @@ export class HighchartsVisualizer implements IVisualizer {
                         this.highchartsChart.update(newOptions);
             
                         // Save the new options
-                        this.basicHighchartsOptions = _.merge({}, this.basicHighchartsOptions, newOptions);
+                        this.basicHighchartsOptions = _.merge({}, this.basicHighchartsOptions, options.chartOptions.customVizualizerChartOptions, newOptions);
                         
                         this.onFinishDrawingChart(resolve, options);
         
@@ -240,7 +240,8 @@ export class HighchartsVisualizer implements IVisualizer {
                     }
                 },
                 fallbackToExportServer: false
-            }
+            },
+            ...options.chartOptions.customVizualizerChartOptions
         };
 
         const categoriesAndSeries = this.getCategoriesAndSeries(options);

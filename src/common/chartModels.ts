@@ -1,5 +1,6 @@
 'use strict';
 
+import { ICustomVizualizerChartOptions } from "../visualizers/customVizualizerChartOptions";
 import { ChartError } from "./errors/errors";
 
 //#region Draft contracts
@@ -163,6 +164,11 @@ export interface IChartOptions {
      * The type of the chart to draw
      */
     chartType: ChartType;
+
+    /**
+     * extra custom chart options
+     */
+    customVizualizerChartOptions?: ICustomVizualizerChartOptions;
 
     /**
      * The columns selection for the Axes and the split-by of the chart
