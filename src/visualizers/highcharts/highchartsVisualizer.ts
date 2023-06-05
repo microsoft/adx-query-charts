@@ -275,6 +275,35 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     private getYAxis(chartOptions: IChartOptions, categoriesAndSeries: Highcharts.Options): Highcharts.YAxisOptions[] {
+        if(chartOptions.columnsSelection?.splitBy?.[0]?.getPosition) {
+            return this.getMultipleYAxis(chartOptions, categoriesAndSeries);
+        }
+        return [this.getSingleYAxis(chartOptions)];
+    }
+
+    private getSingleYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {
+        const firstYAxis = this.options.chartOptions.columnsSelection.yAxes[0];
+        const yAxisOptions: Highcharts.YAxisOptions = {
+            title: {
+                text: this.getYAxisTitle(chartOptions)
+            },
+            labels: {
+                formatter: Formatter.getLabelsFormatter(chartOptions, firstYAxis, /*useHTML*/ false)
+            },
+        }
+
+        if(chartOptions.yMinimumValue != null) {
+            yAxisOptions.min = chartOptions.yMinimumValue;
+        }
+        
+        if(chartOptions.yMaximumValue != null) {
+            yAxisOptions.max = chartOptions.yMaximumValue;
+        }
+
+        return yAxisOptions;
+    }
+
+    private getMultipleYAxis(chartOptions: IChartOptions, categoriesAndSeries: Highcharts.Options): Highcharts.YAxisOptions[] {
         return categoriesAndSeries.series.map((serie, index) => {
             const yAxisOptions: Highcharts.YAxisOptions = {
               labels: {
@@ -289,7 +318,7 @@ export class HighchartsVisualizer implements IVisualizer {
                   color: Highcharts.getOptions().colors[index],
                 },
               },
-              opposite: chartOptions.columnsSelection.splitBy[0].getPosition(serie.name),
+              opposite: chartOptions.columnsSelection?.splitBy?.[0]?.getPosition?.(serie.name) ?? false,
             };
             if (chartOptions.yMinimumValue != null) {
               yAxisOptions.min = chartOptions.yMinimumValue;
@@ -300,7 +329,6 @@ export class HighchartsVisualizer implements IVisualizer {
             }
             return yAxisOptions;
           });
-        
     }
 
     private getYAxisTitle(chartOptions: IChartOptions): string {
@@ -351,17 +379,18 @@ export class HighchartsVisualizer implements IVisualizer {
             categoriesAndSeries = this.currentChart.getStandardCategoriesAndSeries(options);
         }
 
-       
-    categoriesAndSeries = {
-        ...categoriesAndSeries,
-        series: this.currentChart
-          .sortSeriesByName(categoriesAndSeries.series)
-          .map((serie, i) => ({
-            ...serie,
-            yAxis: i,
-            color: Highcharts.getOptions().colors[i],
-          })),
-      };
+       if(!(options.chartOptions.columnsSelection.splitBy.some(split => split.getPosition === undefined))) {
+           categoriesAndSeries = {
+               ...categoriesAndSeries,
+               series: this.currentChart
+                 .sortSeriesByName(categoriesAndSeries.series)
+                 .map((serie, i) => ({
+                   ...serie,
+                   yAxis: i,
+                   color: Highcharts.getOptions().colors[i],
+                 })),
+             };
+       }
       return {
         xAxis: {
           categories: categoriesAndSeries.categories,
