@@ -207,6 +207,7 @@ export class HighchartsVisualizer implements IVisualizer {
         if(options.chartOptions.animationDurationMS === 0) {
             animation = false;
         }
+        const categoriesAndSeries = this.getCategoriesAndSeries(options);
 
         let highchartsOptions: Highcharts.Options = {
             credits: {
@@ -226,7 +227,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 text: chartOptions.title
             },
             xAxis: this.getXAxis(isDatetimeAxis, chartOptions),
-            yAxis: this.getYAxis(chartOptions),        
+            yAxis: this.getYAxis(chartOptions, categoriesAndSeries),        
             tooltip: {
                 formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
                 shared: false,
@@ -244,7 +245,6 @@ export class HighchartsVisualizer implements IVisualizer {
             ...options.chartOptions.customVizualizerChartOptions
         };
 
-        const categoriesAndSeries = this.getCategoriesAndSeries(options);
         const chartTypeOptions = this.currentChart.getChartTypeOptions();
         
         highchartsOptions = _.merge(highchartsOptions, chartTypeOptions, categoriesAndSeries);
@@ -274,26 +274,33 @@ export class HighchartsVisualizer implements IVisualizer {
         }
     }
 
-    private getYAxis(chartOptions: IChartOptions): Highcharts.YAxisOptions {
-        const firstYAxis = this.options.chartOptions.columnsSelection.yAxes[0];
-        const yAxisOptions: Highcharts.YAxisOptions = {
-            title: {
-                text: this.getYAxisTitle(chartOptions)
-            },
-            labels: {
-                formatter: Formatter.getLabelsFormatter(chartOptions, firstYAxis, /*useHTML*/ false)
-            },
-        }
-
-        if(chartOptions.yMinimumValue != null) {
-            yAxisOptions.min = chartOptions.yMinimumValue;
-        }
+    private getYAxis(chartOptions: IChartOptions, categoriesAndSeries: Highcharts.Options): Highcharts.YAxisOptions[] {
+        return categoriesAndSeries.series.map((serie, index) => {
+            const yAxisOptions: Highcharts.YAxisOptions = {
+              labels: {
+                format: "{value}",
+                style: {
+                  color: Highcharts.getOptions().colors[index],
+                },
+              },
+              title: {
+                text: serie.name,
+                style: {
+                  color: Highcharts.getOptions().colors[index],
+                },
+              },
+              opposite: chartOptions.columnsSelection.splitBy[0].getPosition(serie.name),
+            };
+            if (chartOptions.yMinimumValue != null) {
+              yAxisOptions.min = chartOptions.yMinimumValue;
+            }
+      
+            if (chartOptions.yMaximumValue != null) {
+              yAxisOptions.max = chartOptions.yMaximumValue;
+            }
+            return yAxisOptions;
+          });
         
-        if(chartOptions.yMaximumValue != null) {
-            yAxisOptions.max = chartOptions.yMaximumValue;
-        }
-
-        return yAxisOptions;
     }
 
     private getYAxisTitle(chartOptions: IChartOptions): string {
@@ -344,12 +351,23 @@ export class HighchartsVisualizer implements IVisualizer {
             categoriesAndSeries = this.currentChart.getStandardCategoriesAndSeries(options);
         }
 
-        return {
-            xAxis: {
-                categories: categoriesAndSeries.categories
-            },
-            series: this.currentChart.sortSeriesByName(categoriesAndSeries.series)
-        }
+       
+    categoriesAndSeries = {
+        ...categoriesAndSeries,
+        series: this.currentChart
+          .sortSeriesByName(categoriesAndSeries.series)
+          .map((serie, i) => ({
+            ...serie,
+            yAxis: i,
+            color: Highcharts.getOptions().colors[i],
+          })),
+      };
+      return {
+        xAxis: {
+          categories: categoriesAndSeries.categories,
+        },
+        series: categoriesAndSeries.series,
+      };
     }
 
     private onFinishDataTransformation(options: IVisualizerOptions, resolve: ResolveFn, reject: RejectFn): void {
