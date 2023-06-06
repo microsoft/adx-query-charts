@@ -29,6 +29,7 @@ export type ISeriesRow = ISeriesRowValue[];
 export interface IColumn {
     name: string;
     type: DraftColumnType;
+    getPosition?: Function;
 }
 
 export interface IQueryResultData {
