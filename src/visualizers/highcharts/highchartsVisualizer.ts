@@ -137,7 +137,7 @@ export class HighchartsVisualizer implements IVisualizer {
         this.highchartsChart.fullscreen.open();
     }
 
-    public downloadChartJPGImage(onError?: (error: Error) => void): void {
+    public downloadChartJPEGImage(onError?: (error: Error) => void): void {
         if (!this.highchartsChart) {
             return; // No existing chart - do nothing
         }
@@ -151,7 +151,7 @@ export class HighchartsVisualizer implements IVisualizer {
             },
         };
 
-        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        this.highchartsChart.exportChart(exportingOptions, this.basicHighchartsOptions);
     }
 
     public downloadChartPNGImage(onError?: (error: Error) => void): void {
@@ -168,7 +168,7 @@ export class HighchartsVisualizer implements IVisualizer {
             },
         };
 
-        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        this.highchartsChart.exportChart(exportingOptions, this.basicHighchartsOptions);
     }
 
     public downloadChartPDF(onError?: (error: Error) => void): void {
@@ -185,7 +185,7 @@ export class HighchartsVisualizer implements IVisualizer {
             },
         };
 
-        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        this.highchartsChart.exportChart(exportingOptions, this.basicHighchartsOptions);
     }
 
     public downloadChartSVG(onError?: (error: Error) => void): void {
@@ -202,7 +202,7 @@ export class HighchartsVisualizer implements IVisualizer {
             },
         };
 
-        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        this.highchartsChart.exportChart(exportingOptions, this.basicHighchartsOptions);
     }
 
     //#region Private methods

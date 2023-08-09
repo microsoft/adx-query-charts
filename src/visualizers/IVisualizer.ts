@@ -2,9 +2,9 @@
 
 //#region Imports
 
-import { IVisualizerOptions } from './IVisualizerOptions';
-import { ChartTheme } from '../common/chartModels';
 import { Changes } from '../common/chartChange';
+import { ChartTheme } from '../common/chartModels';
+import { IVisualizerOptions } from './IVisualizerOptions';
 
 //#endregion Imports
 
@@ -32,8 +32,36 @@ export interface IVisualizer {
     changeTheme(newTheme: ChartTheme): Promise<void>;
 		
     /**
-     * Download the chart as JPG image
+     * Download the chart as JPEG image
      * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
      */
-    downloadChartJPGImage(onError?: (error: Error) => void): void;
+    downloadChartJPEGImage(onError?: (error: Error) => void): void;
+		
+    /**
+     * Download the chart as PNG image
+     * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+     */
+    downloadChartPNGImage(onError?: (error: Error) => void): void;
+		
+    /**
+     * Download the chart as PDF
+     * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+     */
+    downloadChartPDF(onError?: (error: Error) => void): void;
+		
+    /**
+     * Download the chart as SVG image
+     * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+     */
+    downloadChartSVG(onError?: (error: Error) => void): void;
+		
+    /**
+     * Open fullscreen version
+     */
+    fullscreen(onError?: (error: Error) => void): void;
+		
+    /**
+     * print chart
+     */
+    print(onError?: (error: Error) => void): void;
 }

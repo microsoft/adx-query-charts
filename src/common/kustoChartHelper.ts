@@ -3,17 +3,17 @@
 //#region Imports
 
 import * as _ from 'lodash';
-import { IChartHelper, IQueryResultData, ChartType, DraftColumnType, ISupportedColumnTypes, IColumn, ISupportedColumns, ColumnsSelection, IChartOptions, AggregationType, ChartTheme, IChartInfo, DrawChartStatus, LegendPosition } from './chartModels';
+import { ILimitAndAggregateParams, LimitVisResultsSingleton, LimitedResults } from '../transformers/limitVisResults';
 import { SeriesVisualize } from '../transformers/seriesVisualize';
-import { LimitVisResultsSingleton, LimitedResults, ILimitAndAggregateParams } from '../transformers/limitVisResults';
 import { IVisualizer } from '../visualizers/IVisualizer';
-import { Utilities } from './utilities';
-import { ChartChange } from './chartChange';
-import { ChangeDetection } from './changeDetection';
-import { ChartInfo } from './chartInfo';
 import { IVisualizerOptions } from '../visualizers/IVisualizerOptions';
-import { InvalidInputError, ChartError } from './errors/errors';
+import { ChangeDetection } from './changeDetection';
+import { ChartChange } from './chartChange';
+import { ChartInfo } from './chartInfo';
+import { AggregationType, ChartTheme, ChartType, ColumnsSelection, DraftColumnType, DrawChartStatus, IChartHelper, IChartInfo, IChartOptions, IColumn, IQueryResultData, ISupportedColumnTypes, ISupportedColumns, LegendPosition } from './chartModels';
 import { ErrorCode } from './errors/errorCode';
+import { ChartError, InvalidInputError } from './errors/errors';
+import { Utilities } from './utilities';
 
 //#endregion Imports
 
@@ -209,7 +209,7 @@ export class KustoChartHelper implements IChartHelper {
     }
 
     public downloadChartJPGImage() {
-        this.visualizer.downloadChartJPGImage();
+        this.visualizer.downloadChartJPEGImage();
     }
 
     //#endregion Public methods
