@@ -368,13 +368,13 @@ export class HighchartsVisualizer implements IVisualizer {
                 labels: {
                     format: "{value}",
                     style: {
-                        color: Highcharts.getOptions().colors[index],
+                        color: Themes.getThemeOptions(chartOptions.chartTheme).colors[index],
                     },
                 },
                 title: {
                     text: serie.name,
                     style: {
-                        color: Highcharts.getOptions().colors[index],
+                        color: Themes.getThemeOptions(chartOptions.chartTheme).colors[index],
                     },
                 },
                 opposite: chartOptions.columnsSelection?.splitBy?.[0]?.getPosition?.(serie.name) ?? false,
@@ -446,7 +446,7 @@ export class HighchartsVisualizer implements IVisualizer {
                     .map((serie, i) => ({
                         ...serie,
                         yAxis: i,
-                        color: Highcharts.getOptions().colors[i],
+                        color: Themes.getThemeOptions(options.chartOptions.chartTheme).colors[i],
                     })),
             };
         }
