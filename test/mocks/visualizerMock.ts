@@ -1,9 +1,9 @@
 'use strict';
 
-import { IVisualizer } from "../../src/visualizers/IVisualizer";
-import { IVisualizerOptions } from "../../src/visualizers/IVisualizerOptions";
 import { Changes } from "../../src/common/chartChange";
 import { ChartTheme } from "../../src/common/chartModels";
+import { IVisualizer } from "../../src/visualizers/IVisualizer";
+import { IVisualizerOptions } from "../../src/visualizers/IVisualizerOptions";
 
 //#region Imports
 
@@ -28,7 +28,27 @@ export class VisualizerMock implements IVisualizer {
         });
     }
 	
-    public downloadChartJPGImage(onError?: (error: Error) => void): void {
+    public downloadChartJPEGImage(onError?: (error: Error) => void): void {
+        // Do nothing
+    }
+	
+    public downloadChartPDF(onError?: (error: Error) => void): void {
+        // Do nothing
+    }
+	
+    public downloadChartPNGImage(onError?: (error: Error) => void): void {
+        // Do nothing
+    }
+	
+    public downloadChartSVG(onError?: (error: Error) => void): void {
+        // Do nothing
+    }
+	
+    public fullscreen(): void {
+        // Do nothing
+    }
+	
+    public print(): void {
         // Do nothing
     }
 }
