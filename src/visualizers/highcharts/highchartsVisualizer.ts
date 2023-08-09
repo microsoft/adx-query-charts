@@ -29,7 +29,7 @@ export class HighchartsVisualizer implements IVisualizer {
     private options: IVisualizerOptions;
     private highchartsChart: Highcharts.Chart;
     private basicHighchartsOptions: Highcharts.Options;
-    private themeOptions: Highcharts.Options;       
+    private themeOptions: Highcharts.Options;
     private currentChart: Chart;
     private chartContainerResizeSensor: ResizeSensor;
 
@@ -59,42 +59,42 @@ export class HighchartsVisualizer implements IVisualizer {
             }
         });
     }
-           
+
     public updateExistingChart(options: IVisualizerOptions, changes: Changes): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 this.verifyInput(options);
-                
+
                 // Make sure that there is an existing chart
                 const chartContainer = document.querySelector('#' + this.options.elementId);
                 const isChartExist = chartContainer && chartContainer.children.length > 0;
                 const isChartTypeTheOnlyChange = changes.count === 1 && changes.isPendingChange(ChartChange.ChartType);
-    
-                if(isChartExist && isChartTypeTheOnlyChange) {
+
+                if (isChartExist && isChartTypeTheOnlyChange) {
                     const oldChart = this.currentChart;
                     const newChart = ChartFactory.create(options.chartOptions.chartType, options.chartOptions);
-        
+
                     // We update the existing chart options only if the new chart categories and series builder method is the same as the previous chart's method
-                    if(oldChart.getSplitByCategoriesAndSeries === newChart.getSplitByCategoriesAndSeries && 
-                       oldChart.getStandardCategoriesAndSeries === newChart.getStandardCategoriesAndSeries) {
+                    if (oldChart.getSplitByCategoriesAndSeries === newChart.getSplitByCategoriesAndSeries &&
+                        oldChart.getStandardCategoriesAndSeries === newChart.getStandardCategoriesAndSeries) {
                         this.currentChart = newChart;
                         this.options = options;
-                        
+
                         // Build the options that need to be updated
                         let newOptions: Highcharts.Options = this.currentChart.getChartTypeOptions();
-            
+
                         // Apply the changes
                         this.highchartsChart.update(newOptions);
-            
+
                         // Save the new options
                         this.basicHighchartsOptions = _.merge({}, this.basicHighchartsOptions, options.chartOptions.customVizualizerChartOptions, newOptions);
-                        
+
                         this.onFinishDrawingChart(resolve, options);
-        
+
                         return;
                     }
                 }
-    
+
                 // Every other change - Redraw the chart
                 this.drawNewChart(options)
                     .then(() => {
@@ -114,7 +114,7 @@ export class HighchartsVisualizer implements IVisualizer {
 
         return new Promise<void>((resolve, reject) => {
             // No existing chart / the theme wasn't changed - do nothing
-            if(!this.currentChart || options.chartOptions.chartTheme === newTheme) {
+            if (!this.currentChart || options.chartOptions.chartTheme === newTheme) {
                 resolve();
 
                 return;
@@ -123,7 +123,7 @@ export class HighchartsVisualizer implements IVisualizer {
             // Update new theme options
             this.options.chartOptions.chartTheme = newTheme;
             this.themeOptions = Themes.getThemeOptions(newTheme);
-            
+
             // Re-draw the a new chart with the new theme           
             this.draw(options, resolve, reject);
         });
@@ -131,78 +131,78 @@ export class HighchartsVisualizer implements IVisualizer {
 
     public print() {
         this.highchartsChart.print();
-      }
-    
+    }
+
     public fullscreen() {
-    this.highchartsChart.fullscreen.open();
+        this.highchartsChart.fullscreen.open();
     }
 
     public downloadChartJPGImage(onError?: (error: Error) => void): void {
-    if (!this.highchartsChart) {
-        return; // No existing chart - do nothing
-    }
-
-    const exportingOptions: Highcharts.ExportingOptions = {
-        type: "image/jpeg",
-        error: (options: Highcharts.ExportingOptions, err: Error) => {
-        if (onError) {
-            onError(err);
+        if (!this.highchartsChart) {
+            return; // No existing chart - do nothing
         }
-        },
-    };
 
-    this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        const exportingOptions: Highcharts.ExportingOptions = {
+            type: "image/jpeg",
+            error: (options: Highcharts.ExportingOptions, err: Error) => {
+                if (onError) {
+                    onError(err);
+                }
+            },
+        };
+
+        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
     }
 
     public downloadChartPNGImage(onError?: (error: Error) => void): void {
-    if (!this.highchartsChart) {
-        return; // No existing chart - do nothing
-    }
-
-    const exportingOptions: Highcharts.ExportingOptions = {
-        type: "image/png",
-        error: (options: Highcharts.ExportingOptions, err: Error) => {
-        if (onError) {
-            onError(err);
+        if (!this.highchartsChart) {
+            return; // No existing chart - do nothing
         }
-        },
-    };
 
-    this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        const exportingOptions: Highcharts.ExportingOptions = {
+            type: "image/png",
+            error: (options: Highcharts.ExportingOptions, err: Error) => {
+                if (onError) {
+                    onError(err);
+                }
+            },
+        };
+
+        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
     }
 
     public downloadChartPDF(onError?: (error: Error) => void): void {
-    if (!this.highchartsChart) {
-        return; // No existing chart - do nothing
-    }
-
-    const exportingOptions: Highcharts.ExportingOptions = {
-        type: "application/pdf",
-        error: (options: Highcharts.ExportingOptions, err: Error) => {
-        if (onError) {
-            onError(err);
+        if (!this.highchartsChart) {
+            return; // No existing chart - do nothing
         }
-        },
-    };
 
-    this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        const exportingOptions: Highcharts.ExportingOptions = {
+            type: "application/pdf",
+            error: (options: Highcharts.ExportingOptions, err: Error) => {
+                if (onError) {
+                    onError(err);
+                }
+            },
+        };
+
+        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
     }
 
     public downloadChartSVG(onError?: (error: Error) => void): void {
-    if (!this.highchartsChart) {
-        return; // No existing chart - do nothing
-    }
-
-    const exportingOptions: Highcharts.ExportingOptions = {
-        type: "image/svg+xml",
-        error: (options: Highcharts.ExportingOptions, err: Error) => {
-        if (onError) {
-            onError(err);
+        if (!this.highchartsChart) {
+            return; // No existing chart - do nothing
         }
-        },
-    };
 
-    this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
+        const exportingOptions: Highcharts.ExportingOptions = {
+            type: "image/svg+xml",
+            error: (options: Highcharts.ExportingOptions, err: Error) => {
+                if (onError) {
+                    onError(err);
+                }
+            },
+        };
+
+        this.highchartsChart.exportChart(exportingOptions, /*chartOptions*/ {});
     }
 
     //#region Private methods
@@ -214,18 +214,18 @@ export class HighchartsVisualizer implements IVisualizer {
             const updateCustomOptionsFn = options.chartOptions.updateCustomOptions;
 
             // Allow changing the chart options externally before rendering the chart
-            if(updateCustomOptionsFn && typeof updateCustomOptionsFn === 'function') {
+            if (updateCustomOptionsFn && typeof updateCustomOptionsFn === 'function') {
                 updateCustomOptionsFn(highchartsOptions);
             }
 
             this.destroyExistingChart();
-    
+
             // Draw the chart
             this.highchartsChart = Highcharts.chart(elementId, highchartsOptions, () => {
-                this.handleResize();           
+                this.handleResize();
                 this.onFinishDrawingChart(resolve, options);
-            });   
-        } catch(ex) {
+            });
+        } catch (ex) {
             reject(new VisualizerError(ex.message, ErrorCode.FailedToCreateVisualization));
         }
     }
@@ -237,7 +237,7 @@ export class HighchartsVisualizer implements IVisualizer {
         // If onFinishChartAnimation callback was given, call it after the animation duration
         const finishChartAnimationCallback = options.chartOptions.onFinishChartAnimation;
 
-        if(finishChartAnimationCallback) {
+        if (finishChartAnimationCallback) {
             setTimeout(() => {
                 finishChartAnimationCallback(options.chartInfo);
             }, options.chartOptions.animationDurationMS + 200);
@@ -245,25 +245,25 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     // Highcharts handle resize only on window resize, we need to handle resize when the chart's container size changes
-    private handleResize(): void {        
+    private handleResize(): void {
         const chartContainer = document.querySelector('#' + this.options.elementId);
-    
-        if(this.chartContainerResizeSensor) {
+
+        if (this.chartContainerResizeSensor) {
             // Remove the previous resize sensor, and stop listening to resize events
             this.chartContainerResizeSensor.detach();
         }
-    
+
         this.chartContainerResizeSensor = new ResizeSensor(chartContainer, () => {
             this.highchartsChart.reflow();
         });
     }
 
     private getHighchartsOptions(options: IVisualizerOptions): Highcharts.Options {
-        const chartOptions = options.chartOptions;     
+        const chartOptions = options.chartOptions;
         const isDatetimeAxis = Utilities.isDate(chartOptions.columnsSelection.xAxis.type);
         let animation;
 
-        if(options.chartOptions.animationDurationMS === 0) {
+        if (options.chartOptions.animationDurationMS === 0) {
             animation = false;
         }
         const categoriesAndSeries = this.getCategoriesAndSeries(options);
@@ -286,7 +286,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 text: chartOptions.title
             },
             xAxis: this.getXAxis(isDatetimeAxis, chartOptions),
-            yAxis: this.getYAxis(chartOptions, categoriesAndSeries),        
+            yAxis: this.getYAxis(chartOptions, categoriesAndSeries),
             tooltip: {
                 formatter: this.currentChart.getChartTooltipFormatter(chartOptions),
                 shared: false,
@@ -305,12 +305,12 @@ export class HighchartsVisualizer implements IVisualizer {
         };
 
         const chartTypeOptions = this.currentChart.getChartTypeOptions();
-        
+
         highchartsOptions = _.merge(highchartsOptions, chartTypeOptions, categoriesAndSeries);
 
         return highchartsOptions;
     }
-  
+
     private getXAxis(isDatetimeAxis: boolean, chartOptions: IChartOptions): Highcharts.XAxisOptions {
         const useHTML: boolean = true;
 
@@ -334,7 +334,7 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     private getYAxis(chartOptions: IChartOptions, categoriesAndSeries: Highcharts.Options): Highcharts.YAxisOptions[] {
-        if(chartOptions.columnsSelection?.splitBy?.[0]?.getPosition) {
+        if (chartOptions.columnsSelection?.splitBy?.[0]?.getPosition) {
             return this.getMultipleYAxis(chartOptions, categoriesAndSeries);
         }
         return [this.getSingleYAxis(chartOptions)];
@@ -351,11 +351,11 @@ export class HighchartsVisualizer implements IVisualizer {
             },
         }
 
-        if(chartOptions.yMinimumValue != null) {
+        if (chartOptions.yMinimumValue != null) {
             yAxisOptions.min = chartOptions.yMinimumValue;
         }
-        
-        if(chartOptions.yMaximumValue != null) {
+
+        if (chartOptions.yMaximumValue != null) {
             yAxisOptions.max = chartOptions.yMaximumValue;
         }
 
@@ -365,36 +365,36 @@ export class HighchartsVisualizer implements IVisualizer {
     private getMultipleYAxis(chartOptions: IChartOptions, categoriesAndSeries: Highcharts.Options): Highcharts.YAxisOptions[] {
         return categoriesAndSeries.series.map((serie, index) => {
             const yAxisOptions: Highcharts.YAxisOptions = {
-              labels: {
-                format: "{value}",
-                style: {
-                  color: Highcharts.getOptions().colors[index],
+                labels: {
+                    format: "{value}",
+                    style: {
+                        color: Highcharts.getOptions().colors[index],
+                    },
                 },
-              },
-              title: {
-                text: serie.name,
-                style: {
-                  color: Highcharts.getOptions().colors[index],
+                title: {
+                    text: serie.name,
+                    style: {
+                        color: Highcharts.getOptions().colors[index],
+                    },
                 },
-              },
-              opposite: chartOptions.columnsSelection?.splitBy?.[0]?.getPosition?.(serie.name) ?? false,
+                opposite: chartOptions.columnsSelection?.splitBy?.[0]?.getPosition?.(serie.name) ?? false,
             };
             if (chartOptions.yMinimumValue != null) {
-              yAxisOptions.min = chartOptions.yMinimumValue;
+                yAxisOptions.min = chartOptions.yMinimumValue;
             }
-      
+
             if (chartOptions.yMaximumValue != null) {
-              yAxisOptions.max = chartOptions.yMaximumValue;
+                yAxisOptions.max = chartOptions.yMaximumValue;
             }
             return yAxisOptions;
-          });
+        });
     }
 
     private getYAxisTitle(chartOptions: IChartOptions): string {
         const yAxisColumns = chartOptions.columnsSelection.yAxes;
         const yAxisTitleFormatter = chartOptions.yAxisTitleFormatter;
 
-        if(yAxisTitleFormatter) {
+        if (yAxisTitleFormatter) {
             let yAxisTitle = yAxisTitleFormatter(yAxisColumns);
             let escapedYAxisTitle = Utilities.escapeStr(yAxisTitle);
 
@@ -408,7 +408,7 @@ export class HighchartsVisualizer implements IVisualizer {
         const xAxisColumn = chartOptions.columnsSelection.xAxis;
         const xAxisTitleFormatter = chartOptions.xAxisTitleFormatter;
 
-        if(xAxisTitleFormatter) {
+        if (xAxisTitleFormatter) {
             let xAxisTitle = xAxisTitleFormatter(xAxisColumn);
             let escapedXAxisTitle = Utilities.escapeStr(xAxisTitle);
 
@@ -419,43 +419,43 @@ export class HighchartsVisualizer implements IVisualizer {
     }
 
     private destroyExistingChart(): void {
-        if(this.highchartsChart) {
+        if (this.highchartsChart) {
             try {
                 this.highchartsChart.destroy();
-            } catch(err) {
+            } catch (err) {
                 // Do nothing - this means that the chart object was already destroyed by Highcharts
             }
         }
     }
 
     private getCategoriesAndSeries(options: IVisualizerOptions): Highcharts.Options {
-        const columnsSelection = options.chartOptions.columnsSelection; 
+        const columnsSelection = options.chartOptions.columnsSelection;
         let categoriesAndSeries;
 
-        if(columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
+        if (columnsSelection.splitBy && columnsSelection.splitBy.length > 0) {
             categoriesAndSeries = this.currentChart.getSplitByCategoriesAndSeries(options);
         } else {
             categoriesAndSeries = this.currentChart.getStandardCategoriesAndSeries(options);
         }
 
-       if(!(options.chartOptions.columnsSelection.splitBy.some(split => split.getPosition === undefined))) {
-           categoriesAndSeries = {
-               ...categoriesAndSeries,
-               series: this.currentChart
-                 .sortSeriesByName(categoriesAndSeries.series)
-                 .map((serie, i) => ({
-                   ...serie,
-                   yAxis: i,
-                   color: Highcharts.getOptions().colors[i],
-                 })),
-             };
-       }
-      return {
-        xAxis: {
-          categories: categoriesAndSeries.categories,
-        },
-        series: categoriesAndSeries.series,
-      };
+        if (!(options.chartOptions.columnsSelection.splitBy.some(split => split.getPosition === undefined))) {
+            categoriesAndSeries = {
+                ...categoriesAndSeries,
+                series: this.currentChart
+                    .sortSeriesByName(categoriesAndSeries.series)
+                    .map((serie, i) => ({
+                        ...serie,
+                        yAxis: i,
+                        color: Highcharts.getOptions().colors[i],
+                    })),
+            };
+        }
+        return {
+            xAxis: {
+                categories: categoriesAndSeries.categories,
+            },
+            series: categoriesAndSeries.series,
+        };
     }
 
     private onFinishDataTransformation(options: IVisualizerOptions, resolve: ResolveFn, reject: RejectFn): void {
@@ -468,13 +468,13 @@ export class HighchartsVisualizer implements IVisualizer {
             dataTransformationInfo.numberOfDataPoints += currentSeries['data'].length;
         });
 
-        if(options.chartOptions.onFinishDataTransformation) {
+        if (options.chartOptions.onFinishDataTransformation) {
             const drawChartPromise = options.chartOptions.onFinishDataTransformation(dataTransformationInfo);
-           
+
             // Continue drawing the chart only after drawChartPromise is resolved with true
             drawChartPromise
                 .then((continueDraw: boolean) => {
-                    if(continueDraw) {
+                    if (continueDraw) {
                         this.draw(options, resolve, reject);
                     } else {
                         options.chartInfo.status = DrawChartStatus.Canceled;
@@ -490,19 +490,19 @@ export class HighchartsVisualizer implements IVisualizer {
     private verifyInput(options: IVisualizerOptions): void {
         const elementId = options.elementId;
 
-        if(!elementId) {
+        if (!elementId) {
             throw new InvalidInputError("The elementId option can't be empty", ErrorCode.InvalidChartContainerElementId);
         }
 
-        
+
         // Make sure that there is an existing chart container element before drawing the chart
-        if(!document.querySelector(`#${elementId}`)) {
+        if (!document.querySelector(`#${elementId}`)) {
             throw new InvalidInputError(`Element with the id '${elementId}' doesn't exist on the DOM`, ErrorCode.InvalidChartContainerElementId);
         }
-        
+
         const columnSelection = options.chartOptions.columnsSelection;
 
-        if(columnSelection.yAxes.length > 1 && columnSelection.splitBy && columnSelection.splitBy.length > 0) {
+        if (columnSelection.yAxes.length > 1 && columnSelection.splitBy && columnSelection.splitBy.length > 0) {
             throw new InvalidInputError("When there are multiple y-axis columns, split-by column isn't allowed", ErrorCode.InvalidColumnsSelection);
         }
     }
@@ -547,7 +547,7 @@ export class HighchartsVisualizer implements IVisualizer {
         let legendMaxHeight: number = 70; // Default
         const chartContainer: Element = document.querySelector('#' + this.options.elementId);
 
-        if(chartContainer && chartContainer.clientHeight) {
+        if (chartContainer && chartContainer.clientHeight) {
             legendMaxHeight = chartContainer.clientHeight / 5;
         }
 
