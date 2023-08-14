@@ -208,8 +208,28 @@ export class KustoChartHelper implements IChartHelper {
         return columnsSelection;
     }
 
-    public downloadChartJPGImage() {
+    public downloadChartJPEGImage() {
         this.visualizer.downloadChartJPEGImage();
+    }
+
+    public downloadChartPDF() {
+        this.visualizer.downloadChartPDF();
+    }
+
+    public downloadChartSVG() {
+        this.visualizer.downloadChartSVG();
+    }
+
+    public downloadChartPNGImage() {
+        this.visualizer.downloadChartPNGImage();
+    }
+
+    public fullscreen() {
+        this.visualizer.fullscreen();
+    }
+
+    public print() {
+        this.visualizer.print();
     }
 
     //#endregion Public methods

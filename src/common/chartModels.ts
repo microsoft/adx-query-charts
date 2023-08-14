@@ -395,10 +395,37 @@ export interface IChartHelper {
      * @param supportedColumnsForChart - [Optional] The list of the supported column types for the axes and the split-by
      */
     getDefaultSelection(queryResultData: IQueryResultData, chartType: ChartType, supportedColumnsForChart?: ISupportedColumns): ColumnsSelection;
-
-    /**
-     * Download the chart as JPG image
+/**
+     * Download the chart as JPEG image
      * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
      */
-    downloadChartJPGImage(onError?: (error: ChartError) => void): void;
+downloadChartJPEGImage(onError?: (error: Error) => void): void;
+		
+/**
+ * Download the chart as PNG image
+ * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+ */
+downloadChartPNGImage(onError?: (error: Error) => void): void;
+    
+/**
+ * Download the chart as PDF
+ * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+ */
+downloadChartPDF(onError?: (error: Error) => void): void;
+    
+/**
+ * Download the chart as SVG image
+ * @param onError - [Optional] A callback that will be called if the module failed to export the chart image
+ */
+downloadChartSVG(onError?: (error: Error) => void): void;
+    
+/**
+ * Open fullscreen version
+ */
+fullscreen(onError?: (error: Error) => void): void;
+    
+/**
+ * print chart
+ */
+print(onError?: (error: Error) => void): void;
 }
