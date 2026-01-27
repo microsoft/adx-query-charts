@@ -92,7 +92,7 @@ export class _LimitVisResults {
         for (let i = 0; i < strLength; i++) {
             const charCode: number = str.charCodeAt(i);
 
-            hash = ((hash << 5) - hash) + charCode;
+            hash = ((hash << 5) + hash) + charCode;
             hash |= 0; // Convert to 32bit integer
         }
 
