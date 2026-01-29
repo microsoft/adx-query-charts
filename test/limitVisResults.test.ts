@@ -439,8 +439,8 @@ describe('Unit tests for LimitVisResults', () => {
             const limitedResults = LimitVisResultsSingleton.limitAndAggregateRows(limitAndAggregateParams);
 
             const expectedLimitesRows = [
-                ["2019-09-15T00:00:00Z", "United States", 23997],
                 ["2019-09-15T00:00:00Z", "Israel", 95],
+                ["2019-09-15T00:00:00Z", "United States", 23997],
                 ["2019-09-16T00:00:00Z", "United States", 52451]
             ];
 
