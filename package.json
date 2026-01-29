@@ -1,12 +1,12 @@
 {
   "name": "adx-query-charts",
-  "version": "1.1.63",
+  "version": "1.1.64",
   "description": "Draw charts from Azure Data Explorer queries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublish": "npm run build && npm run test",
+    "prepare": "npm run build && npm run test",
     "test": "npm run build && jest",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
