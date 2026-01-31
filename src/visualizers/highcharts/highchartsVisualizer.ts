@@ -66,7 +66,7 @@ export class HighchartsVisualizer implements IVisualizer {
                 this.verifyInput(options);
                 
                 // Make sure that there is an existing chart
-                const chartContainer = document.querySelector('#' + this.options.elementId);
+                const chartContainer = document.querySelector('#' + this.options?.elementId);
                 const isChartExist = chartContainer && chartContainer.children.length > 0;
                 const isChartTypeTheOnlyChange = changes.count === 1 && changes.isPendingChange(ChartChange.ChartType);
     
